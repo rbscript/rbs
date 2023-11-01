@@ -1,26 +1,26 @@
 import {describe, expect, test} from '@jest/globals'
 import {createSource} from './utils'
-import {Output} from '../src/parser'
+import {Tree} from '../src/parser'
 
 test("empty line", () => {
     const src = createSource("")
-    const op = new Output(src)
+    const tree = new Tree(src)
 
-    expect(op.nextLine()).toBeUndefined()
+    expect(tree.nextLine()).toBeUndefined()
 })
 
 test("comment line", () => {
     const src = createSource("## bla bla")
-    const op = new Output(src)
+    const tree = new Tree(src)
 
-    expect(op.nextLine()).toBeUndefined()
+    expect(tree.nextLine()).toBeUndefined()
 })
 
 test("attribute", () => {
     const src = createSource("+- nd_tbl: (empty)")
-    const op = new Output(src)
+    const tree = new Tree(src)
 
-    const line = op.nextLine()
+    const line = tree.nextLine()
     expect(line.type).toEqual("attr")
     expect(line.name).toEqual("nd_tbl")
     expect(line.value).toEqual("(empty)")
@@ -28,9 +28,9 @@ test("attribute", () => {
 
 test("node", () => {
     const src = createSource("@ NODE_BLOCK (line: 26, location: (26,0)-(494,129))")
-    const op = new Output(src)
+    const tree = new Tree(src)
 
-    const line = op.nextLine()
+    const line = tree.nextLine()
     expect(line.type).toEqual("NODE_BLOCK")
     expect(line.location.startLine).toEqual(26)
     expect(line.location.startCol).toEqual(0)
@@ -40,8 +40,8 @@ test("node", () => {
 
 test("null node", () => {
     const src = createSource("|  (null node)")
-    const op = new Output(src)
+    const tree = new Tree(src)
 
-    const line = op.nextLine()
+    const line = tree.nextLine()
     expect(line.type).toEqual("(null node)")
 })

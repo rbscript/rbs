@@ -1,15 +1,16 @@
 import {spawnSync} from 'node:child_process'
+import {Program} from './programs'
 
 export function parse(source) {
     const p = spawnSync('ruby', ["--dump=parsetree"], {
 	input: source
     })
 
-    const output = new Output(p.stdout.toString())
-    return new Program(output)
+    const tree = new Tree(p.stdout.toString())
+    return new Program(tree)
 }
 
-export class Output {
+export class Tree {
     constructor(source) {
 	this.source = source
 	this.index = 0
@@ -120,19 +121,3 @@ export class Location {
 }
 
 
-class Program {
-    constructor(output) {
-	this.children = []
-	while (true) {
-	    const line = output.nextLine()
-	    if (line == undefined) {
-		break
-	    }
-
-	}
-    }
-}
-
-class Scope {
-    
-}
