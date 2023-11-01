@@ -84,6 +84,15 @@ export class Line {
 	    const index = content.indexOf(":")
 	    this.name = content.slice(3, index)
 	    this.value = content.slice(index + 2).trim()
+	    this.type = "attr"
+	    break
+	default:
+	    if (content == "(null node)") {
+		this.type = "(null node)"
+	    } else {
+		throw "Unexpected content " + content
+	    }
+	    break
 	}
     }
 }
