@@ -26,7 +26,8 @@ export class Tree {
 	let pipes = 0
 	while (true) {
 	    const c = this.source[this.index]
-	    if (c == '\r') {
+	    if (c == '\n') {
+		this.index++
 		break
 	    }
 
