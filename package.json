@@ -1,0 +1,22 @@
+{
+    "name": "rbs-loader",
+    "displayName": "rbs loader",
+    "version": "0.1.0",
+    "description": "Rubyscript Loader",
+    "main": "dist/rbs-loader-0.1.js",
+    "scripts": {
+        "build": "npx webpack --mode development",
+        "release": "npx webpack --mode production",
+        "test": "jest"
+    },
+    "author": "Savas Alparslan",
+    "license": "Apache-2.0",
+    "devDependencies": {
+        "babel-loader": "latest",
+        "jest": "^29.7.0",
+        "webpack": "^5.70.0",
+        "webpack-cli": "^4.10.0",
+	"@babel/plugin-proposal-class-properties": "latest",
+	"@babel/preset-env": "latest"
+    }
+}
