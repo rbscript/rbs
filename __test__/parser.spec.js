@@ -26,6 +26,16 @@ test("attribute", () => {
     expect(line.value).toEqual("(empty)")
 })
 
+test("attribute with paranthesis", () => {
+    const src = createSource("+- nd_head (1):")
+    const tree = new Tree(src)
+
+    const line = tree.nextLine()
+    expect(line.type).toEqual("attr")
+    expect(line.name).toEqual("nd_head")
+})
+
+
 test("node", () => {
     const src = createSource("@ NODE_BLOCK (line: 26, location: (26,0)-(494,129))")
     const tree = new Tree(src)

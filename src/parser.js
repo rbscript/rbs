@@ -122,6 +122,9 @@ export class Line {
 	case '+': // +- nd_mid: :autoload
 	    const index = content.indexOf(":")
 	    this.name = content.slice(3, index)
+	    if (this.name.endsWith(")")) { // nd_head (1)
+		this.name = this.name.slice(0, this.name.lastIndexOf("(") - 1)
+	    }
 	    this.value = content.slice(index + 2).trim()
 	    this.type = "attr"
 	    break
