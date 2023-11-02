@@ -1,5 +1,5 @@
 import {spawnSync} from 'node:child_process'
-import {Program} from './programs'
+import {Program} from './program'
 
 export function parse(source) {
     const p = spawnSync('ruby', ["--dump=parsetree"], {
@@ -14,13 +14,18 @@ export class Tree {
     constructor(source) {
 	this.source = source
 	this.index = 0
+	this.indent = 0
     }
 
-    nextLine() {
+    nextLine(indent, type, value) { // Parameters are for assertion and optional
 	if (this.index == this.source.length) {
+	    if (type != undefined) {
+		throw "Unexpected end-of-tree while waiting for " + type
+	    }
 	    return undefined
 	}
 
+	let save = this.index
 	let start = undefined
 	let spaces = 0
 	let pipes = 0
@@ -33,14 +38,18 @@ export class Tree {
 
 	    switch (c) {
 	    case ' ':
-		spaces++
+		if (start == undefined) {
+		    spaces++
+		}
 		break
 	    case '|':
 		pipes++
 		break
 	    case '@':
 	    case '+':
-		start = this.index
+		if (start == undefined) {
+		    start = this.index
+		}
 		break
 	    case '(': // Only for (null node)
 		if (start == undefined) {
@@ -55,8 +64,15 @@ export class Tree {
 	    }
 	}
 
+	if (spaces < indent) {
+	    this.index = save
+	    if (type != undefined) {
+		throw "Unexpected end-of-tree at indent " + spaces + " while waiting for " + type
+	    }
+	    return undefined
+	}
+
 	const ret = this.source.slice(start, this.index).trim()
-	
 	if (ret.length == 0) {
 	    return this.nextLine()
 	}
@@ -64,8 +80,28 @@ export class Tree {
 	if (ret.startsWith("##")) {
 	    return this.nextLine()
 	}
+
+	const retLine = new Line(ret, spaces, pipes)
 	
-	return new Line(ret, spaces, pipes)
+	// Assertion
+	//
+	if (type != undefined) {
+	    if (retLine.type != type) {
+		throw "Unexpected type " + retLine.type + " instead of " + type +
+		    " LINE: " + retLine
+	    }
+
+	    switch (retLine.type) {
+	    case "attr":
+		if (retLine.name != value) {
+		    throw "Unexpected attr " + retLine.name + " instead of " + value +
+			" LINE: " + retLine
+		}
+		break
+	    }
+	}
+
+	return retLine
     }
 
     
@@ -73,6 +109,7 @@ export class Tree {
 
 export class Line {
     constructor(content, spaces, pipes) {
+	this.content = content
 	this.indent = spaces
 
 	this.sign = content.slice(0, 1)
@@ -96,6 +133,10 @@ export class Line {
 	    }
 	    break
 	}
+    }
+
+    toString() {
+	return this.content
     }
 }
 
