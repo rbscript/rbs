@@ -12,3 +12,12 @@ export class FuncCall {
 	this.args = resolveNode(tree, line)
     }
 }
+
+export class VarCall {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+	
+	let line = tree.nextLine(startLine.indent, "attr", "nd_mid")
+	this.name = line.value
+    }
+}

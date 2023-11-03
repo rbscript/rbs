@@ -1,4 +1,4 @@
-import {Scope} from './scope'
+import {Scope} from './blocks'
 
 export class Program {
     constructor(tree) {

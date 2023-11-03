@@ -6,7 +6,13 @@ export function parse(source) {
 	input: source
     })
 
-    const tree = new Tree(p.stdout.toString())
+    const stderr = p.stderr.toString()
+    if (stderr.length > 0) {
+	throw stderr
+    }
+    
+    const stdout = p.stdout.toString()
+    const tree = new Tree(stdout)
     return new Program(tree)
 }
 
@@ -15,6 +21,7 @@ export class Tree {
 	this.source = source
 	this.index = 0
 	this.indent = 0
+	this.lineno = 0
     }
 
     nextLine(indent, type, value) { // Parameters are for assertion and optional
@@ -25,6 +32,7 @@ export class Tree {
 	    return undefined
 	}
 
+	this.lineno++
 	let save = this.index
 	let start = undefined
 	let spaces = 0
@@ -81,7 +89,7 @@ export class Tree {
 	    return this.nextLine()
 	}
 
-	const retLine = new Line(ret, spaces, pipes)
+	const retLine = new Line(this.lineno, ret, spaces, pipes)
 	
 	// Assertion
 	//
@@ -108,7 +116,8 @@ export class Tree {
 }
 
 export class Line {
-    constructor(content, spaces, pipes) {
+    constructor(no, content, spaces, pipes) {
+	this.no = no
 	this.content = content
 	this.indent = spaces
 
@@ -139,7 +148,7 @@ export class Line {
     }
 
     toString() {
-	return this.content
+	return "LINE " + this.no + ": " + this.content
     }
 }
 

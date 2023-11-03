@@ -1,6 +1,30 @@
 import {Body} from './body'
 import {resolveNode} from './node'
 
+export class Scope {
+    constructor(tree, startLine) {
+	
+	this.location = startLine.location
+
+	const indent = startLine.indent 
+	
+	// nd_tbl: (empty)
+	tree.nextLine(indent, "attr", "nd_tbl")
+
+	// # +- nd_args:
+        // # |   (null node)
+	let line = tree.nextLine(indent, "attr", "nd_args")
+	line = tree.nextLine(line.indent)
+	this.args = resolveNode(tree, line)
+
+	// # +- nd_body:
+	line = tree.nextLine(indent, "attr", "nd_body")
+
+	this.body = new Body(tree, line)
+	
+    }
+}
+
 export class Block {
     constructor(tree, startLine) {
 	this.location = startLine.location

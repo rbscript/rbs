@@ -78,6 +78,15 @@ export class LocalVariable {
     }
 }
 
+export class DynamicVariable {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+	
+	tree.nextLine(startLine.indent, "attr", "nd_vid") // contains internal value
+    }
+}
+
+
 export class GlobalVariable {
     constructor(tree, startLine) {
 	this.location = startLine.location
