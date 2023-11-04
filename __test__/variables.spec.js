@@ -75,3 +75,43 @@ test("multi variable def and use", () => {
 
     //expect(out).equals("")
 })
+
+test("multi assignment", () => {
+    const src = createSource("a, b = 333, 666")
+
+    const out = parseSource(src)
+
+    //expect(out).equals("")
+})
+
+test("swap", () => {
+    const src = createSource("a, b = b, a")
+
+    const out = parseSource(src)
+
+    //expect(out).equals("")
+})
+
+test("multi assignment II", () => {
+    const src = createSource("a, *b = 333, 666, 4, 5, 9")
+
+    const out = parseSource(src)
+
+    //expect(out).equals("")
+})
+
+test("decomposition", () => {
+    const src = createSource("(a, b) = [1, 2]")
+
+    const out = parseSource(src)
+
+    //expect(out).equals("")
+})
+
+test("decomposition II", () => {
+    const src = createSource("a, (b, *c), *d = 1, [2, 3, 4], 5, 6")
+
+    const out = parseSource(src)
+
+    //expect(out).equals("")
+})

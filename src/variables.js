@@ -69,6 +69,26 @@ export class GlobalAssignment {
     }
 }
 
+export class MultiAssignment {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+
+	let line = tree.nextLine(startLine.indent, "attr", "nd_value")
+	line = tree.nextLine(line.indent)
+	this.value = resolveNode(tree, line)
+
+	line = tree.nextLine(startLine.indent, "attr", "nd_head")
+	line = tree.nextLine(line.indent)
+	this.head = resolveNode(tree, line)
+
+	line = tree.nextLine(startLine.indent, "attr", "nd_args")
+	line = tree.nextLine(line.indent)
+	this.args = resolveNode(tree, line)
+    }
+}
+
+
+
 export class LocalVariable {
     constructor(tree, startLine) {
 	this.location = startLine.location

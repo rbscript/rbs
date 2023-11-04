@@ -12,6 +12,7 @@ export function parse(source) {
     }
     
     const stdout = p.stdout.toString()
+    console.log(stdout)
     const tree = new Tree(stdout)
     return new Program(tree)
 }
