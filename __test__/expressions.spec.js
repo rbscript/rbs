@@ -328,3 +328,13 @@ test("Ternary if", () => {
     //expect(out).equals("")
 })
 
+test.skip("Pattern matching I", () => {
+    const src = createSource(
+	"config in {connections: {db: {user:, password:}}, logging: {level: log_level}}")
+
+    const out = parseSource(src)
+
+    //expect(out).equals("")
+})
+
+

@@ -4,7 +4,7 @@ import {String, DynamicString, EvalString, Match, Match2, Match3} from './string
 import {OpCall} from './operators'
 import {FuncCall, VarCall, Method, ClassMethod, Lambda, Call} from './methods'
 import {List, ForArgs, Range} from './lists'
-import {Hash} from './hashes'
+import {Hash, HashPattern} from './hashes'
 import {LocalAssignment, GlobalAssignment, ClassVarAssignment, MemberAssignment, MultiAssignment,
 	ConstDecl, LocalVariable, GlobalVariable, MemberVariable,
 	ClassVariable, DynamicVariable, Const, Nil, True, False} from './variables'
@@ -85,6 +85,7 @@ export function resolveNode(tree, line) {
 	return new Until(tree, line)
     case "NODE_CASE":
     case "NODE_CASE2":
+    case "NODE_CASE3":
 	return new Case(tree, line)
     case "NODE_CLASS":
 	return new Class(tree, line)
@@ -106,6 +107,8 @@ export function resolveNode(tree, line) {
 	return new False(tree, line)
     case "NODE_HASH":
 	return new Hash(tree, line)
+    case "NODE_HSHPTN":
+	return new HashPattern(tree, line)
     case "NODE_DOT2":
     case "NODE_DOT3":
 	return new Range(tree, line)

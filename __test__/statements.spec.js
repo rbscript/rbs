@@ -168,3 +168,21 @@ test("while with redo", () => {
 
     //expect(out).toEqual(out2)
 })             
+
+// I am not sure if we should implement pattern matching or not
+test.skip("Pattern matching with case", () => {
+    const src = createSource(
+	"a = 5",
+	"case [1, 2]",
+	"    in String => a, String",
+	'"matched"',
+	"else",
+	'   "not matched"',
+	"end")
+
+
+    const out = parseSource(src)
+
+    //expect(out).equals("")
+})
+

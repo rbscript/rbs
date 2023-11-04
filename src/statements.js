@@ -134,15 +134,22 @@ export class Until {
 export class Case {
     constructor(tree, startLine) {
 	this.location = startLine.location
-
+	this.type = startLine.type
+	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
 	line = tree.nextLine(line.indent)
 	this.cond = resolveNode(tree, line)
 
-	// This body consists of NODE_WHENs
+	// This body consists of NODE_WHENs or NODE_INs
 	line = tree.nextLine(startLine.indent, "attr", "nd_body")
-	line = tree.nextLine(line.indent, "NODE_WHEN")
-	this.firstWhen = new When(tree, line)
+	line = tree.nextLine(line.indent)
+	if (line.type == "NODE_WHEN") {
+	    this.firstWhen = new When(tree, line)
+	} else if (line.type == "NODE_IN") {
+	    this.firstWhen = new In(tree, line)
+	} else {
+	    throw "Unexpected node " + line.type + " while resolving case"
+	}
     }
 }
 
@@ -162,6 +169,33 @@ class When {
 	line = tree.nextLine(line.indent)
 	switch (line.type) {
 	case "NODE_WHEN":
+	    this.when = new When(tree, line)
+	case "(null node)":
+	    this.elsepart = undefined
+	    break
+	default:
+	    this.elsepart = resolveNode(tree, line)
+	    break
+	}
+    }
+}
+
+class In {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+
+	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
+	line = tree.nextLine(line.indent)
+	this.cond = resolveNode(tree, line)
+
+	line = tree.nextLine(startLine.indent, "attr", "nd_body")
+	line = tree.nextLine(line.indent)
+	this.body = resolveNode(tree, line)
+
+	line = tree.nextLine(startLine.indent, "attr", "nd_next")
+	line = tree.nextLine(line.indent)
+	switch (line.type) {
+	case "NODE_IN":
 	    this.when = new When(tree, line)
 	case "(null node)":
 	    this.elsepart = undefined
