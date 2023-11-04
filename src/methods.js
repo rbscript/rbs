@@ -51,3 +51,13 @@ export class ClassMethod {
 	this.args = resolveNode(tree, line)
     }
 }
+
+export class Lambda {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+	
+	let line = tree.nextLine(startLine.indent, "attr", "nd_body")
+	line = tree.nextLine(line.indent)
+	this.body = resolveNode(tree, line)
+    }
+}

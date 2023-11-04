@@ -1,7 +1,78 @@
+import {resolveNode} from './node'
+
 export class String {
     constructor(tree, startLine) {
 	this.location = startLine.location
 	const line = tree.nextLine(startLine.indent, "attr", "nd_lit")
 	this.value = line.value
+    }
+}
+
+export class DynamicString {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+	
+	let line = tree.nextLine(startLine.indent, "attr", "nd_lit")
+	this.value = line.value
+
+	line = tree.nextLine(startLine.indent, "attr", "nd_next->nd_head")
+	line = tree.nextLine(line.indent)
+	this.head = resolveNode(tree, line)
+
+	line = tree.nextLine(startLine.indent, "attr", "nd_next->nd_next")
+	line = tree.nextLine(line.indent)
+	this.next = resolveNode(tree, line)
+    }
+}
+
+export class EvalString {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+	
+	let line = tree.nextLine(startLine.indent, "attr", "nd_body")
+	line = tree.nextLine(line.indent)
+	this.body = resolveNode(tree, line)
+    }
+}
+
+export class Match {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+	
+	let line = tree.nextLine(startLine.indent, "attr", "nd_lit")
+	line = tree.nextLine(line.indent)
+	this.lit = resolveNode(tree, line)
+
+	line = tree.nextLine(startLine.indent, "attr", "nd_value")
+	line = tree.nextLine(line.indent)
+	this.value = resolveNode(tree, line)
+    }
+}
+
+export class Match2 {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+	
+	let line = tree.nextLine(startLine.indent, "attr", "nd_recv")
+	line = tree.nextLine(line.indent)
+	this.recv = resolveNode(tree, line)
+
+	line = tree.nextLine(startLine.indent, "attr", "nd_value")
+	line = tree.nextLine(line.indent)
+	this.value = resolveNode(tree, line)
+    }
+}
+
+export class Match3 {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+	
+	let line = tree.nextLine(startLine.indent, "attr", "nd_recv")
+	line = tree.nextLine(line.indent)
+	this.recv = resolveNode(tree, line)
+
+	line = tree.nextLine(startLine.indent, "attr", "nd_value")
+	line = tree.nextLine(line.indent)
+	this.value = resolveNode(tree, line)
     }
 }

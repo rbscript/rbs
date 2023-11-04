@@ -122,3 +122,21 @@ export class Const {
 	this.name = line.value
     }
 }
+
+export class Nil {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+    }
+}
+
+export class True {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+    }
+}
+
+export class False {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+    }
+}

@@ -14,8 +14,19 @@ export class List {
 	    this.array.push(resolveNode(tree, line))
 	}
 
-	tree.nextLine(startLine.indent, "attr", "nd_next")
-	tree.nextLine(startLine.indent, "(null node)")
+	// For some reason, nd_heads may appear instead of nd_next (nd_alen is not the decider here)
+	while (true) {
+	    line = tree.nextLine(startLine.indent)
+	    if (line.name == "nd_head") {
+		line = tree.nextLine(line.indent)
+		this.array.push(resolveNode(tree, line))
+	    } else if (line.name == "nd_next") {
+		tree.nextLine(line.indent, "(null node)")
+		break
+	    } else {
+		throw "Unexpected attr " + this.name + " for List"
+	    }
+	}
     }
 }
 
@@ -48,5 +59,21 @@ export class ForArgs {
 	line = tree.nextLine(startLine.indent, "attr", "nd_ainfo->kw_rest_arg")
 	line = tree.nextLine(line.indent)
 	this.kwRestArgs = resolveNode(tree, line)
+    }
+}
+
+export class Range {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+
+	this.type = startLine.type
+	
+	let line = tree.nextLine(startLine.indent, "attr", "nd_beg")
+	line = tree.nextLine(line.indent)
+	this.beg = resolveNode(tree, line)
+
+	line = tree.nextLine(startLine.indent, "attr", "nd_end")
+	line = tree.nextLine(line.indent)
+	this.end = resolveNode(tree, line)
     }
 }
