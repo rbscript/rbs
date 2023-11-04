@@ -2,13 +2,13 @@ import {Scope, Begin, Block} from './blocks'
 import {Literal} from './literal'
 import {String} from './string'
 import {OpCall} from './operators'
-import {FuncCall, VarCall} from './methods'
+import {FuncCall, VarCall, Method, ClassMethod} from './methods'
 import {List, ForArgs} from './lists'
 import {LocalAssignment, GlobalAssignment, ClassVarAssignment, MemberAssignment,
 	ConstDecl, LocalVariable, GlobalVariable, MemberVariable,
-	ClassVariable, DynamicVariable} from './variables'
+	ClassVariable, DynamicVariable, Const} from './variables'
 import {If, Unless, Return, For, While, Until, Case} from './statements'
-
+import {Class, Self, Singleton} from './classes'
 
 export function resolveNode(tree, line) {
     switch (line.type) {
@@ -52,6 +52,8 @@ export function resolveNode(tree, line) {
 	return new ClassVariable(tree, line)
     case "NODE_DVAR":
 	return new DynamicVariable(tree, line)
+    case "NODE_CONST":
+	return new Const(tree, line)
     case "NODE_IF":
 	return new If(tree, line)
     case "NODE_UNLESS":
@@ -69,6 +71,16 @@ export function resolveNode(tree, line) {
     case "NODE_CASE":
     case "NODE_CASE2":
 	return new Case(tree, line)
+    case "NODE_CLASS":
+	return new Class(tree, line)
+    case "NODE_SCLASS":
+	return new Singleton(tree, line)
+    case "NODE_SELF":
+	return new Self(tree, line)
+    case "NODE_DEFN":
+	return new Method(tree, line)
+    case "NODE_DEFS":
+	return new ClassMethod(tree, line)
     default:
 	throw "Unexpected line " + line
     }

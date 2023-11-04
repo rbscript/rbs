@@ -35,7 +35,8 @@ export class Block {
 	    if (line == undefined) {
 		break
 	    }
-	    line = tree.nextLine(startLine.indent)
+	    line = tree.nextLine(line.indent)
+
 	    this.statements.push(resolveNode(tree, line))
 	}
     }

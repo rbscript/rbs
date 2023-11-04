@@ -113,3 +113,12 @@ export class ClassVariable {
 	this.name = line.value
     }
 }
+
+export class Const {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+	
+	let line = tree.nextLine(startLine.indent, "attr", "nd_vid")
+	this.name = line.value
+    }
+}

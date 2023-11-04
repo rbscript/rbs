@@ -6,6 +6,7 @@ export class Body {
 	this.children = []
 	
 	let line = tree.nextLine()
+	const indent = line.indent
 	do {
 	    let nev = resolveNode(tree, line)
 	    if (nev == undefined) {
@@ -13,6 +14,6 @@ export class Body {
 	    }
 	    this.children.push(nev)
 	    
-	} while (line = tree.nextLine())
+	} while (line = tree.nextLine(indent))
     }
 }
