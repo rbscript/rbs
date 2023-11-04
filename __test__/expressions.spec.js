@@ -319,3 +319,12 @@ test("Proc", () => {
     //expect(out).equals("")
 })
 
+test("Ternary if", () => {
+    const src = createSource(
+	"a = b == 5 ? 333 : 666")
+
+    const out = parseSource(src)
+
+    //expect(out).equals("")
+})
+

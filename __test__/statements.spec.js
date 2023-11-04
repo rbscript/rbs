@@ -130,3 +130,41 @@ test("begin block", () => {
 
     //expect(out).toEqual(out2)
 })             
+
+test("begin block", () => {
+    const src = createSource(
+	"begin",
+	"  a = 333",
+	"  print(53 + 2)",
+	"end while x < 999"
+    )
+    const out = parseSource(src)
+
+    //expect(out).toEqual(out2)
+})             
+
+test("while with break", () => {
+    const src = createSource(
+	"i = 0",
+	"while true",
+	"  i += 3",
+	"  break if i > 10",
+	"end"
+    )
+    const out = parseSource(src)
+
+    //expect(out).toEqual(out2)
+})             
+
+test("while with redo", () => {
+    const src = createSource(
+	"i = 0",
+	"while true",
+	"  i += 3",
+	"  redo if i > 10",
+	"end"
+    )
+    const out = parseSource(src)
+
+    //expect(out).toEqual(out2)
+})             

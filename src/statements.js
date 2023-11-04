@@ -52,6 +52,36 @@ export class Return {
     }
 }
 
+export class Break {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+
+	let line = tree.nextLine(startLine.indent, "attr", "nd_stts")
+
+	line = tree.nextLine(line.indent)
+	this.stts = resolveNode(tree, line)
+    }
+}
+
+export class Next {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+
+	let line = tree.nextLine(startLine.indent, "attr", "nd_stts")
+
+	line = tree.nextLine(line.indent)
+	this.stts = resolveNode(tree, line)
+    }
+}
+
+export class Redo {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+    }
+}
+
+
+
 export class For {
     constructor(tree, startLine) {
 	this.location = startLine.location

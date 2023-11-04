@@ -2,13 +2,13 @@ import {Scope, Begin, Block} from './blocks'
 import {Literal} from './literal'
 import {String, DynamicString, EvalString, Match, Match2, Match3} from './string'
 import {OpCall} from './operators'
-import {FuncCall, VarCall, Method, ClassMethod, Lambda} from './methods'
+import {FuncCall, VarCall, Method, ClassMethod, Lambda, Call} from './methods'
 import {List, ForArgs, Range} from './lists'
 import {Hash} from './hashes'
-import {LocalAssignment, GlobalAssignment, ClassVarAssignment, MemberAssignment,
+import {LocalAssignment, GlobalAssignment, ClassVarAssignment, MemberAssignment, MultiAssignment,
 	ConstDecl, LocalVariable, GlobalVariable, MemberVariable,
 	ClassVariable, DynamicVariable, Const, Nil, True, False} from './variables'
-import {If, Unless, Return, For, While, Until, Case} from './statements'
+import {If, Unless, Return, For, While, Until, Case, Break, Next, Redo} from './statements'
 import {Class, Self, Singleton} from './classes'
 
 export function resolveNode(tree, line) {
@@ -35,6 +35,8 @@ export function resolveNode(tree, line) {
 	return new FuncCall(tree, line)
     case "NODE_VCALL":
 	return new VarCall(tree, line)
+    case "NODE_CALL":
+	return new Call(tree, line)
     case "NODE_LIST":
 	return new List(tree, line)
     case "NODE_LASGN":
@@ -45,6 +47,8 @@ export function resolveNode(tree, line) {
 	return new ClassVarAssignment(tree, line)
     case "NODE_GASGN":
 	return new GlobalAssignment(tree, line)
+    case "NODE_MASGN":
+	return new MultiAssignment(tree, line)
     case "NODE_CDECL":
 	return new ConstDecl(tree, line)
     case "NODE_LVAR":
@@ -65,6 +69,12 @@ export function resolveNode(tree, line) {
 	return new Unless(tree, line)
     case "NODE_RETURN":
 	return new Return(tree, line)
+    case "NODE_BREAK":
+	return new Break(tree, line)
+    case "NODE_NEXT":
+	return new Next(tree, line)
+    case "NODE_REDO":
+	return new Redo(tree, line)
     case "NODE_FOR":
 	return new For(tree, line)
     case "NODE_ARGS":
