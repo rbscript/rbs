@@ -75,3 +75,19 @@ export class Colon3 {
     }
 }
 
+export class Super {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+
+	let line = tree.nextLine(startLine.indent, "attr", "nd_args")
+	line = tree.nextLine(line.indent)
+	this.args  = resolveNode(tree, line)
+    }
+}
+
+export class ZSuper {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+    }
+}
+

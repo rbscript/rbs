@@ -236,3 +236,42 @@ test("Including modules", () => {
 
     //expect(out).toEqual(out2)
 })  
+
+test("constructor with super", () => {
+    const src = createSource(
+	"class Animal",
+	"  def initialize(a, b)",
+	"    super(a, b)",
+	"    @eye_color = 'blue'",
+	"  end",
+	"end")
+    const out = parseSource(src)
+
+    //expect(out).toEqual(out2)
+})             
+
+test("method with super", () => {
+    const src = createSource(
+	"class Animal",
+	"  def initialize(a, b)",
+	"    @eye_color = 'blue'",
+	"    super.do_something",
+	"  end",
+	"end")
+    const out = parseSource(src)
+
+    //expect(out).toEqual(out2)
+})             
+
+test("method with super", () => {
+    const src = createSource(
+	"class Animal",
+	"  def initialize(a, b)",
+	"    @eye_color = 'blue'",
+	"    super.do_something",
+	"  end",
+	"end")
+    const out = parseSource(src)
+
+    //expect(out).toEqual(out2)
+})             

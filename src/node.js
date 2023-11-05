@@ -10,7 +10,7 @@ import {LocalAssignment, GlobalAssignment, ClassVarAssignment, MemberAssignment,
 	ConstDecl, LocalVariable, GlobalVariable, MemberVariable,
 	ClassVariable, DynamicVariable, Const, Nil, True, False, Alias} from './variables'
 import {If, Unless, Return, For, While, Until, Case, Break, Next, Redo} from './statements'
-import {Class, Self, Singleton, Module, Colon2, Colon3} from './classes'
+import {Class, Self, Singleton, Module, Colon2, Colon3, Super, ZSuper} from './classes'
 import {Ensure, Rescue, RescueBody, Retry} from './exceptions'
 
 export function resolveNode(tree, line) {
@@ -152,6 +152,10 @@ export function resolveNode(tree, line) {
 	return new RescueBody(tree, line)
     case "NODE_RETRY":
 	return new Retry(tree, line)
+    case "NODE_SUPER":
+	return new Super(tree, line)
+    case "NODE_ZSUPER":
+	return new ZSuper(tree, line)
     default:
 	throw "Unexpected line " + line
     }

@@ -7,6 +7,7 @@
     "scripts": {
         "build": "npx webpack --mode development",
         "release": "npx webpack --mode production",
+	"dir": "node dist/rbs-loader-0.1.js",
         "test": "jest"
     },
     "author": "Savas Alparslan",
