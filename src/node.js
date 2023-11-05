@@ -4,7 +4,7 @@ import {String, DynamicString, EvalString, Match, Match2, Match3} from './string
 import {OpCall} from './operators'
 import {FuncCall, VarCall, Method, ClassMethod, Lambda, Call, Undefine, QCall,
 	OptionalArgument, KeywordArgument} from './methods'
-import {List, ForArgs, Range, Splat} from './lists'
+import {List, Args, Range, Splat} from './lists'
 import {Hash, HashPattern} from './hashes'
 import {LocalAssignment, GlobalAssignment, ClassVarAssignment, MemberAssignment, MultiAssignment,
 	ConstDecl, LocalVariable, GlobalVariable, MemberVariable,
@@ -87,7 +87,7 @@ export function resolveNode(tree, line) {
     case "NODE_FOR":
 	return new For(tree, line)
     case "NODE_ARGS":
-	return new ForArgs(tree, line)
+	return new Args(tree, line)
     case "NODE_OPT_ARG":
 	return new OptionalArgument(tree, line)
     case "NODE_KW_ARG":

@@ -30,7 +30,7 @@ export class List {
     }
 }
 
-export class ForArgs {
+export class Args {
     constructor(tree, startLine) {
 	this.location = startLine.location
 
