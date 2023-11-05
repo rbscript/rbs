@@ -77,3 +77,15 @@ export class Range {
 	this.end = resolveNode(tree, line)
     }
 }
+
+export class Splat {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+
+	this.type = startLine.type
+	
+	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
+	line = tree.nextLine(line.indent)
+	this.head = resolveNode(tree, line)
+    }
+}

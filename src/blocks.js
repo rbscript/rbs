@@ -58,3 +58,37 @@ export class Yield {
 	this.head = resolveNode(tree, line)
     }
 }
+
+export class Iter {
+    constructor(tree, startLine) {
+	
+	this.location = startLine.location
+
+	const indent = startLine.indent 
+	
+	let line = tree.nextLine(indent, "attr", "nd_iter")
+	line = tree.nextLine(line.indent)
+	this.iter = resolveNode(tree, line)
+
+	line = tree.nextLine(indent, "attr", "nd_body")
+	line = tree.nextLine(line.indent)
+	this.body = resolveNode(tree, line)
+    }
+}
+
+export class BlockPass {
+    constructor(tree, startLine) {
+	
+	this.location = startLine.location
+
+	const indent = startLine.indent 
+	
+	let line = tree.nextLine(indent, "attr", "nd_head")
+	line = tree.nextLine(line.indent)
+	this.head = resolveNode(tree, line)
+
+	line = tree.nextLine(indent, "attr", "nd_body")
+	line = tree.nextLine(line.indent)
+	this.body = resolveNode(tree, line)
+    }
+}

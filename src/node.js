@@ -1,10 +1,10 @@
-import {Scope, Begin, Block, Yield} from './blocks'
+import {Scope, Begin, Block, Yield, Iter, BlockPass} from './blocks'
 import {Literal} from './literal'
 import {String, DynamicString, EvalString, Match, Match2, Match3} from './string'
 import {OpCall} from './operators'
-import {FuncCall, VarCall, Method, ClassMethod, Lambda, Call, Undefine,
+import {FuncCall, VarCall, Method, ClassMethod, Lambda, Call, Undefine, QCall,
 	OptionalArgument, KeywordArgument} from './methods'
-import {List, ForArgs, Range} from './lists'
+import {List, ForArgs, Range, Splat} from './lists'
 import {Hash, HashPattern} from './hashes'
 import {LocalAssignment, GlobalAssignment, ClassVarAssignment, MemberAssignment, MultiAssignment,
 	ConstDecl, LocalVariable, GlobalVariable, MemberVariable,
@@ -22,6 +22,10 @@ export function resolveNode(tree, line) {
 	return new Begin(tree, line)
     case "NODE_BLOCK":
 	return new Block(tree, line)
+    case "NODE_BLOCK_PASS":
+	return new BlockPass(tree, line)
+    case "NODE_ITER":
+	return new Iter(tree, line)
     case "NODE_LIT":
 	return new Literal(tree, line)
     case "NODE_STR":
@@ -38,8 +42,12 @@ export function resolveNode(tree, line) {
 	return new VarCall(tree, line)
     case "NODE_CALL":
 	return new Call(tree, line)
+    case "NODE_QCALL":
+	return new QCall(tree, line)
     case "NODE_LIST":
 	return new List(tree, line)
+    case "NODE_SPLAT":
+	return new Splat(tree, line)
     case "NODE_LASGN":
 	return new LocalAssignment(tree, line)
     case "NODE_IASGN":
