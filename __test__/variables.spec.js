@@ -131,3 +131,11 @@ test("alias II", () => {
 
     //expect(out).equals("")
 })
+
+test("attribute assignment", () => {
+    const src = createSource("obje.prop = 666")
+
+    const out = parseSource(src)
+
+    //expect(out).equals("")
+})

@@ -7,7 +7,7 @@ import {FuncCall, VarCall, Method, ClassMethod, Lambda, Call, Undefine, QCall,
 import {List, Args, Range, Splat} from './lists'
 import {Hash, HashPattern} from './hashes'
 import {LocalAssignment, GlobalAssignment, ClassVarAssignment, MemberAssignment, MultiAssignment,
-	ConstDecl, LocalVariable, GlobalVariable, MemberVariable,
+	ConstDecl, LocalVariable, GlobalVariable, MemberVariable, AttributeAssignment,
 	ClassVariable, DynamicVariable, Const, Nil, True, False, Alias} from './variables'
 import {If, Unless, Return, For, While, Until, Case, Break, Next, Redo} from './statements'
 import {Class, Self, Singleton, Module, Colon2, Colon3, Super, ZSuper} from './classes'
@@ -156,6 +156,8 @@ export function resolveNode(tree, line) {
 	return new Super(tree, line)
     case "NODE_ZSUPER":
 	return new ZSuper(tree, line)
+    case "NODE_ATTRASGN":
+	return new AttributeAssignment(tree, line)
     default:
 	throw "Unexpected line " + line
     }
