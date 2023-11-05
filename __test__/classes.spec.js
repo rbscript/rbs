@@ -128,3 +128,14 @@ test("singleton class method", () => {
 
     //expect(out).toEqual(out2)
 })             
+
+test("New animal", () => {
+    const src = createSource(
+	"class Animal",
+	"end",
+	"a = Animal.new"
+    )
+    const out = parseSource(src)
+
+    //expect(out).toEqual(out2)
+})             
