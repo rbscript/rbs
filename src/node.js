@@ -10,7 +10,7 @@ import {LocalAssignment, GlobalAssignment, ClassVarAssignment, MemberAssignment,
 	ConstDecl, LocalVariable, GlobalVariable, MemberVariable,
 	ClassVariable, DynamicVariable, Const, Nil, True, False, Alias} from './variables'
 import {If, Unless, Return, For, While, Until, Case, Break, Next, Redo} from './statements'
-import {Class, Self, Singleton} from './classes'
+import {Class, Self, Singleton, Module, Colon2, Colon3} from './classes'
 
 export function resolveNode(tree, line) {
     switch (line.type) {
@@ -137,6 +137,12 @@ export function resolveNode(tree, line) {
 	return new Yield(tree, line)
     case "NODE_ALIAS":
 	return new Alias(tree, line)
+    case "NODE_MODULE":
+	return new Module(tree, line)
+    case "NODE_COLON2":
+	return new Colon2(tree, line)
+    case "NODE_COLON3":
+	return new Colon3(tree, line)
     default:
 	throw "Unexpected line " + line
     }

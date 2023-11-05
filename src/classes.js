@@ -5,16 +5,10 @@ export class Class {
 	this.location = startLine.location
 
 	let line = tree.nextLine(startLine.indent, "attr", "nd_cpath")
-	let indent = line.indent // save for later
-	line = tree.nextLine(line.indent, "NODE_COLON2")
-	line = tree.nextLine(line.indent, "attr", "nd_mid")
-	this.name = line.value
-
-	line = tree.nextLine(line.indent, "attr", "nd_head")
 	line = tree.nextLine(line.indent)
-	this.head = resolveNode(tree, line)
-
-	line = tree.nextLine(indent, "attr", "nd_super")
+	this.cpath  = resolveNode(tree, line)
+	
+	line = tree.nextLine(startLine.indent, "attr", "nd_super")
 	line = tree.nextLine(line.indent)
 	this.super = resolveNode(tree, line)
 
@@ -43,3 +37,41 @@ export class Singleton {
 	this.body = resolveNode(tree, line)
     }
 }
+
+export class Module {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+
+	let line = tree.nextLine(startLine.indent, "attr", "nd_cpath")
+	line = tree.nextLine(line.indent)
+	this.cpath  = resolveNode(tree, line)
+
+	line = tree.nextLine(startLine.indent, "attr", "nd_body")
+	line = tree.nextLine(line.indent)
+	this.body = resolveNode(tree, line)
+    }
+}
+
+export class Colon2 {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+
+	let line = tree.nextLine(startLine.indent, "attr", "nd_mid")
+	this.mid = line.value
+
+	line = tree.nextLine(startLine.indent, "attr", "nd_head")
+	line = tree.nextLine(line.indent)
+	this.head = resolveNode(tree, line)
+    }
+}
+
+// ::Z
+export class Colon3 {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+
+	let line = tree.nextLine(startLine.indent, "attr", "nd_mid")
+	this.mid = line.value
+    }
+}
+

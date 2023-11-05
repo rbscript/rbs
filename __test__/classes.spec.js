@@ -139,3 +139,100 @@ test("New animal", () => {
 
     //expect(out).toEqual(out2)
 })             
+
+
+test("Simple module", () => {
+    const src = createSource(
+	"module M",
+	"end"
+    )
+    const out = parseSource(src)
+
+    //expect(out).toEqual(out2)
+})  
+
+test("Nested modules I", () => {
+    const src = createSource(
+	"module Outer",
+	"  module Inner",
+	"  end",
+	"end"
+    )
+    const out = parseSource(src)
+
+    //expect(out).toEqual(out2)
+})  
+
+test("Nested modules II", () => {
+    const src = createSource(
+	"module Outer::Inner::Child",
+	"  module Grandson",
+	"  end",
+	"end"
+    )
+    const out = parseSource(src)
+
+    //expect(out).toEqual(out2)
+})  
+
+test("Nested modules III", () => {
+    const src = createSource(
+	"module A",
+	"  Z = 1",
+	"  module B",
+	"    p Module.nesting #=> [A::B, A]",
+	"    p Z #=> 1",
+	"  end",
+	"end"
+    )
+    const out = parseSource(src)
+
+    //expect(out).toEqual(out2)
+})  
+
+test("Nested modules IVo", () => {
+    const src = createSource(
+	"Z = 0",
+	"module A",
+	"  Z = 1",
+	"  module B",
+	"    p ::Z #=> 0",
+	"  end",
+	"end"
+    )
+    const out = parseSource(src)
+
+    //expect(out).toEqual(out2)
+})  
+
+test("Including modules", () => {
+    const src = createSource(
+	"module A",
+	"  def add a, b",
+	"    a + b",
+	"  end",
+	"end",
+	"class Klas",
+	"  include A",
+	"end"
+    )
+    const out = parseSource(src)
+
+    //expect(out).toEqual(out2)
+})  
+
+test("Including modules", () => {
+    const src = createSource(
+	"module A",
+	"  def add a, b",
+	"    a + b",
+	"  end",
+	"end",
+	"class Klas",
+	"  include A",
+	"end"
+    )
+    const out = parseSource(src)
+
+    //expect(out).toEqual(out2)
+})  
