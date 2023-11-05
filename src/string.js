@@ -8,6 +8,15 @@ export class String {
     }
 }
 
+export class XString { // backtick string
+    constructor(tree, startLine) {
+	this.location = startLine.location
+	const line = tree.nextLine(startLine.indent, "attr", "nd_lit")
+	this.value = line.value
+    }
+}
+
+
 export class DynamicString {
     constructor(tree, startLine) {
 	this.location = startLine.location

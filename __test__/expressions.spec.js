@@ -26,6 +26,15 @@ test("single string", () => {
     //expect(out).equals("")
 })
 
+test("backtick string", () => {
+    const src = createSource("`ozgur`")
+
+    const out = parseSource(src)
+
+    //expect(out).equals("")
+})
+
+
 test("addition", () => {
     const src = createSource("666*9 + 333 - 2")
 
