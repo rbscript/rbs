@@ -115,3 +115,19 @@ test("decomposition II", () => {
 
     //expect(out).equals("")
 })
+
+test("alias I", () => {
+    const src = createSource("alias a b")
+
+    const out = parseSource(src)
+
+    //expect(out).equals("")
+})
+
+test("alias II", () => {
+    const src = createSource("alias :a :b")
+
+    const out = parseSource(src)
+
+    //expect(out).equals("")
+})

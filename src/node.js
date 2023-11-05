@@ -1,13 +1,14 @@
-import {Scope, Begin, Block} from './blocks'
+import {Scope, Begin, Block, Yield} from './blocks'
 import {Literal} from './literal'
 import {String, DynamicString, EvalString, Match, Match2, Match3} from './string'
 import {OpCall} from './operators'
-import {FuncCall, VarCall, Method, ClassMethod, Lambda, Call} from './methods'
+import {FuncCall, VarCall, Method, ClassMethod, Lambda, Call, Undefine,
+	OptionalArgument, KeywordArgument} from './methods'
 import {List, ForArgs, Range} from './lists'
 import {Hash, HashPattern} from './hashes'
 import {LocalAssignment, GlobalAssignment, ClassVarAssignment, MemberAssignment, MultiAssignment,
 	ConstDecl, LocalVariable, GlobalVariable, MemberVariable,
-	ClassVariable, DynamicVariable, Const, Nil, True, False} from './variables'
+	ClassVariable, DynamicVariable, Const, Nil, True, False, Alias} from './variables'
 import {If, Unless, Return, For, While, Until, Case, Break, Next, Redo} from './statements'
 import {Class, Self, Singleton} from './classes'
 
@@ -79,6 +80,10 @@ export function resolveNode(tree, line) {
 	return new For(tree, line)
     case "NODE_ARGS":
 	return new ForArgs(tree, line)
+    case "NODE_OPT_ARG":
+	return new OptionalArgument(tree, line)
+    case "NODE_KW_ARG":
+	return new KeywordArgument(tree, line)
     case "NODE_WHILE":
 	return new While(tree, line)
     case "NODE_UNTIL":
@@ -97,6 +102,8 @@ export function resolveNode(tree, line) {
 	return new Method(tree, line)
     case "NODE_DEFS":
 	return new ClassMethod(tree, line)
+    case "NODE_UNDEF":
+	return new Undefine(tree, line)
     case "NODE_LAMBDA":
 	return new Lambda(tree, line)
     case "NODE_NIL":
@@ -118,6 +125,10 @@ export function resolveNode(tree, line) {
 	return new Match2(tree, line)
     case "NODE_MATCH3":
 	return new Match3(tree, line)
+    case "NODE_YIELD":
+	return new Yield(tree, line)
+    case "NODE_ALIAS":
+	return new Alias(tree, line)
     default:
 	throw "Unexpected line " + line
     }

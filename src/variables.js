@@ -1,4 +1,5 @@
 import {resolveNode} from './node'
+import {Literal} from './literal'
 
 export class LocalAssignment {
     constructor(tree, startLine) {
@@ -158,5 +159,19 @@ export class True {
 export class False {
     constructor(tree, startLine) {
 	this.location = startLine.location
+    }
+}
+
+export class Alias {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+	
+	let line = tree.nextLine(startLine.indent, "attr", "nd_1st")
+	line = tree.nextLine(line.indent, "NODE_LIT")
+	this.first = new Literal(tree, line)
+
+	line = tree.nextLine(startLine.indent, "attr", "nd_2nd")
+	line = tree.nextLine(line.indent, "NODE_LIT")
+	this.second = new Literal(tree, line)
     }
 }

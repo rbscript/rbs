@@ -49,3 +49,12 @@ export class Begin {
 	this.body = new Body(tree, line)
     }
 }
+
+export class Yield {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
+	line = tree.nextLine(line.indent)
+	this.head = resolveNode(tree, line)
+    }
+}
