@@ -275,3 +275,32 @@ test("method with super", () => {
 
     //expect(out).toEqual(out2)
 })             
+
+test("using", () => {
+    const src = createSource(
+	"using Kullan",
+    )
+    const out = parseSource(src)
+
+    //expect(out).toEqual(out2)
+})             
+
+test("refine", () => {
+    const src = createSource(
+	"refine A do",
+	"end"
+    )
+    const out = parseSource(src)
+
+    //expect(out).toEqual(out2)
+})             
+
+test("require", () => {
+    const src = createSource(
+	"require 'C'"
+    )
+    const out = parseSource(src)
+
+    //expect(out).toEqual(out2)
+})             
+
