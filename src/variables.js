@@ -5,12 +5,8 @@ export class LocalAssignment {
     constructor(tree, startLine) {
 	this.location = startLine.location
 	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_vid")
-	this.name = line.value
-
-	line = tree.nextLine(startLine.indent, "attr", "nd_value")
-	line = tree.nextLine(line.indent)
-	this.value = resolveNode(tree, line)
+	this.name = tree.get(startLine, "nd_vid")
+	this.value = tree.get(startLine, "nd_value")
     }
 }
 

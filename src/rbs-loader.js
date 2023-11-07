@@ -16,15 +16,22 @@ function processDir(path) {
 	// We're testing
 	return
     }
+
+    // Print specific file
+    if (path.endsWith(".rb")) {
+	processFile(path, true)
+	return
+    }
     
     readdir(path, (err, files) => {
+	files = files.sort()
 	for (const f of files) {
-	    const file = path + "/" + f
+	    const file = path + (path.endsWith('/') ? "" : "/") + f
 	    if (f.endsWith(".rb")) {
 		processFile(file)
 	    } else {
-		stat(file, (err, stat) => {
-		    if (stat.isDirectory()) {
+		stat(file, (err, istat) => {
+		    if (err == undefined && istat.isDirectory()) {
 			processDir(file)
 		    }
 		})
@@ -33,8 +40,9 @@ function processDir(path) {
     })
 }
 
-function processFile(path) {
+function processFile(path, dump) {
     readFile(path, (err, data) => {
-	parse(data)
+	console.log(path)
+	parse(data, dump)
     })
 }

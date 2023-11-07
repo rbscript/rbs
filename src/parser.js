@@ -1,7 +1,8 @@
+import {resolveNode} from './node'
 import {spawnSync} from 'node:child_process'
 import {Program} from './program'
 
-export function parse(source) {
+export function parse(source, dump) {
     const p = spawnSync('ruby', ["--dump=parsetree"], {
 	input: source
     })
@@ -12,7 +13,9 @@ export function parse(source) {
     }
     
     const stdout = p.stdout.toString()
-    console.log(stdout)
+    if (dump) {
+	console.log(stdout)
+    }
     const tree = new Tree(stdout)
     return new Program(tree)
 }
@@ -28,7 +31,7 @@ export class Tree {
     nextLine(indent, type, value) { // Parameters are for assertion and optional
 	if (this.index == this.source.length) {
 	    if (type != undefined) {
-		throw "Unexpected end-of-tree while waiting for " + type
+		throw "Unexpected end-of-tree while waiting for " + type + " lineno=" + this.lineno
 	    }
 	    return undefined
 	}
@@ -76,7 +79,8 @@ export class Tree {
 	if (spaces < indent) {
 	    this.index = save
 	    if (type != undefined) {
-		throw "Unexpected end-of-tree at indent " + spaces + " while waiting for " + type
+		throw "Unexpected end-of-tree at indent " + spaces + " while waiting for " + type +
+		    " lineno=" + this.lineno
 	    }
 	    return undefined
 	}
@@ -113,7 +117,14 @@ export class Tree {
 	return retLine
     }
 
-    
+    get(startLine, name) {
+	let line = this.nextLine(startLine.indent, "attr", name)
+	if (line.value != "") {
+	    return line.value
+	}
+	line = this.nextLine(line.indent)
+	return resolveNode(this, line)
+    }
 }
 
 export class Line {
@@ -142,7 +153,7 @@ export class Line {
 	    if (content == "(null node)") {
 		this.type = "(null node)"
 	    } else {
-		throw "Unexpected content " + content
+		throw "Unexpected content " + content + " lineno=" + this.no
 	    }
 	    break
 	}

@@ -16,6 +16,9 @@ import {Class, Self, Singleton, Module, Colon2, Colon3, Super, ZSuper} from './c
 import {Ensure, Rescue, RescueBody, Retry, ErrInfo} from './exceptions'
 
 export function resolveNode(tree, line) {
+    if (line == undefined) {
+	throw "Line is undefined for resolveNode(). Lineno=" + tree.lineno
+    }
     switch (line.type) {
     case "(null node)":
 	return undefined// Nothing here
