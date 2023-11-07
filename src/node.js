@@ -1,9 +1,8 @@
 import {Scope, Begin, Block, Yield, Iter, BlockPass} from './blocks'
 import {Literal} from './literal'
-import {String, DynamicString, EvalString, Match, Match2, Match3, XString, NthRef} from './string'
-import {OpCall, OpAnd} from './operators'
 import {String, DynamicString, EvalString, XString, 
 	Match, Match2, Match3, NthRef, DynamicRegExp} from './string'
+import {OpCall, OpAnd, OpOr, OpAssignAnd, OpAssignOr} from './operators'
 import {FuncCall, VarCall, Method, ClassMethod, Lambda, Call, Undefine, QCall,
 	OptionalArgument, KeywordArgument} from './methods'
 import {List, Args, Range, Splat, ZList} from './lists'
@@ -44,6 +43,12 @@ export function resolveNode(tree, line) {
 	return new OpCall(tree, line)
     case "NODE_AND":
 	return new OpAnd(tree, line)
+    case "NODE_OR":
+	return new OpOr(tree, line)
+    case "NODE_ASGN_AND":
+	return new OpAssignAnd(tree, line)
+    case "NODE_ASGN_OR":
+	return new OpAssignOr(tree, line)
     case "NODE_FCALL":
 	return new FuncCall(tree, line)
     case "NODE_VCALL":

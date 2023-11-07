@@ -32,3 +32,56 @@ export class OpAnd {
 	this.second = resolveNode(tree, line)
     }
 }
+
+export class OpOr {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+	
+	let line = tree.nextLine(startLine.indent, "attr", "nd_1st")
+	line = tree.nextLine(line.indent)
+	this.firsts = [resolveNode(tree, line)]
+
+	// There may be more 1sts
+	while (true) {
+	    line = tree.nextLine(startLine.indent)
+	    if (line.name == "nd_2nd") {
+		break
+	    }
+
+	    line = tree.nextLine(line.indent)
+	    this.firsts.push(resolveNode(tree, line))
+	}
+	
+	// Add the nd_2nd and finish
+	line = tree.nextLine(line.indent)
+	this.second = resolveNode(tree, line)
+    }
+}
+
+export class OpAssignAnd {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+	
+	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
+	line = tree.nextLine(line.indent)
+	this.head = resolveNode(tree, line)
+
+	line = tree.nextLine(startLine.indent, "attr", "nd_value")
+	line = tree.nextLine(line.indent)
+	this.value = resolveNode(tree, line)
+    }
+}
+
+export class OpAssignOr {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+	
+	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
+	line = tree.nextLine(line.indent)
+	this.head = resolveNode(tree, line)
+
+	line = tree.nextLine(startLine.indent, "attr", "nd_value")
+	line = tree.nextLine(line.indent)
+	this.value = resolveNode(tree, line)
+    }
+}
