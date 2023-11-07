@@ -1,6 +1,6 @@
 import {Scope, Begin, Block, Yield, Iter, BlockPass} from './blocks'
 import {Literal} from './literal'
-import {String, DynamicString, EvalString, XString, 
+import {String, DynamicString, EvalString, XString, DXString,
 	Match, Match2, Match3, NthRef, DynamicRegExp} from './string'
 import {OpCall, OpAnd, OpOr, OpAssignAnd, OpAssignOr} from './operators'
 import {FuncCall, VarCall, Method, ClassMethod, Lambda, Call, Undefine, QCall,
@@ -38,6 +38,8 @@ export function resolveNode(tree, line) {
 	return new String(tree, line)
     case "NODE_XSTR":
 	return new XString(tree, line)
+    case "NODE_DXSTR":
+	return new DXString(tree, line)
     case "NODE_DSTR":
 	return new DynamicString(tree, line)
     case "NODE_EVSTR":

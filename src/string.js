@@ -16,6 +16,16 @@ export class XString { // backtick string
     }
 }
 
+export class DXString { // backtick string with interpolation
+    constructor(tree, startLine) {
+	this.location = startLine.location
+
+	this.lit = tree.get(startLine, "nd_lit")
+	this.head = tree.get(startLine, "nd_next->nd_head")
+	this.next = tree.get(startLine, "nd_next->nd_next")
+    }
+}
+
 
 export class DynamicString {
     constructor(tree, startLine) {
