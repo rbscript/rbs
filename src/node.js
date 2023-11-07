@@ -2,6 +2,8 @@ import {Scope, Begin, Block, Yield, Iter, BlockPass} from './blocks'
 import {Literal} from './literal'
 import {String, DynamicString, EvalString, Match, Match2, Match3, XString, NthRef} from './string'
 import {OpCall, OpAnd} from './operators'
+import {String, DynamicString, EvalString, XString, 
+	Match, Match2, Match3, NthRef, DynamicRegExp} from './string'
 import {FuncCall, VarCall, Method, ClassMethod, Lambda, Call, Undefine, QCall,
 	OptionalArgument, KeywordArgument} from './methods'
 import {List, Args, Range, Splat, ZList} from './lists'
@@ -147,6 +149,8 @@ export function resolveNode(tree, line) {
 	return new Match3(tree, line)
     case "NODE_NTH_REF":
 	return new NthRef(tree, line)
+    case "NODE_DREGX":
+	return new DynamicRegExp(tree, line)
     case "NODE_YIELD":
 	return new Yield(tree, line)
     case "NODE_ALIAS":

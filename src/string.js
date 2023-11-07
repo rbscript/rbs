@@ -95,3 +95,19 @@ export class NthRef {
     }
 }
 
+export class DynamicRegExp {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+	
+	let line = tree.nextLine(startLine.indent, "attr", "nd_lit")
+	this.value = line.value
+
+	line = tree.nextLine(startLine.indent, "attr", "nd_next->nd_head")
+	line = tree.nextLine(line.indent)
+	this.head = resolveNode(tree, line)
+
+	line = tree.nextLine(startLine.indent, "attr", "nd_next->nd_next")
+	line = tree.nextLine(line.indent)
+	this.next = resolveNode(tree, line)
+    }
+}
