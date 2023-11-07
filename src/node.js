@@ -8,7 +8,8 @@ import {List, Args, Range, Splat} from './lists'
 import {Hash, HashPattern} from './hashes'
 import {LocalAssignment, GlobalAssignment, ClassVarAssignment, MemberAssignment, MultiAssignment,
 	ConstDecl, LocalVariable, GlobalVariable, MemberVariable, AttributeAssignment,
-	ClassVariable, DynamicVariable, Const, Nil, True, False, Alias} from './variables'
+	ClassVariable, Const, Nil, True, False, Alias,
+	DynamicVariable, DynamicAssignment, DynamicAssignmentCurrent} from './variables'
 import {If, Unless, Return, For, While, Until, Case, Break, Next, Redo} from './statements'
 import {Class, Self, Singleton, Module, Colon2, Colon3, Super, ZSuper} from './classes'
 import {Ensure, Rescue, RescueBody, Retry} from './exceptions'
@@ -73,6 +74,10 @@ export function resolveNode(tree, line) {
 	return new ClassVariable(tree, line)
     case "NODE_DVAR":
 	return new DynamicVariable(tree, line)
+    case "NODE_DASGN":
+	return new DynamicAssignment(tree, line)
+    case "NODE_DASGN_CURR":
+	return new DynamicAssignmentCurrent(tree, line)
     case "NODE_CONST":
 	return new Const(tree, line)
     case "NODE_IF":

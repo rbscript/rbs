@@ -40,6 +40,34 @@ export class ClassVarAssignment {
     }
 }
 
+// https://www.rubydoc.info/gems/ruby-internal/Node/DASGN
+export class DynamicAssignment {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+	
+	let line = tree.nextLine(startLine.indent, "attr", "nd_vid")
+	this.name = line.value
+
+	line = tree.nextLine(startLine.indent, "attr", "nd_value")
+	line = tree.nextLine(line.indent)
+	this.value = resolveNode(tree, line)
+    }
+}
+
+// https://www.rubydoc.info/gems/ruby-internal/Node/DASGN_CURR
+export class DynamicAssignmentCurrent {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+	
+	let line = tree.nextLine(startLine.indent, "attr", "nd_vid")
+	this.name = line.value
+
+	line = tree.nextLine(startLine.indent, "attr", "nd_value")
+	line = tree.nextLine(line.indent)
+	this.value = resolveNode(tree, line)
+    }
+}
+
 
 export class ConstDecl {
     constructor(tree, startLine) {
