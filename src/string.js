@@ -85,3 +85,13 @@ export class Match3 {
 	this.value = resolveNode(tree, line)
     }
 }
+
+export class NthRef {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+	
+	let line = tree.nextLine(startLine.indent, "attr", "nd_nth")
+	this.nth = line.value
+    }
+}
+
