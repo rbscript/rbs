@@ -89,3 +89,10 @@ export class Splat {
 	this.head = resolveNode(tree, line)
     }
 }
+
+// []
+export class ZList {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+    }
+}
