@@ -61,3 +61,10 @@ export class Retry {
 	this.location = startLine.location
     }
 }
+
+export class ErrInfo {
+    constructor(tree, startLine) {
+	
+	this.location = startLine.location
+    }
+}
