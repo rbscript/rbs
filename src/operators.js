@@ -85,3 +85,14 @@ export class OpAssignOr {
 	this.value = resolveNode(tree, line)
     }
 }
+
+export class OpAssign1 {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+
+	this.recv = tree.get(startLine, "nd_recv")
+	this.mid = tree.get(startLine, "nd_mid")
+	this.head = tree.get(startLine, "nd_args->nd_head")
+	this.body = tree.get(startLine, "nd_args->nd_body")
+    }
+}

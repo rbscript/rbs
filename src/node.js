@@ -2,7 +2,7 @@ import {Scope, Begin, Block, Yield, Iter, BlockPass} from './blocks'
 import {Literal} from './literal'
 import {String, DynamicString, EvalString, XString, DXString,
 	Match, Match2, Match3, NthRef, DynamicRegExp} from './string'
-import {OpCall, OpAnd, OpOr, OpAssignAnd, OpAssignOr} from './operators'
+import {OpCall, OpAnd, OpOr, OpAssignAnd, OpAssignOr, OpAssign1} from './operators'
 import {FuncCall, VarCall, Method, ClassMethod, Lambda, Call, Undefine, QCall,
 	OptionalArgument, KeywordArgument} from './methods'
 import {List, Args, Range, Splat, ZList} from './lists'
@@ -54,6 +54,8 @@ export function resolveNode(tree, line) {
 	return new OpAssignAnd(tree, line)
     case "NODE_ASGN_OR":
 	return new OpAssignOr(tree, line)
+    case "NODE_OP_ASGN1":
+	return new OpAssign1(tree, line)
     case "NODE_FCALL":
 	return new FuncCall(tree, line)
     case "NODE_VCALL":
