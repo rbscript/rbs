@@ -10,7 +10,7 @@ export class Hash {
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_head")
 	line = tree.nextLine(line.indent)
-	this.list = new List(tree, line)
+	this.list = resolveNode(tree, line)
     }
 }
 
