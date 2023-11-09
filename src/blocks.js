@@ -6,22 +6,9 @@ export class Scope {
 	
 	this.location = startLine.location
 
-	const indent = startLine.indent 
-	
-	// nd_tbl: (empty)
-	tree.nextLine(indent, "attr", "nd_tbl")
-
-	// # +- nd_args:
-        // # |   (null node)
-	let line = tree.nextLine(indent, "attr", "nd_args")
-	line = tree.nextLine(line.indent)
-	this.args = resolveNode(tree, line)
-
-	// # +- nd_body:
-	line = tree.nextLine(indent, "attr", "nd_body")
-
-	this.body = new Body(tree, line)
-	
+	this.tbl = tree.get(startLine, "nd_tbl")
+	this.args = tree.get(startLine, "nd_args")
+	this.body = tree.get(startLine, "nd_body")
     }
 }
 
@@ -64,15 +51,8 @@ export class Iter {
 	
 	this.location = startLine.location
 
-	const indent = startLine.indent 
-	
-	let line = tree.nextLine(indent, "attr", "nd_iter")
-	line = tree.nextLine(line.indent)
-	this.iter = resolveNode(tree, line)
-
-	line = tree.nextLine(indent, "attr", "nd_body")
-	line = tree.nextLine(line.indent)
-	this.body = resolveNode(tree, line)
+	this.iter = tree.get(startLine, "nd_iter")
+	this.body = tree.get(startLine, "nd_body")
     }
 }
 

@@ -4,24 +4,27 @@ export class List {
     constructor(tree, startLine) {
 	this.location = startLine.location
 	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_alen")
-	const alen = parseInt(line.value)
+	const alen = parseInt(tree.get(startLine, "nd_alen"))
 
 	this.array = []
 	for (let i = 0; i < alen; ++i) {
-	    line = tree.nextLine(startLine.indent, "attr", "nd_head")
-	    line = tree.nextLine(line.indent)
-	    this.array.push(resolveNode(tree, line))
+	    this.array.push(tree.get(startLine, "nd_head"))
 	}
+
+
 
 	// For some reason, nd_heads may appear instead of nd_next (nd_alen is not the decider here)
 	while (true) {
-	    line = tree.nextLine(startLine.indent)
+	    let line = tree.nextLine(startLine.indent)
+	    if (line == undefined) {
+		break
+	    }
 	    if (line.name == "nd_head") {
 		line = tree.nextLine(line.indent)
 		this.array.push(resolveNode(tree, line))
 	    } else if (line.name == "nd_next") {
-		tree.nextLine(line.indent, "(null node)")
+		line = tree.nextLine(line.indent)
+		this.next = resolveNode(tree, line)
 		break
 	    } else {
 		throw "Unexpected attr " + this.name + " for List"
@@ -34,31 +37,18 @@ export class Args {
     constructor(tree, startLine) {
 	this.location = startLine.location
 
-	tree.nextLine(startLine.indent, "attr", "nd_ainfo->pre_args_num")
-	let line = tree.nextLine(startLine.indent, "attr", "nd_ainfo->pre_init")
-	line = tree.nextLine(line.indent)
-	this.preInit = resolveNode(tree, line)
+	this.preArgsNum = tree.get(startLine, "nd_ainfo->pre_args_num")
+	this.preInit = tree.get(startLine, "nd_ainfo->pre_init")
+	this.postArgsNum = tree.get(startLine, "nd_ainfo->post_args_num")
+	this.postInit = tree.get(startLine, "nd_ainfo->post_init")
 
-	tree.nextLine(startLine.indent, "attr", "nd_ainfo->post_args_num")
-	line = tree.nextLine(startLine.indent, "attr", "nd_ainfo->post_init")
-	line = tree.nextLine(line.indent)
-	this.postInit = resolveNode(tree, line)
+	this.firstPostArg = tree.get(startLine, "nd_ainfo->first_post_arg")
+	this.restArg = tree.get(startLine, "nd_ainfo->rest_arg")
+	this.blockArg = tree.get(startLine, "nd_ainfo->block_arg")
 
-	tree.nextLine(startLine.indent, "attr", "nd_ainfo->first_post_arg")
-	tree.nextLine(startLine.indent, "attr", "nd_ainfo->rest_arg")
-	tree.nextLine(startLine.indent, "attr", "nd_ainfo->block_arg")
-
-	line = tree.nextLine(startLine.indent, "attr", "nd_ainfo->opt_args")
-	line = tree.nextLine(line.indent)
-	this.optArgs = resolveNode(tree, line)
-
-	line = tree.nextLine(startLine.indent, "attr", "nd_ainfo->kw_args")
-	line = tree.nextLine(line.indent)
-	this.kwArgs = resolveNode(tree, line)
-
-	line = tree.nextLine(startLine.indent, "attr", "nd_ainfo->kw_rest_arg")
-	line = tree.nextLine(line.indent)
-	this.kwRestArgs = resolveNode(tree, line)
+	this.optArgs = tree.get(startLine, "nd_ainfo->opt_args")
+	this.kwArgs = tree.get(startLine, "nd_ainfo->kw_args")
+	this.kwRestArgs = tree.get(startLine, "nd_ainfo->kw_rest_arg")
     }
 }
 
@@ -94,5 +84,34 @@ export class Splat {
 export class ZList {
     constructor(tree, startLine) {
 	this.location = startLine.location
+    }
+}
+
+// return 1, 2, 3
+export class Values {
+    constructor(tree, startLine) {
+	this.location = startLine.location
+	
+	let line = tree.nextLine(startLine.indent, "attr", "nd_alen")
+	const alen = parseInt(line.value)
+
+	this.array = []
+	for (let i = 0; i < alen; ++i) {
+	    this.array.push(tree.get(startLine, "nd_head"))
+	}
+
+	// For some reason, nd_heads may appear instead of nd_next (nd_alen is not the decider here)
+	while (true) {
+	    line = tree.nextLine(startLine.indent)
+	    if (line.name == "nd_head") {
+		line = tree.nextLine(line.indent)
+		this.array.push(resolveNode(tree, line))
+	    } else if (line.name == "nd_next") {
+		tree.nextLine(line.indent, "(null node)")
+		break
+	    } else {
+		throw "Unexpected attr " + this.name + " for Values"
+	    }
+	}
     }
 }

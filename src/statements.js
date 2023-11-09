@@ -4,7 +4,7 @@ import {List} from './lists'
 export class If {
     constructor(tree, startLine) {
 	this.location = startLine.location
-
+	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_cond")
 
 	line = tree.nextLine(line.indent)

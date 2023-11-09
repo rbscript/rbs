@@ -347,3 +347,50 @@ test.skip("Pattern matching I", () => {
 })
 
 
+test("Regex I", () => {
+    const src = createSource(
+	"a = /AZaz/")
+
+    const out = parseSource(src)
+
+    //expect(out).equals("")
+})
+
+test("Regex Multi I", () => {
+    const src = createSource(
+	"a = /",
+	"  AZaz",
+	"/x"
+    )
+
+    const out = parseSource(src)
+
+    //expect(out).equals("")
+})
+
+test("Regex Multi II", () => {
+    const src = createSource(
+	"a = /",
+	"  AZaz",
+	"/x",
+	"c = 6666"
+    )
+
+    const out = parseSource(src)
+
+    //expect(out).equals("")
+})
+
+test.only("Regex Multi III", () => {
+    const src = createSource(
+	"CONTENT_TYPE_PARSER = /",
+        " \A",
+        " (?<mime_type>[^;\s]+\s*(?:;\s*(?:(?!charset)[^;\s])+)*)?",
+        ' (?:;\s*charset=(?<quote>"?)(?<charset>[^;\s]+)\k<quote>)?',
+        "/x # :nodoc:"
+    )
+
+    const out = parseSource(src)
+
+    //expect(out).equals("")
+})

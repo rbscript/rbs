@@ -55,12 +55,8 @@ export class DynamicAssignmentCurrent {
     constructor(tree, startLine) {
 	this.location = startLine.location
 	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_vid")
-	this.name = line.value
-
-	line = tree.nextLine(startLine.indent, "attr", "nd_value")
-	line = tree.nextLine(line.indent)
-	this.value = resolveNode(tree, line)
+	this.vid = tree.get(startLine, "nd_vid")
+	this.value = tree.get(startLine, "nd_value")
     }
 }
 
@@ -68,16 +64,10 @@ export class DynamicAssignmentCurrent {
 export class ConstDecl {
     constructor(tree, startLine) {
 	this.location = startLine.location
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_vid")
-	this.name = line.value
 
-	// What the fuck???
-	line = tree.nextLine(startLine.indent, "attr", "nd_else")
-	
-	line = tree.nextLine(startLine.indent, "attr", "nd_value")
-	line = tree.nextLine(line.indent)
-	this.value = resolveNode(tree, line)
+	this.vid = tree.get(startLine, "nd_vid")
+	this.els = tree.get(startLine, "nd_else")
+	this.els = tree.get(startLine, "nd_value")
     }
 }
 
@@ -98,17 +88,9 @@ export class MultiAssignment {
     constructor(tree, startLine) {
 	this.location = startLine.location
 
-	let line = tree.nextLine(startLine.indent, "attr", "nd_value")
-	line = tree.nextLine(line.indent)
-	this.value = resolveNode(tree, line)
-
-	line = tree.nextLine(startLine.indent, "attr", "nd_head")
-	line = tree.nextLine(line.indent)
-	this.head = resolveNode(tree, line)
-
-	line = tree.nextLine(startLine.indent, "attr", "nd_args")
-	line = tree.nextLine(line.indent)
-	this.args = resolveNode(tree, line)
+	this.value = tree.get(startLine, "nd_value")
+	this.head = tree.get(startLine, "nd_head")
+	this.args = tree.get(startLine, "nd_args")
     }
 }
 

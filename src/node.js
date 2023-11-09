@@ -1,11 +1,12 @@
 import {Scope, Begin, Block, Yield, Iter, BlockPass} from './blocks'
-import {Literal} from './literal'
+import {Literal, DynamicSymbol} from './literal'
 import {String, DynamicString, EvalString, XString, DXString,
-	Match, Match2, Match3, NthRef, DynamicRegExp} from './string'
-import {OpCall, OpAnd, OpOr, OpAssignAnd, OpAssignOr, OpAssign1} from './operators'
+	Match, Match2, Match3, NthRef, DynamicRegExp, BackRef} from './string'
+import {OpCall, OpAnd, OpOr, AssignAnd, AssignOr, OpAssignAnd, OpAssignOr,
+	OpAssign1, OpAssign2, Defined} from './operators'
 import {FuncCall, VarCall, Method, ClassMethod, Lambda, Call, Undefine, QCall,
-	OptionalArgument, KeywordArgument} from './methods'
-import {List, Args, Range, Splat, ZList} from './lists'
+	OptionalArgument, KeywordArgument, ArgsPush, ArgsCat, PostArg} from './methods'
+import {List, Args, Range, Splat, ZList, Values} from './lists'
 import {Hash, HashPattern} from './hashes'
 import {LocalAssignment, GlobalAssignment, ClassVarAssignment, MemberAssignment, MultiAssignment,
 	ConstDecl, LocalVariable, GlobalVariable, MemberVariable, AttributeAssignment,
@@ -17,8 +18,10 @@ import {Ensure, Rescue, RescueBody, Retry, ErrInfo} from './exceptions'
 
 export function resolveNode(tree, line) {
     if (line == undefined) {
+	console.trace()
 	throw "Line is undefined for resolveNode(). Lineno=" + tree.lineno
     }
+    tree.lastNodeType = line.type
     switch (line.type) {
     case "(null node)":
 	return undefined// Nothing here
@@ -34,6 +37,8 @@ export function resolveNode(tree, line) {
 	return new Iter(tree, line)
     case "NODE_LIT":
 	return new Literal(tree, line)
+    case "NODE_DSYM":
+	return new DynamicSymbol(tree, line)
     case "NODE_STR":
 	return new String(tree, line)
     case "NODE_XSTR":
@@ -51,11 +56,19 @@ export function resolveNode(tree, line) {
     case "NODE_OR":
 	return new OpOr(tree, line)
     case "NODE_ASGN_AND":
-	return new OpAssignAnd(tree, line)
+	return new AssignAnd(tree, line)
     case "NODE_ASGN_OR":
+	return new AssignOr(tree, line)
+    case "NODE_OP_ASGN_AND":
+	return new OpAssignAnd(tree, line)
+    case "NODE_OP_ASGN_OR":
 	return new OpAssignOr(tree, line)
     case "NODE_OP_ASGN1":
 	return new OpAssign1(tree, line)
+    case "NODE_OP_ASGN2":
+	return new OpAssign2(tree, line)
+    case "NODE_DEFINED":
+	return new Defined(tree, line)
     case "NODE_FCALL":
 	return new FuncCall(tree, line)
     case "NODE_VCALL":
@@ -70,6 +83,8 @@ export function resolveNode(tree, line) {
 	return new Splat(tree, line)
     case "NODE_ZLIST":
 	return new ZList(tree, line)
+    case "NODE_VALUES":
+	return new Values(tree, line)
     case "NODE_LASGN":
 	return new LocalAssignment(tree, line)
     case "NODE_IASGN":
@@ -163,6 +178,8 @@ export function resolveNode(tree, line) {
 	return new NthRef(tree, line)
     case "NODE_DREGX":
 	return new DynamicRegExp(tree, line)
+    case "NODE_BACK_REF":
+	return new BackRef(tree, line)
     case "NODE_YIELD":
 	return new Yield(tree, line)
     case "NODE_ALIAS":
@@ -189,6 +206,12 @@ export function resolveNode(tree, line) {
 	return new ZSuper(tree, line)
     case "NODE_ATTRASGN":
 	return new AttributeAssignment(tree, line)
+    case "NODE_ARGSPUSH":
+	return new ArgsPush(tree, line)
+    case "NODE_ARGSCAT":
+	return new ArgsCat(tree, line)
+    case "NODE_POSTARG":
+	return new PostArg(tree, line)
     default:
 	throw "Unexpected line " + line
     }

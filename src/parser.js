@@ -1,23 +1,37 @@
 import {resolveNode} from './node'
 import {spawnSync} from 'node:child_process'
 import {Program} from './program'
+import {buffer} from 'node:buffer'
 
 export function parse(source, dump) {
     const p = spawnSync('ruby', ["--dump=parsetree"], {
-	input: source
+	input: source,
+	maxBuffer: 8 * 1024 * 1024
     })
 
     const stderr = p.stderr.toString()
     if (stderr.length > 0) {
 	throw stderr
     }
-    
+
     const stdout = p.stdout.toString()
     if (dump) {
-	console.log(stdout)
+	log(stdout)
     }
+
     const tree = new Tree(stdout)
     return new Program(tree)
+}
+
+function log(str) { // Can print longer messages
+    let len = str.length
+    if (len < 10000) {
+	console.log(str)
+    } else {
+	const index = str.slice(0, 10000).lastIndexOf("\n")
+	console.log(str.slice(0, index + 1))
+	log(str.slice(index + 1))
+    }
 }
 
 export class Tree {
@@ -31,12 +45,16 @@ export class Tree {
     nextLine(indent, type, value) { // Parameters are for assertion and optional
 	if (this.index == this.source.length) {
 	    if (type != undefined) {
-		throw "Unexpected end-of-tree while waiting for " + type + " lineno=" + this.lineno
+		throw "Unexpected end-of-tree while waiting for " + type +
+		    (type == "attr" ? " " + value : "") +
+		    " lineno=" + this.lineno + " lastNodeType=" + this.lastNodeType
 	    }
 	    return undefined
 	}
 
 	this.lineno++
+
+	let origindex = this.index
 	let save = this.index
 	let start = undefined
 	let spaces = 0
@@ -76,11 +94,31 @@ export class Tree {
 	    }
 	}
 
+	// When a line does not start with #,
+	// then it can be a multiline value
+	// An example:
+	// #                 |           |       @ NODE_LIT (line: 413, location: (413,26)-(417,6))
+	// #                 |           |       +- nd_lit: /
+	//      \A
+	//      (?<mime_type>[^;\s]+\s*(?:;\s*(?:(?!charset)[^;\s])+)*)?
+	//      (?:;\s*charset=(?<quote>"?)(?<charset>[^;\s]+)\k<quote>)?
+	//      /x
+	// #                 |           +- nd_head (66):
+
+	if (this.source[origindex] != '#') {
+	    if (this.lastRetLine != undefined) {
+		this.lastRetLine.value += "\n" + this.source.slice(origindex, this.index).trim()
+		return this.nextLine(indent, type, value)
+	    }
+	}
+
 	if (spaces < indent) {
 	    this.index = save
 	    if (type != undefined) {
 		throw "Unexpected end-of-tree at indent " + spaces + " while waiting for " + type +
-		    " lineno=" + this.lineno
+		    (type == "attr" ? " " + value : "") +
+		    " spaces=" + spaces + " indent " + indent + 
+		    " lineno=" + this.lineno + " lastNodeType=" + this.lastNodeType
 	    }
 	    return undefined
 	}
@@ -93,6 +131,7 @@ export class Tree {
 	if (ret.startsWith("##")) {
 	    return this.nextLine()
 	}
+
 
 	const retLine = new Line(this.lineno, ret, spaces, pipes)
 	
@@ -107,6 +146,7 @@ export class Tree {
 	    switch (retLine.type) {
 	    case "attr":
 		if (retLine.name != value) {
+		    console.trace()
 		    throw "Unexpected attr " + retLine.name + " instead of " + value +
 			" LINE: " + retLine
 		}
@@ -114,6 +154,7 @@ export class Tree {
 	    }
 	}
 
+	this.lastRetLine = retLine
 	return retLine
     }
 
@@ -153,7 +194,8 @@ export class Line {
 	    if (content == "(null node)") {
 		this.type = "(null node)"
 	    } else {
-		throw "Unexpected content " + content + " lineno=" + this.no
+		throw "Unexpected content " + content + " lineno=" + this.no +
+		    " lastNodeType=" + this.lastNodeType
 	    }
 	    break
 	}

@@ -1,5 +1,5 @@
 import {parse} from './parser'
-import {readdir, stat, readFile} from 'node:fs'
+import {readdirSync, statSync, readFileSync} from 'node:fs'
 
 if (process.argv.length > 2) {
     processDir(process.argv[2])
@@ -22,27 +22,28 @@ function processDir(path) {
 	processFile(path, true)
 	return
     }
-    
-    readdir(path, (err, files) => {
-	files = files.sort()
-	for (const f of files) {
-	    const file = path + (path.endsWith('/') ? "" : "/") + f
-	    if (f.endsWith(".rb")) {
-		processFile(file)
-	    } else {
-		stat(file, (err, istat) => {
-		    if (err == undefined && istat.isDirectory()) {
-			processDir(file)
-		    }
-		})
+
+    const files = readdirSync(path)
+    for (const f of files) {
+	const file = path + (path.endsWith('/') ? "" : "/") + f
+	if (f.endsWith(".rb")) {
+	    processFile(file)
+	} else {
+	    const stat = statSync(file)
+	    if (stat.isDirectory()) {
+		processDir(file)
 	    }
 	}
-    })
+    }
+
 }
 
 function processFile(path, dump) {
-    readFile(path, (err, data) => {
-	console.log(path)
-	parse(data, dump)
+    console.log(path)
+    const data = readFileSync(path, {
+	encoding: 'utf8',
+	flag: 'r'
     })
+    parse(data, dump)
+
 }
