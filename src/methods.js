@@ -19,8 +19,11 @@ export class VarCall extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
 	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_mid")
-	this.name = line.value
+	this.mid = tree.get(parent, startLine, "nd_mid")
+    }
+
+    convert(output) {
+	this.add(output, this.mid.slice(1)) // a symbol starting with :
     }
 }
 
