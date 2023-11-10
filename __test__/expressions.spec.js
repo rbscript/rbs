@@ -18,7 +18,7 @@ test("single number", () => {
     expect(out).toEqual("666")
 })
 
-test.only("single variable", () => {
+test("single variable", () => {
     const src = createSource("x")
 
     const out = parseSource(src)
@@ -27,12 +27,12 @@ test.only("single variable", () => {
 })
 
 
-test("single string", () => {
+test.only("single string", () => {
     const src = createSource("'ozgur'")
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual('"ozgur"')
 })
 
 test("backtick string", () => {
