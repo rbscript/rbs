@@ -1,4 +1,5 @@
 import {parse} from './parser'
+import {Output} from './output'
 import {readdirSync, statSync, readFileSync} from 'node:fs'
 
 if (process.argv.length > 2) {
@@ -6,7 +7,10 @@ if (process.argv.length > 2) {
 }
 
 export default function(source) {
-    parse(source)
+    
+    const program = parse(source)
+    const output = new Output()
+    return program.convert(output)
 }
 
 

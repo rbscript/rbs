@@ -7,7 +7,7 @@ test("empty line", () => {
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual("")
 })
 
 test("single number", () => {
@@ -381,7 +381,7 @@ test("Regex Multi II", () => {
     //expect(out).equals("")
 })
 
-test.only("Regex Multi III", () => {
+test("Regex Multi III", () => {
     const src = createSource(
 	"CONTENT_TYPE_PARSER = /",
         " \A",
