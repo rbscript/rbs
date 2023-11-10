@@ -10,12 +10,12 @@ test("empty line", () => {
     expect(out).toEqual("")
 })
 
-test("single number", () => {
+test.only("single number", () => {
     const src = createSource("666")
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual("666")
 })
 
 test("single string", () => {

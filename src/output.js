@@ -21,5 +21,10 @@ export class Output {
 	    }
 	}
 	this.text += str
+	this.col += str.length
+    }
+
+    toString() {
+	return this.text
     }
 }

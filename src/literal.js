@@ -3,8 +3,11 @@ import {Artifact} from './program'
 export class Literal extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
-	const line = tree.nextLine(startLine.indent, "attr", "nd_lit")
-	this.value = line.value
+	this.value = tree.get(parent, startLine, "nd_lit")
+    }
+
+    convert(output) {
+	this.add(output, this.value)
     }
 }
 

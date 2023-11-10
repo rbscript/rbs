@@ -7,7 +7,8 @@ export class Program {
     }
 
     convert(output) {
-	return this.scope.convert(output)
+	this.scope.convert(output)
+	return output.toString()
     }
 }
 
@@ -19,5 +20,9 @@ export class Artifact {
 
     convert(output) {
 	throw "convert() not implemented for " + this.constructor.name
+    }
+
+    add(output, str) {
+	output.add(this.location.startCol, str)
     }
 }
