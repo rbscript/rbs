@@ -158,13 +158,17 @@ export class Tree {
 	return retLine
     }
 
-    get(startLine, name) {
+    get(parent, startLine, name) {
 	let line = this.nextLine(startLine.indent, "attr", name)
 	if (line.value != "") {
 	    return line.value
 	}
 	line = this.nextLine(line.indent)
-	return resolveNode(this, line)
+	const ret = resolveNode(parent, this, line)
+	if (ret != undefined) {
+	    ret.parent = parent
+	}
+	return ret
     }
 }
 

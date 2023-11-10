@@ -1,207 +1,208 @@
 import {resolveNode} from './node'
+import {Artifact} from './program'
 import {List} from './lists'
 
-export class If {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+export class If extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_cond")
 
 	line = tree.nextLine(line.indent)
-	this.cond = resolveNode(tree, line)
+	this.cond = resolveNode(this, tree, line)
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_body")
 	line = tree.nextLine(line.indent)
-	this.body = resolveNode(tree, line)
+	this.body = resolveNode(this, tree, line)
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_else")
 	line = tree.nextLine(line.indent)
-	this.elsepart = resolveNode(tree, line)
+	this.els = resolveNode(this, tree, line)
 	
     }
 }
 
-export class Unless {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+export class Unless extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
 
 	let line = tree.nextLine(startLine.indent, "attr", "nd_cond")
 
 	line = tree.nextLine(line.indent)
-	this.cond = resolveNode(tree, line)
+	this.cond = resolveNode(this, tree, line)
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_body")
 	line = tree.nextLine(line.indent)
-	this.body = resolveNode(tree, line)
+	this.body = resolveNode(this, tree, line)
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_else")
 	line = tree.nextLine(line.indent)
-	this.elsepart = resolveNode(tree, line)
+	this.els = resolveNode(this, tree, line)
 	
     }
 }
 
-export class Return {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+export class Return extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
 
 	let line = tree.nextLine(startLine.indent, "attr", "nd_stts")
 
 	line = tree.nextLine(line.indent)
-	this.stts = resolveNode(tree, line)
+	this.stts = resolveNode(this, tree, line)
     }
 }
 
-export class Break {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+export class Break extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
 
 	let line = tree.nextLine(startLine.indent, "attr", "nd_stts")
 
 	line = tree.nextLine(line.indent)
-	this.stts = resolveNode(tree, line)
+	this.stts = resolveNode(this, tree, line)
     }
 }
 
-export class Next {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+export class Next extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
 
 	let line = tree.nextLine(startLine.indent, "attr", "nd_stts")
 
 	line = tree.nextLine(line.indent)
-	this.stts = resolveNode(tree, line)
+	this.stts = resolveNode(this, tree, line)
     }
 }
 
-export class Redo {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+export class Redo extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
     }
 }
 
 
 
-export class For {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+export class For extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
 
 	let line = tree.nextLine(startLine.indent, "attr", "nd_iter")
 
 	line = tree.nextLine(line.indent)
-	this.iter = resolveNode(tree, line)
+	this.iter = resolveNode(this, tree, line)
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_body")
 	line = tree.nextLine(line.indent)
-	this.body = resolveNode(tree, line)
+	this.body = resolveNode(this, tree, line)
     }
 }
 
-export class While {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+export class While extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
 
 	let line = tree.nextLine(startLine.indent, "attr", "nd_state")
 	this.state = line.value
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_cond")
 	line = tree.nextLine(line.indent)
-	this.cond = resolveNode(tree, line)
+	this.cond = resolveNode(this, tree, line)
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_body")
 	line = tree.nextLine(line.indent)
-	this.body = resolveNode(tree, line)
+	this.body = resolveNode(this, tree, line)
     }
 }
 
-export class Until {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+export class Until extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
 
 	let line = tree.nextLine(startLine.indent, "attr", "nd_state")
 	this.state = line.value
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_cond")
 	line = tree.nextLine(line.indent)
-	this.cond = resolveNode(tree, line)
+	this.cond = resolveNode(this, tree, line)
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_body")
 	line = tree.nextLine(line.indent)
-	this.body = resolveNode(tree, line)
+	this.body = resolveNode(this, tree, line)
     }
 }
 
-export class Case {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+export class Case extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
 	this.type = startLine.type
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
 	line = tree.nextLine(line.indent)
-	this.cond = resolveNode(tree, line)
+	this.cond = resolveNode(this, tree, line)
 
 	// This body consists of NODE_WHENs or NODE_INs
 	line = tree.nextLine(startLine.indent, "attr", "nd_body")
 	line = tree.nextLine(line.indent)
 	if (line.type == "NODE_WHEN") {
-	    this.firstWhen = new When(tree, line)
+	    this.firstWhen = new When(this, tree, line)
 	} else if (line.type == "NODE_IN") {
-	    this.firstWhen = new In(tree, line)
+	    this.firstWhen = new In(this, tree, line)
 	} else {
 	    throw "Unexpected node " + line.type + " while resolving case"
 	}
     }
 }
 
-class When {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+class When extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
 
 	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
 	line = tree.nextLine(line.indent)
-	this.cond = resolveNode(tree, line)
+	this.cond = resolveNode(this, tree, line)
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_body")
 	line = tree.nextLine(line.indent)
-	this.body = resolveNode(tree, line)
+	this.body = resolveNode(this, tree, line)
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_next")
 	line = tree.nextLine(line.indent)
 	switch (line.type) {
 	case "NODE_WHEN":
-	    this.when = new When(tree, line)
+	    this.when = new When(this, tree, line)
 	case "(null node)":
-	    this.elsepart = undefined
+	    this.els = undefined
 	    break
 	default:
-	    this.elsepart = resolveNode(tree, line)
+	    this.els = resolveNode(this, tree, line)
 	    break
 	}
     }
 }
 
-class In {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+class In extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
 
 	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
 	line = tree.nextLine(line.indent)
-	this.cond = resolveNode(tree, line)
+	this.cond = resolveNode(this, tree, line)
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_body")
 	line = tree.nextLine(line.indent)
-	this.body = resolveNode(tree, line)
+	this.body = resolveNode(this, tree, line)
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_next")
 	line = tree.nextLine(line.indent)
 	switch (line.type) {
 	case "NODE_IN":
-	    this.when = new When(tree, line)
+	    this.when = new When(this, tree, line)
 	case "(null node)":
-	    this.elsepart = undefined
+	    this.els = undefined
 	    break
 	default:
-	    this.elsepart = resolveNode(tree, line)
+	    this.els = resolveNode(this, tree, line)
 	    break
 	}
     }

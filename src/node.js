@@ -16,7 +16,7 @@ import {If, Unless, Return, For, While, Until, Case, Break, Next, Redo} from './
 import {Class, Self, Singleton, Module, Colon2, Colon3, Super, ZSuper} from './classes'
 import {Ensure, Rescue, RescueBody, Retry, ErrInfo} from './exceptions'
 
-export function resolveNode(tree, line) {
+export function resolveNode(parent, tree, line) {
     if (line == undefined) {
 	console.trace()
 	throw "Line is undefined for resolveNode(). Lineno=" + tree.lineno
@@ -26,192 +26,192 @@ export function resolveNode(tree, line) {
     case "(null node)":
 	return undefined// Nothing here
     case "NODE_SCOPE":
-	return new Scope(tree, line)
+	return new Scope(parent, tree, line)
     case "NODE_BEGIN":
-	return new Begin(tree, line)
+	return new Begin(parent, tree, line)
     case "NODE_BLOCK":
-	return new Block(tree, line)
+	return new Block(parent, tree, line)
     case "NODE_BLOCK_PASS":
-	return new BlockPass(tree, line)
+	return new BlockPass(parent, tree, line)
     case "NODE_ITER":
-	return new Iter(tree, line)
+	return new Iter(parent, tree, line)
     case "NODE_LIT":
-	return new Literal(tree, line)
+	return new Literal(parent, tree, line)
     case "NODE_DSYM":
-	return new DynamicSymbol(tree, line)
+	return new DynamicSymbol(parent, tree, line)
     case "NODE_STR":
-	return new String(tree, line)
+	return new String(parent, tree, line)
     case "NODE_XSTR":
-	return new XString(tree, line)
+	return new XString(parent, tree, line)
     case "NODE_DXSTR":
-	return new DXString(tree, line)
+	return new DXString(parent, tree, line)
     case "NODE_DSTR":
-	return new DynamicString(tree, line)
+	return new DynamicString(parent, tree, line)
     case "NODE_EVSTR":
-	return new EvalString(tree, line)
+	return new EvalString(parent, tree, line)
     case "NODE_OPCALL":
-	return new OpCall(tree, line)
+	return new OpCall(parent, tree, line)
     case "NODE_AND":
-	return new OpAnd(tree, line)
+	return new OpAnd(parent, tree, line)
     case "NODE_OR":
-	return new OpOr(tree, line)
+	return new OpOr(parent, tree, line)
     case "NODE_ASGN_AND":
-	return new AssignAnd(tree, line)
+	return new AssignAnd(parent, tree, line)
     case "NODE_ASGN_OR":
-	return new AssignOr(tree, line)
+	return new AssignOr(parent, tree, line)
     case "NODE_OP_ASGN_AND":
-	return new OpAssignAnd(tree, line)
+	return new OpAssignAnd(parent, tree, line)
     case "NODE_OP_ASGN_OR":
-	return new OpAssignOr(tree, line)
+	return new OpAssignOr(parent, tree, line)
     case "NODE_OP_ASGN1":
-	return new OpAssign1(tree, line)
+	return new OpAssign1(parent, tree, line)
     case "NODE_OP_ASGN2":
-	return new OpAssign2(tree, line)
+	return new OpAssign2(parent, tree, line)
     case "NODE_DEFINED":
-	return new Defined(tree, line)
+	return new Defined(parent, tree, line)
     case "NODE_FCALL":
-	return new FuncCall(tree, line)
+	return new FuncCall(parent, tree, line)
     case "NODE_VCALL":
-	return new VarCall(tree, line)
+	return new VarCall(parent, tree, line)
     case "NODE_CALL":
-	return new Call(tree, line)
+	return new Call(parent, tree, line)
     case "NODE_QCALL":
-	return new QCall(tree, line)
+	return new QCall(parent, tree, line)
     case "NODE_LIST":
-	return new List(tree, line)
+	return new List(parent, tree, line)
     case "NODE_SPLAT":
-	return new Splat(tree, line)
+	return new Splat(parent, tree, line)
     case "NODE_ZLIST":
-	return new ZList(tree, line)
+	return new ZList(parent, tree, line)
     case "NODE_VALUES":
-	return new Values(tree, line)
+	return new Values(parent, tree, line)
     case "NODE_LASGN":
-	return new LocalAssignment(tree, line)
+	return new LocalAssignment(parent, tree, line)
     case "NODE_IASGN":
-	return new MemberAssignment(tree, line)
+	return new MemberAssignment(parent, tree, line)
     case "NODE_CVASGN":
-	return new ClassVarAssignment(tree, line)
+	return new ClassVarAssignment(parent, tree, line)
     case "NODE_GASGN":
-	return new GlobalAssignment(tree, line)
+	return new GlobalAssignment(parent, tree, line)
     case "NODE_MASGN":
-	return new MultiAssignment(tree, line)
+	return new MultiAssignment(parent, tree, line)
     case "NODE_CDECL":
-	return new ConstDecl(tree, line)
+	return new ConstDecl(parent, tree, line)
     case "NODE_LVAR":
-	return new LocalVariable(tree, line)
+	return new LocalVariable(parent, tree, line)
     case "NODE_GVAR":
-	return new GlobalVariable(tree, line)
+	return new GlobalVariable(parent, tree, line)
     case "NODE_IVAR":
-	return new MemberVariable(tree, line)
+	return new MemberVariable(parent, tree, line)
     case "NODE_CVAR":
-	return new ClassVariable(tree, line)
+	return new ClassVariable(parent, tree, line)
     case "NODE_DVAR":
-	return new DynamicVariable(tree, line)
+	return new DynamicVariable(parent, tree, line)
     case "NODE_DASGN":
-	return new DynamicAssignment(tree, line)
+	return new DynamicAssignment(parent, tree, line)
     case "NODE_DASGN_CURR":
-	return new DynamicAssignmentCurrent(tree, line)
+	return new DynamicAssignmentCurrent(parent, tree, line)
     case "NODE_CONST":
-	return new Const(tree, line)
+	return new Const(parent, tree, line)
     case "NODE_IF":
-	return new If(tree, line)
+	return new If(parent, tree, line)
     case "NODE_UNLESS":
-	return new Unless(tree, line)
+	return new Unless(parent, tree, line)
     case "NODE_RETURN":
-	return new Return(tree, line)
+	return new Return(parent, tree, line)
     case "NODE_BREAK":
-	return new Break(tree, line)
+	return new Break(parent, tree, line)
     case "NODE_NEXT":
-	return new Next(tree, line)
+	return new Next(parent, tree, line)
     case "NODE_REDO":
-	return new Redo(tree, line)
+	return new Redo(parent, tree, line)
     case "NODE_FOR":
-	return new For(tree, line)
+	return new For(parent, tree, line)
     case "NODE_ARGS":
-	return new Args(tree, line)
+	return new Args(parent, tree, line)
     case "NODE_OPT_ARG":
-	return new OptionalArgument(tree, line)
+	return new OptionalArgument(parent, tree, line)
     case "NODE_KW_ARG":
-	return new KeywordArgument(tree, line)
+	return new KeywordArgument(parent, tree, line)
     case "NODE_WHILE":
-	return new While(tree, line)
+	return new While(parent, tree, line)
     case "NODE_UNTIL":
-	return new Until(tree, line)
+	return new Until(parent, tree, line)
     case "NODE_CASE":
     case "NODE_CASE2":
     case "NODE_CASE3":
-	return new Case(tree, line)
+	return new Case(parent, tree, line)
     case "NODE_CLASS":
-	return new Class(tree, line)
+	return new Class(parent, tree, line)
     case "NODE_SCLASS":
-	return new Singleton(tree, line)
+	return new Singleton(parent, tree, line)
     case "NODE_SELF":
-	return new Self(tree, line)
+	return new Self(parent, tree, line)
     case "NODE_DEFN":
-	return new Method(tree, line)
+	return new Method(parent, tree, line)
     case "NODE_DEFS":
-	return new ClassMethod(tree, line)
+	return new ClassMethod(parent, tree, line)
     case "NODE_UNDEF":
-	return new Undefine(tree, line)
+	return new Undefine(parent, tree, line)
     case "NODE_LAMBDA":
-	return new Lambda(tree, line)
+	return new Lambda(parent, tree, line)
     case "NODE_NIL":
-	return new Nil(tree, line)
+	return new Nil(parent, tree, line)
     case "NODE_TRUE":
-	return new True(tree, line)
+	return new True(parent, tree, line)
     case "NODE_FALSE":
-	return new False(tree, line)
+	return new False(parent, tree, line)
     case "NODE_HASH":
-	return new Hash(tree, line)
+	return new Hash(parent, tree, line)
     case "NODE_HSHPTN":
-	return new HashPattern(tree, line)
+	return new HashPattern(parent, tree, line)
     case "NODE_DOT2":
     case "NODE_DOT3":
-	return new Range(tree, line)
+	return new Range(parent, tree, line)
     case "NODE_MATCH":
-	return new Match(tree, line)
+	return new Match(parent, tree, line)
     case "NODE_MATCH2":
-	return new Match2(tree, line)
+	return new Match2(parent, tree, line)
     case "NODE_MATCH3":
-	return new Match3(tree, line)
+	return new Match3(parent, tree, line)
     case "NODE_NTH_REF":
-	return new NthRef(tree, line)
+	return new NthRef(parent, tree, line)
     case "NODE_DREGX":
-	return new DynamicRegExp(tree, line)
+	return new DynamicRegExp(parent, tree, line)
     case "NODE_BACK_REF":
-	return new BackRef(tree, line)
+	return new BackRef(parent, tree, line)
     case "NODE_YIELD":
-	return new Yield(tree, line)
+	return new Yield(parent, tree, line)
     case "NODE_ALIAS":
-	return new Alias(tree, line)
+	return new Alias(parent, tree, line)
     case "NODE_MODULE":
-	return new Module(tree, line)
+	return new Module(parent, tree, line)
     case "NODE_COLON2":
-	return new Colon2(tree, line)
+	return new Colon2(parent, tree, line)
     case "NODE_COLON3":
-	return new Colon3(tree, line)
+	return new Colon3(parent, tree, line)
     case "NODE_ENSURE":
-	return new Ensure(tree, line)
+	return new Ensure(parent, tree, line)
     case "NODE_RESCUE":
-	return new Rescue(tree, line)
+	return new Rescue(parent, tree, line)
     case "NODE_RESBODY":
-	return new RescueBody(tree, line)
+	return new RescueBody(parent, tree, line)
     case "NODE_RETRY":
-	return new Retry(tree, line)
+	return new Retry(parent, tree, line)
     case "NODE_ERRINFO":
-	return new ErrInfo(tree, line)
+	return new ErrInfo(parent, tree, line)
     case "NODE_SUPER":
-	return new Super(tree, line)
+	return new Super(parent, tree, line)
     case "NODE_ZSUPER":
-	return new ZSuper(tree, line)
+	return new ZSuper(parent, tree, line)
     case "NODE_ATTRASGN":
-	return new AttributeAssignment(tree, line)
+	return new AttributeAssignment(parent, tree, line)
     case "NODE_ARGSPUSH":
-	return new ArgsPush(tree, line)
+	return new ArgsPush(parent, tree, line)
     case "NODE_ARGSCAT":
-	return new ArgsCat(tree, line)
+	return new ArgsCat(parent, tree, line)
     case "NODE_POSTARG":
-	return new PostArg(tree, line)
+	return new PostArg(parent, tree, line)
     default:
 	throw "Unexpected line " + line
     }

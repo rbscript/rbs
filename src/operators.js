@@ -1,8 +1,9 @@
 import {resolveNode} from './node'
+import {Artifact} from './program'
 
-export class OpCall {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+export class OpCall extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_mid")
 	this.op = line.value
@@ -11,21 +12,21 @@ export class OpCall {
 	line = tree.nextLine(startLine.indent, "attr", "nd_recv")
 
 	line = tree.nextLine(line.indent)
-	this.recv = resolveNode(tree, line)
+	this.recv = resolveNode(this, tree, line)
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_args")
 	line = tree.nextLine(line.indent)
-	this.args = resolveNode(tree, line)
+	this.args = resolveNode(this, tree, line)
     }
 }
 
-export class OpAnd {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+export class OpAnd extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_1st")
 	line = tree.nextLine(line.indent)
-	this.firsts = [resolveNode(tree, line)]
+	this.firsts = [resolveNode(this, tree, line)]
 
 	// There may be more 1sts
 	while (true) {
@@ -35,22 +36,22 @@ export class OpAnd {
 	    }
 
 	    line = tree.nextLine(line.indent)
-	    this.firsts.push(resolveNode(tree, line))
+	    this.firsts.push(resolveNode(this, tree, line))
 	}
 	
 	// Add the nd_2nd and finish
 	line = tree.nextLine(line.indent)
-	this.second = resolveNode(tree, line)
+	this.second = resolveNode(this, tree, line)
     }
 }
 
-export class OpOr {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+export class OpOr extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_1st")
 	line = tree.nextLine(line.indent)
-	this.firsts = [resolveNode(tree, line)]
+	this.firsts = [resolveNode(this, tree, line)]
 
 	// There may be more 1sts
 	while (true) {
@@ -60,100 +61,100 @@ export class OpOr {
 	    }
 
 	    line = tree.nextLine(line.indent)
-	    this.firsts.push(resolveNode(tree, line))
+	    this.firsts.push(resolveNode(this, tree, line))
 	}
 	
 	// Add the nd_2nd and finish
 	line = tree.nextLine(line.indent)
-	this.second = resolveNode(tree, line)
+	this.second = resolveNode(this, tree, line)
     }
 }
 
-export class AssignAnd {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+export class AssignAnd extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
 	line = tree.nextLine(line.indent)
-	this.head = resolveNode(tree, line)
+	this.head = resolveNode(this, tree, line)
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_value")
 	line = tree.nextLine(line.indent)
-	this.value = resolveNode(tree, line)
+	this.value = resolveNode(this, tree, line)
     }
 }
 
-export class OpAssignAnd {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+export class OpAssignAnd extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
 	line = tree.nextLine(line.indent)
-	this.head = resolveNode(tree, line)
+	this.head = resolveNode(this, tree, line)
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_value")
 	line = tree.nextLine(line.indent)
-	this.value = resolveNode(tree, line)
+	this.value = resolveNode(this, tree, line)
     }
 }
 
 
-export class AssignOr {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+export class AssignOr extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
 	line = tree.nextLine(line.indent)
-	this.head = resolveNode(tree, line)
+	this.head = resolveNode(this, tree, line)
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_value")
 	line = tree.nextLine(line.indent)
-	this.value = resolveNode(tree, line)
+	this.value = resolveNode(this, tree, line)
     }
 }
 
 
-export class OpAssignOr {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+export class OpAssignOr extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
 	line = tree.nextLine(line.indent)
-	this.head = resolveNode(tree, line)
+	this.head = resolveNode(this, tree, line)
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_value")
 	line = tree.nextLine(line.indent)
-	this.value = resolveNode(tree, line)
+	this.value = resolveNode(this, tree, line)
     }
 }
 
-export class OpAssign1 {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+export class OpAssign1 extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
 
-	this.recv = tree.get(startLine, "nd_recv")
-	this.mid = tree.get(startLine, "nd_mid")
-	this.head = tree.get(startLine, "nd_args->nd_head")
-	this.body = tree.get(startLine, "nd_args->nd_body")
+	this.recv = tree.get(this, startLine, "nd_recv")
+	this.mid = tree.get(this, startLine, "nd_mid")
+	this.head = tree.get(this, startLine, "nd_args->nd_head")
+	this.body = tree.get(this, startLine, "nd_args->nd_body")
     }
 }
 
-export class OpAssign2 {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+export class OpAssign2 extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
 
-	this.recv = tree.get(startLine, "nd_recv")
-	this.vid = tree.get(startLine, "nd_next->nd_vid")
-	this.mid = tree.get(startLine, "nd_next->nd_mid")
-	this.value = tree.get(startLine, "nd_value")
+	this.recv = tree.get(this, startLine, "nd_recv")
+	this.vid = tree.get(this, startLine, "nd_next->nd_vid")
+	this.mid = tree.get(this, startLine, "nd_next->nd_mid")
+	this.value = tree.get(this, startLine, "nd_value")
     }
 }
 
 
-export class Defined {
-    constructor(tree, startLine) {
-	this.location = startLine.location
+export class Defined extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
 
-	this.head = tree.get(startLine, "nd_head")
+	this.head = tree.get(this, startLine, "nd_head")
     }
 }

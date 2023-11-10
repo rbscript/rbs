@@ -1,70 +1,71 @@
 import {Body} from './body'
 import {resolveNode} from './node'
+import {Artifact} from './program'
 
-export class Ensure {
-    constructor(tree, startLine) {
+export class Ensure extends Artifact {
+    constructor(parent, tree, startLine) {
 	
-	this.location = startLine.location
+	super(parent, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
 	line = tree.nextLine(line.indent)
-	this.head = resolveNode(tree, line)
+	this.head = resolveNode(this, tree, line)
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_ensr")
 	line = tree.nextLine(line.indent)
-	this.ensr = resolveNode(tree, line)
+	this.ensr = resolveNode(this, tree, line)
     }
 }
 
-export class Rescue {
-    constructor(tree, startLine) {
+export class Rescue extends Artifact {
+    constructor(parent, tree, startLine) {
 	
-	this.location = startLine.location
+	super(parent, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
 	line = tree.nextLine(line.indent)
-	this.head = resolveNode(tree, line)
+	this.head = resolveNode(this, tree, line)
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_resq")
 	line = tree.nextLine(line.indent)
-	this.resq = resolveNode(tree, line)
+	this.resq = resolveNode(this, tree, line)
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_else")
 	line = tree.nextLine(line.indent)
-	this.els = resolveNode(tree, line)
+	this.els = resolveNode(this, tree, line)
 
     }
 }
 
-export class RescueBody {
-    constructor(tree, startLine) {
+export class RescueBody extends Artifact {
+    constructor(parent, tree, startLine) {
 	
-	this.location = startLine.location
+	super(parent, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_args")
 	line = tree.nextLine(line.indent)
-	this.args = resolveNode(tree, line)
+	this.args = resolveNode(this, tree, line)
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_body")
 	line = tree.nextLine(line.indent)
-	this.body = resolveNode(tree, line)
+	this.body = resolveNode(this, tree, line)
 
 	line = tree.nextLine(startLine.indent, "attr", "nd_head")
 	line = tree.nextLine(line.indent)
-	this.head = resolveNode(tree, line)
+	this.head = resolveNode(this, tree, line)
     }
 }
 
-export class Retry {
-    constructor(tree, startLine) {
+export class Retry extends Artifact {
+    constructor(parent, tree, startLine) {
 	
-	this.location = startLine.location
+	super(parent, startLine)
     }
 }
 
-export class ErrInfo {
-    constructor(tree, startLine) {
+export class ErrInfo extends Artifact {
+    constructor(parent, tree, startLine) {
 	
-	this.location = startLine.location
+	super(parent, startLine)
     }
 }
