@@ -104,28 +104,28 @@ test("expression VI", () => {
 
 // TODO: Test operators which have no equivalent in Javascript
 
-test.skip("function call", () => {
+test("function call", () => {
     const src = createSource("f()")
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual("f()")
 })
 
-test.skip("function call II", () => {
+test("function call II", () => {
     const src = createSource("f(3, 5 + 8, g())")
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual("f(3, 5 + 8, g())")
 })
 
-test.skip("complex", () => {
+test("complex", () => {
     const src = createSource("'savas' + f(3, 5 + 8, g()) / 2")
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual('"savas" + f(3, 5 + 8, g()) / 2')
 })
 
 

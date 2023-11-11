@@ -1,17 +1,27 @@
 import {resolveNode} from './node'
 import {Artifact} from './program'
+import {symbol} from './literal'
 
 export class FuncCall extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
 
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_mid")
-	this.name = line.value
+	this.mid = tree.get(this, startLine, "nd_mid")
+	this.args = tree.get(this, startLine, "nd_args")
+    }
 
-	line = tree.nextLine(startLine.indent, "attr", "nd_args")
-	line = tree.nextLine(line.indent)
-	this.args = resolveNode(this, tree, line)
+    convert(output) {
+	this.add(output, symbol(this.mid))
+
+	this.add(output, "(")
+	if (this.args != undefined && this.args.array.length > 0) {
+	    this.add(output, this.args.array[0])
+	    for (let i = 1; i < this.args.array.length; ++i) {
+		this.add(output, ", ")
+		this.add(output, this.args.array[i])
+	    }
+	}
+	this.add(output, ")")
     }
 }
 
@@ -19,11 +29,11 @@ export class VarCall extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
 	
-	this.mid = tree.get(parent, startLine, "nd_mid")
+	this.mid = tree.get(this, startLine, "nd_mid")
     }
 
     convert(output) {
-	this.add(output, this.mid.slice(1)) // a symbol starting with :
+	this.add(output, symbol(this.mid))
     }
 }
 
