@@ -129,36 +129,36 @@ test("complex", () => {
 })
 
 
-test.skip("nil", () => {
+test("nil", () => {
     const src = createSource("a = nil")
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual("const a = undefined")
 })
 
-test.skip("true", () => {
+test("true", () => {
     const src = createSource("b = true")
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual("const b = true")
 })
 
-test.skip("big number", () => {
+test("big number", () => {
     const src = createSource("d = 1_000_000")
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual("const d = 1000000")
 })
 
-test.skip("rational number", () => {
+test("rational number", () => {
     const src = createSource("r = 0.1r")
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual("const r = (1/10)")
 })
 
 test.skip("imaginary number", () => {

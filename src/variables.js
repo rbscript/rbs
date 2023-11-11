@@ -1,13 +1,20 @@
 import {resolveNode} from './node'
 import {Artifact} from './program'
-import {Literal} from './literal'
+import {Literal, symbol} from './literal'
 
 export class LocalAssignment extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
 	
-	this.name = tree.get(this, startLine, "nd_vid")
+	this.vid = tree.get(this, startLine, "nd_vid")
 	this.value = tree.get(this, startLine, "nd_value")
+    }
+
+    convert(output) {
+	this.add(output, "const ") // TODO determine if const or let or nothing
+	this.add(output, symbol(this.vid))
+	this.add(output, " = ")
+	this.add(output, this.value)
     }
 }
 
@@ -155,17 +162,29 @@ export class Nil extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
     }
+
+    convert(output) {
+	this.add(output, "undefined")
+    }
 }
 
 export class True extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
     }
+
+    convert(output) {
+	this.add(output, "true")
+    }
 }
 
 export class False extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
+    }
+
+    convert(output) {
+	this.add(output, "false")
     }
 }
 
