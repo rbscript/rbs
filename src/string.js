@@ -4,7 +4,7 @@ import {Artifact} from './program'
 export class String extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
-	this.lit = tree.get(parent, startLine, "nd_lit")
+	this.lit = tree.get(this, startLine, "nd_lit")
     }
 
     convert(output) {

@@ -5,9 +5,9 @@ export class OpCall extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
 
-	this.mid = tree.get(parent, startLine, "nd_mid")
-	this.recv = tree.get(parent, startLine, "nd_recv")
-	this.args = tree.get(parent, startLine, "nd_args")
+	this.mid = tree.get(this, startLine, "nd_mid")
+	this.recv = tree.get(this, startLine, "nd_recv")
+	this.args = tree.get(this, startLine, "nd_args")
     }
 
     convert(output) {

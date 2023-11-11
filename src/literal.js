@@ -3,7 +3,7 @@ import {Artifact} from './program'
 export class Literal extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
-	this.value = tree.get(parent, startLine, "nd_lit")
+	this.value = tree.get(this, startLine, "nd_lit")
     }
 
     convert(output) {

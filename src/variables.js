@@ -173,8 +173,8 @@ export class Alias extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
 	
-	this.first = tree.get(parent, startLine, "nd_1st")
-	this.second = tree.get(parent, startLine, "nd_2nd")
+	this.first = tree.get(this, startLine, "nd_1st")
+	this.second = tree.get(this, startLine, "nd_2nd")
     }
 }
 
