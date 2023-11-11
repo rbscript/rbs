@@ -1,19 +1,50 @@
 import {Artifact} from './program'
 
+const reAlphaChar = /[a-zA-Z_]/
+
 export function symbol(str) {
+    let text
+
+    // First, clear :symbol
     if (str instanceof Literal) {
 	if (str.lit.startsWith(":")) {
-	    return str.lit.slice(1)
+	    text = str.lit.slice(1)
 	} else {
-	    return str.lit
+	    text = str.lit
 	}
     } else {
 	if (str.startsWith(":")) {
-	    return str.slice(1)
+	    text = str.slice(1)
 	} else {
-	    return str
+	    text = str
 	}
     }
+
+    // Convert from first_name to firstName
+    //
+    let flag = false
+    let newtext = ""
+    for (let i = 0; i < text.length; ++i) {
+	const c = text[i]
+
+	if (flag) {
+	    flag = false
+	    if (c.match(reAlphaChar)) {
+		newtext += c.toUpperCase()
+		continue
+	    }
+	}
+
+	if (c == '_') {
+	    flag = true
+	    continue
+	}
+
+	newtext += c
+    }
+    text = newtext
+
+    return text
 }
 
 export class Literal extends Artifact {

@@ -169,84 +169,84 @@ test.skip("imaginary number", () => {
     //expect(out).equals("")
 })
 
-test.skip("string with escape", () => {
+test("string with escape", () => {
     const src = createSource('s = "hello \\"Billy\\""')
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual('const s = "hello \\\"Billy\\\""')
 })
 
-test.skip("string with escape II", () => {
+test("string with escape II", () => {
     const src = createSource('s = "my line\\n"')
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual('const s = "my line\\n"')
 })
 
-test.skip("string interpolation", () => {
+test("string interpolation", () => {
     const src = createSource('s = "my name is #{name}"')
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual('const s = "my name is " + name')
 })
 
-test.skip("string interpolation II", () => {
+test("string interpolation II", () => {
     const src = createSource('s = "my name is #{name} and the surname is #{surname}"')
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual('const s = "my name is " + name + " and the surname is " + surname')
 })
 
-test.skip("string interpolation III", () => {
+test("string interpolation III", () => {
     const src = createSource(
 	's = "my name is #{name} and the surname is #{surname} and #{number}"')
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual('const s = "my name is " + name + " and the surname is " + surname + " and " + number')
 })
 
-test.skip("string interpolation IV", () => {
+test("string interpolation IV", () => {
     const src = createSource(
 	's = "my name is #{name + 666} and the surname is #{surname} and #{number}"')
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual('const s = "my name is " + (name + 666) + " and the surname is " + surname + " and " + number')
 })
 
-test.skip("% string", () => {
+test("% string", () => {
     const src = createSource(
 	's = %(Savas Alparslan)')
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual('const s = "Savas Alparslan"')
 })
 
-test.skip("%q string", () => {
+test("%q string", () => {
     const src = createSource(
 	's = %q(Savas Alparslan)')
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual('const s = "Savas Alparslan"')
 })
 
-test.skip("Auto concat strings", () => {
+test("Auto concat strings", () => {
     const src = createSource(
 	's = "Bill" "Gates"')
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual('const s = "BillGates"')
 })
 
-test.skip("HEREDOC string", () => {
+test("HEREDOC string", () => {
     const src = createSource(
 	"expected_result = <<HEREDOC",
 	"This would contain specially formatted text.",
@@ -256,10 +256,10 @@ test.skip("HEREDOC string", () => {
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual('const expectedResult = "This would contain specially formatted text.\\n\\nThat might span many lines\\n"')
 })
 
-test.skip("Indented HEREDOC string", () => {
+test("Indented HEREDOC string", () => {
     const src = createSource(
 	"  expected_result = <<-HEREDOC",
 	"This would contain specially formatted text.",
@@ -269,10 +269,10 @@ test.skip("Indented HEREDOC string", () => {
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual('  const expectedResult = "This would contain specially formatted text.\\n\\nThat might span many lines\\n"')
 })
 
-test.skip("Squiggly HEREDOC string", () => {
+test("Squiggly HEREDOC string", () => {
     const src = createSource(
 	"expected_result = <<~HEREDOC",
 	"  This would contain specially formatted text.",
@@ -282,10 +282,10 @@ test.skip("Squiggly HEREDOC string", () => {
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual('const expectedResult = "This would contain specially formatted text.\\n\\nThat might span many lines\\n"')
 })
 
-test.skip("Multiple HEREDOC strings", () => {
+test("Multiple HEREDOC strings", () => {
     const src = createSource(
 	"puts(<<-ONE, <<-TWO)",
 	"content for heredoc one",
@@ -295,7 +295,7 @@ test.skip("Multiple HEREDOC strings", () => {
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual('puts("content for heredoc one\\n", "content for heredoc two\\n")')
 })
 
 test.skip("Symbol", () => {

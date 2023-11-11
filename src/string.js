@@ -1,5 +1,6 @@
 import {resolveNode} from './node'
 import {Artifact} from './program'
+import {VarCall} from './methods'
 
 export class String extends Artifact {
     constructor(parent, tree, startLine) {
@@ -36,13 +37,14 @@ export class DXString extends Artifact { // backtick string with interpolation
 export class DynamicString extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_lit")
-	this.value = line.value
 
+	//let line = tree.nextLine(startLine.indent, "attr", "nd_lit")
+	//this.lit = line.value
+	this.lit = tree.get(this, startLine, "nd_lit")
+	
 	// Sometimes, NODE_DSTR has only nd_lit, because the
 	// parameter is like __FILE__ and expanded during parsing
-	line = tree.nextLine(startLine.indent)
+	let line = tree.nextLine(startLine.indent)
 	if (line != undefined) {
 	    // it should be "nd_next->nd_head")
 	    line = tree.nextLine(line.indent)
@@ -53,15 +55,38 @@ export class DynamicString extends Artifact {
 	    this.next = resolveNode(this, tree, line)
 	}
     }
+
+    convert(output) {
+	this.add(output, this.lit)
+	if (this.head != undefined) {
+	    this.add(output, " + ")
+	    this.add(output, this.head)
+
+	    if (this.next != undefined) { // it should List
+		for (const head of this.next.array) {
+		    this.add(output, " + ")
+		    this.add(output, head)
+		}
+	    }
+	}
+    }
 }
 
 export class EvalString extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_body")
-	line = tree.nextLine(line.indent)
-	this.body = resolveNode(this, tree, line)
+
+	this.body = tree.get(this, startLine, "nd_body")
+    }
+
+    convert(output) {
+	if (this.body instanceof VarCall) {
+	    this.add(output, this.body)
+	} else {
+	    this.add(output, "(")
+	    this.add(output, this.body)
+	    this.add(output, ")")
+	}
     }
 }
 
