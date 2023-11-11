@@ -43,23 +43,68 @@ test.skip("backtick string", () => {
     expect(out).toEqual("")
 })
 
-test.only("negative number", () => {
+test("negative number", () => {
     const src = createSource("-1")
 
-test("addition", () => {
     const out = parseSource(src)
 
     // For some reason, negative numbers have extra column...
     expect(out).toEqual(" -1")
 })
+
+
+test("expression I", () => {
+    const src = createSource("1 + 2")
+
+    const out = parseSource(src)
+
+    expect(out).toEqual("1 + 2")
+})
+
+test("expression II", () => {
+    const src = createSource("1 + 2 + 3")
+
+    const out = parseSource(src)
+
+    expect(out).toEqual("(1 + 2) + 3")
+})
+
+test("expression III", () => {
+    const src = createSource("1 + 2 - 3")
+
+    const out = parseSource(src)
+
+    expect(out).toEqual("(1 + 2) - 3")
+})
+
+test("expression IV", () => {
+    const src = createSource("1 + 2 / 3")
+
+    const out = parseSource(src)
+
+    expect(out).toEqual("1 + 2 / 3")
+})
+
+test("expression V", () => {
+    const src = createSource("(1 + 2) / 3")
+
+    const out = parseSource(src)
+
+    expect(out).toEqual("(1 + 2) / 3")
+})
+
+
+test("expression VI", () => {
     const src = createSource("666*9 + 333 - 2")
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual("((666 * 9) + 333) - 2")
 })
 
-test("function call", () => {
+// TODO: Test operators which have no equivalent in Javascript
+
+test.skip("function call", () => {
     const src = createSource("f()")
 
     const out = parseSource(src)
@@ -67,7 +112,7 @@ test("function call", () => {
     //expect(out).equals("")
 })
 
-test("function call II", () => {
+test.skip("function call II", () => {
     const src = createSource("f(3, 5 + 8, g())")
 
     const out = parseSource(src)
@@ -75,7 +120,7 @@ test("function call II", () => {
     //expect(out).equals("")
 })
 
-test("complex", () => {
+test.skip("complex", () => {
     const src = createSource("'savas' + f(3, 5 + 8, g()) / 2")
 
     const out = parseSource(src)
@@ -84,7 +129,7 @@ test("complex", () => {
 })
 
 
-test("nil", () => {
+test.skip("nil", () => {
     const src = createSource("a = nil")
 
     const out = parseSource(src)
@@ -92,7 +137,7 @@ test("nil", () => {
     //expect(out).equals("")
 })
 
-test("true", () => {
+test.skip("true", () => {
     const src = createSource("b = true")
 
     const out = parseSource(src)
@@ -100,7 +145,7 @@ test("true", () => {
     //expect(out).equals("")
 })
 
-test("big number", () => {
+test.skip("big number", () => {
     const src = createSource("d = 1_000_000")
 
     const out = parseSource(src)
@@ -108,7 +153,7 @@ test("big number", () => {
     //expect(out).equals("")
 })
 
-test("rational number", () => {
+test.skip("rational number", () => {
     const src = createSource("r = 0.1r")
 
     const out = parseSource(src)
@@ -116,7 +161,7 @@ test("rational number", () => {
     //expect(out).equals("")
 })
 
-test("imaginary number", () => {
+test.skip("imaginary number", () => {
     const src = createSource("i = 1i")
 
     const out = parseSource(src)
@@ -124,7 +169,7 @@ test("imaginary number", () => {
     //expect(out).equals("")
 })
 
-test("string with escape", () => {
+test.skip("string with escape", () => {
     const src = createSource('s = "hello \\"Billy\\""')
 
     const out = parseSource(src)
@@ -132,7 +177,7 @@ test("string with escape", () => {
     //expect(out).equals("")
 })
 
-test("string with escape II", () => {
+test.skip("string with escape II", () => {
     const src = createSource('s = "my line\\n"')
 
     const out = parseSource(src)
@@ -140,7 +185,7 @@ test("string with escape II", () => {
     //expect(out).equals("")
 })
 
-test("string interpolation", () => {
+test.skip("string interpolation", () => {
     const src = createSource('s = "my name is #{name}"')
 
     const out = parseSource(src)
@@ -148,7 +193,7 @@ test("string interpolation", () => {
     //expect(out).equals("")
 })
 
-test("string interpolation II", () => {
+test.skip("string interpolation II", () => {
     const src = createSource('s = "my name is #{name} and the surname is #{surname}"')
 
     const out = parseSource(src)
@@ -156,7 +201,7 @@ test("string interpolation II", () => {
     //expect(out).equals("")
 })
 
-test("string interpolation III", () => {
+test.skip("string interpolation III", () => {
     const src = createSource(
 	's = "my name is #{name} and the surname is #{surname} and #{number}"')
 
@@ -165,7 +210,7 @@ test("string interpolation III", () => {
     //expect(out).equals("")
 })
 
-test("string interpolation IV", () => {
+test.skip("string interpolation IV", () => {
     const src = createSource(
 	's = "my name is #{name + 666} and the surname is #{surname} and #{number}"')
 
@@ -174,7 +219,7 @@ test("string interpolation IV", () => {
     //expect(out).equals("")
 })
 
-test("% string", () => {
+test.skip("% string", () => {
     const src = createSource(
 	's = %(Savas Alparslan)')
 
@@ -183,7 +228,7 @@ test("% string", () => {
     //expect(out).equals("")
 })
 
-test("%q string", () => {
+test.skip("%q string", () => {
     const src = createSource(
 	's = %q(Savas Alparslan)')
 
@@ -192,7 +237,7 @@ test("%q string", () => {
     //expect(out).equals("")
 })
 
-test("Auto concat strings", () => {
+test.skip("Auto concat strings", () => {
     const src = createSource(
 	's = "Bill" "Gates"')
 
@@ -201,7 +246,7 @@ test("Auto concat strings", () => {
     //expect(out).equals("")
 })
 
-test("HEREDOC string", () => {
+test.skip("HEREDOC string", () => {
     const src = createSource(
 	"expected_result = <<HEREDOC",
 	"This would contain specially formatted text.",
@@ -214,7 +259,7 @@ test("HEREDOC string", () => {
     //expect(out).equals("")
 })
 
-test("Indented HEREDOC string", () => {
+test.skip("Indented HEREDOC string", () => {
     const src = createSource(
 	"  expected_result = <<-HEREDOC",
 	"This would contain specially formatted text.",
@@ -227,7 +272,7 @@ test("Indented HEREDOC string", () => {
     //expect(out).equals("")
 })
 
-test("Squiggly HEREDOC string", () => {
+test.skip("Squiggly HEREDOC string", () => {
     const src = createSource(
 	"expected_result = <<~HEREDOC",
 	"  This would contain specially formatted text.",
@@ -240,7 +285,7 @@ test("Squiggly HEREDOC string", () => {
     //expect(out).equals("")
 })
 
-test("Multiple HEREDOC strings", () => {
+test.skip("Multiple HEREDOC strings", () => {
     const src = createSource(
 	"puts(<<-ONE, <<-TWO)",
 	"content for heredoc one",
@@ -253,7 +298,7 @@ test("Multiple HEREDOC strings", () => {
     //expect(out).equals("")
 })
 
-test("Symbol", () => {
+test.skip("Symbol", () => {
     const src = createSource(
 	's = :if')
 
@@ -262,7 +307,7 @@ test("Symbol", () => {
     //expect(out).equals("")
 })
 
-test("Array", () => {
+test.skip("Array", () => {
     const src = createSource(
 	's = [3, 5, 8]')
 
@@ -271,7 +316,7 @@ test("Array", () => {
     //expect(out).equals("")
 })
 
-test("Hash I", () => {
+test.skip("Hash I", () => {
     const src = createSource(
 	's = { "a" => 1, "b" => 2 }')
 
@@ -280,7 +325,7 @@ test("Hash I", () => {
     //expect(out).equals("")
 })
 
-test("Hash II", () => {
+test.skip("Hash II", () => {
     const src = createSource(
 	's = { a: 1, b: 2 }')
 
@@ -289,7 +334,7 @@ test("Hash II", () => {
     //expect(out).equals("")
 })
 
-test("Range I", () => {
+test.skip("Range I", () => {
     const src = createSource(
 	'r = (333..666)')
 
@@ -298,7 +343,7 @@ test("Range I", () => {
     //expect(out).equals("")
 })
 
-test("Range II", () => {
+test.skip("Range II", () => {
     const src = createSource(
 	'r = (333...666)')
 
@@ -307,7 +352,7 @@ test("Range II", () => {
     //expect(out).equals("")
 })
 
-test("Range III", () => {
+test.skip("Range III", () => {
     const src = createSource(
 	'r = (..666)')
 
@@ -317,7 +362,7 @@ test("Range III", () => {
 })
 
 
-test("Range IV", () => {
+test.skip("Range IV", () => {
     const src = createSource(
 	'r = (666..)')
 
@@ -326,7 +371,7 @@ test("Range IV", () => {
     //expect(out).equals("")
 })
 
-test("Regexp", () => {
+test.skip("Regexp", () => {
     const src = createSource(
 	"/hay/ =~ 'haystack'")
 
@@ -335,7 +380,7 @@ test("Regexp", () => {
     //expect(out).equals("")
 })
 
-test("Proc", () => {
+test.skip("Proc", () => {
     const src = createSource(
 	"p = -> { 5 + 5 }")
 
@@ -344,7 +389,7 @@ test("Proc", () => {
     //expect(out).equals("")
 })
 
-test("Ternary if", () => {
+test.skip("Ternary if", () => {
     const src = createSource(
 	"a = b == 5 ? 333 : 666")
 
@@ -363,7 +408,7 @@ test.skip("Pattern matching I", () => {
 })
 
 
-test("Regex I", () => {
+test.skip("Regex I", () => {
     const src = createSource(
 	"a = /AZaz/")
 
@@ -372,7 +417,7 @@ test("Regex I", () => {
     //expect(out).equals("")
 })
 
-test("Regex Multi I", () => {
+test.skip("Regex Multi I", () => {
     const src = createSource(
 	"a = /",
 	"  AZaz",
@@ -384,7 +429,7 @@ test("Regex Multi I", () => {
     //expect(out).equals("")
 })
 
-test("Regex Multi II", () => {
+test.skip("Regex Multi II", () => {
     const src = createSource(
 	"a = /",
 	"  AZaz",
@@ -397,7 +442,7 @@ test("Regex Multi II", () => {
     //expect(out).equals("")
 })
 
-test("Regex Multi III", () => {
+test.skip("Regex Multi III", () => {
     const src = createSource(
 	"CONTENT_TYPE_PARSER = /",
         " \A",

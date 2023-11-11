@@ -4,19 +4,33 @@ import {Artifact} from './program'
 export class OpCall extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_mid")
-	this.op = line.value
 
+	this.mid = tree.get(parent, startLine, "nd_mid")
+	this.recv = tree.get(parent, startLine, "nd_recv")
+	this.args = tree.get(parent, startLine, "nd_args")
+    }
 
-	line = tree.nextLine(startLine.indent, "attr", "nd_recv")
+    convert(output) {
+	if (this.recv instanceof OpCall) {
+	    this.add(output, "(")
+	    this.add(output, this.recv)
+	    this.add(output, ")")
+	} else {
+	    this.add(output, this.recv)
+	}
 
-	line = tree.nextLine(line.indent)
-	this.recv = resolveNode(this, tree, line)
-
-	line = tree.nextLine(startLine.indent, "attr", "nd_args")
-	line = tree.nextLine(line.indent)
-	this.args = resolveNode(this, tree, line)
+	this.add(output, " ")
+	this.add(output, this.mid.slice(1)) // ops are like :+
+	this.add(output, " ")
+	this.add(output, this.args.array[0])
+	if (this.args.array.length > 1) {
+	    for (let i = 1; i < this.args.array.length; ++i) {
+		this.add(output, " ")
+		this.add(output, this.mid.slice(1))
+		this.add(output, " ")
+		this.add(output, this.args.array[i])
+	    }
+	}
     }
 }
 

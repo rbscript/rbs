@@ -1,3 +1,5 @@
+import {Artifact} from './program'
+
 export class Output {
     constructor() {
 	this.text = ""
@@ -15,13 +17,14 @@ export class Output {
 	if (str == undefined) {
 	    throw "Trying to add undefined string"
 	}
+	if (str instanceof Artifact) {
+	    str.convert(this)
+	    return
+	}
 	if ("string" != typeof str) {
 	    throw "Trying to add " + str.constructor.name
 	}
-	if (this.col != 0) {
-	    this.text += " "
-	    this.col++
-	} else {
+	if (this.col == 0) {
 	    for (let i = 0; i < col; ++i) {
 		this.text += " "
 	    }
