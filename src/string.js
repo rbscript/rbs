@@ -18,6 +18,8 @@ export class XString extends Artifact { // backtick string
 	const line = tree.nextLine(startLine.indent, "attr", "nd_lit")
 	this.value = line.value
     }
+
+    // TODO convert() should call shell and got the output
 }
 
 export class DXString extends Artifact { // backtick string with interpolation

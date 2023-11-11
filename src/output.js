@@ -12,6 +12,12 @@ export class Output {
     }
 
     add(col, str) {
+	if (str == undefined) {
+	    throw "Trying to add undefined string"
+	}
+	if ("string" != typeof str) {
+	    throw "Trying to add " + str.constructor.name
+	}
 	if (this.col != 0) {
 	    this.text += " "
 	    this.col++
