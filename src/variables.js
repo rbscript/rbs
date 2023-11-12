@@ -107,17 +107,20 @@ export class MultiAssignment extends Artifact {
 export class LocalVariable extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_vid")
-	this.name = line.value
+
+	this.vid = tree.get(this, startLine, "nd_vid")
+    }
+
+    convert(output) {
+	this.add(output, symbol(this.vid))
     }
 }
 
 export class DynamicVariable extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
-	
-	tree.nextLine(startLine.indent, "attr", "nd_vid") // contains internal value
+
+	this.vid = tree.get(this, startLine, "nd_vid")
     }
 }
 

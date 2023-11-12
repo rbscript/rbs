@@ -127,7 +127,7 @@ test("simple unless else", () => {
     expect(out).toEqual(out2)
 })             
 
-test.skip("simple for", () => {
+test("simple for", () => {
     const src = createSource(
 	"for i in some_func",
 	"  print(i)",
@@ -135,7 +135,13 @@ test.skip("simple for", () => {
     )
     const out = parseSource(src)
 
-    //expect(out).toEqual(out2)
+    const out2 = createSource(
+	"for (const i in someFunc) {",
+	"  print(i)",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
 })             
     
 test.skip("simple while", () => {

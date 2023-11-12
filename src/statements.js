@@ -1,6 +1,7 @@
 import {resolveNode} from './node'
 import {Artifact} from './program'
 import {List} from './lists'
+import {symbol} from './literal'
 
 export class If extends Artifact {
     constructor(parent, tree, startLine) {
@@ -139,14 +140,21 @@ export class For extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
 
-	let line = tree.nextLine(startLine.indent, "attr", "nd_iter")
+	this.iter = tree.get(this, startLine, "nd_iter")
+	this.body = tree.get(this, startLine, "nd_body")
+    }
 
-	line = tree.nextLine(line.indent)
-	this.iter = resolveNode(this, tree, line)
+    convert(output) {
+	this.add(output, "for (const ")
+	this.add(output, symbol(this.body.args.preInit.vid))
+	this.add(output, " in ")
+	this.add(output, this.iter)
+	this.add(output, ") {")
+	output.addLine()
 
-	line = tree.nextLine(startLine.indent, "attr", "nd_body")
-	line = tree.nextLine(line.indent)
-	this.body = resolveNode(this, tree, line)
+	this.add(output, this.body)
+	output.addLine()
+	this.add(output, "}")
     }
 }
 
