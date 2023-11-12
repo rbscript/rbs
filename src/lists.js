@@ -32,6 +32,20 @@ export class List extends Artifact {
 	    }
 	}
     }
+
+    convert(output) {
+	this.add(output, "[")
+	let first = true
+	for (const elem of this.array) {
+	    if (first) {
+		first = false
+	    } else {
+		this.add(output, ", ")
+	    }
+	    this.add(output, elem)
+	}
+	this.add(output, "]")
+    }
 }
 
 export class Args extends Artifact {

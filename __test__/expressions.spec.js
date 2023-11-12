@@ -307,33 +307,34 @@ test.skip("Symbol", () => {
     //expect(out).equals("")
 })
 
-test.skip("Array", () => {
+test("Array", () => {
     const src = createSource(
-	's = [3, 5, 8]')
+	'a = [3, 5, 8]')
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual("const a = [3, 5, 8]")
 })
 
-test.skip("Hash I", () => {
+test("Hash I", () => {
     const src = createSource(
-	's = { "a" => 1, "b" => 2 }')
+	'h = { "a" => 1, "b" => 2 }')
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual('const h = {"a": 1, "b": 2}')
 })
 
-test.skip("Hash II", () => {
+test("Hash II", () => {
     const src = createSource(
-	's = { a: 1, b: 2 }')
+	'h = { a: 1, b: 2 }')
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    expect(out).toEqual('const h = {a: 1, b: 2}')
 })
 
+// TODO https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from
 test.skip("Range I", () => {
     const src = createSource(
 	'r = (333..666)')
