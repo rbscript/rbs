@@ -7,7 +7,7 @@ export class Output {
 	this.col = 0
     }
 
-    line() {
+    addLine() {
 	this.text += "\n"
 	this.line++
 	this.col = 0
@@ -15,6 +15,7 @@ export class Output {
 
     add(col, str) {
 	if (str == undefined) {
+	    console.warn("Trying to add undefined string")
 	    throw "Trying to add undefined string"
 	}
 	if (str instanceof Artifact) {

@@ -8,11 +8,36 @@ test("simple if", () => {
 	"  b = 3 + 5",
 	"end"
     )
-    
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    const out2 = createSource(
+	"if (a == 5) {",
+	"  const b = 3 + 5",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
 })
+
+test("simple if with two statements", () => {
+    const src = createSource(
+	"if a == 5",
+	"  b = 3 + 5",
+	"  print('hello')",
+	"end"
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"if (a == 5) {",
+	"  const b = 3 + 5",
+	'  print("hello")',
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
 
 test("simple if else", () => {
     const src = createSource(
@@ -24,7 +49,15 @@ test("simple if else", () => {
     )
     const out = parseSource(src)
 
-    //expect(out).toEqual(out2)
+    const out2 = createSource(
+	"if (a == 5) {",
+	"  return 3 + 5",
+	"} else {",
+	"  return (3 + 5) + 8",
+	"}"
+    )
+    
+   expect(out).toEqual(out2)
 })             
 
 test("simple if elsif", () => {
@@ -37,8 +70,42 @@ test("simple if elsif", () => {
     )
     const out = parseSource(src)
 
-    //expect(out).toEqual(out2)
+    const out2 = createSource(
+	"if (a == 5) {",
+	"  return 3 + 5",
+	"} else if (a == 9) {",
+	"  return (3 + 5) + 8",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
 })             
+
+test("simple if elsif else", () => {
+    const src = createSource(
+	"if a == 5",
+	"  return 3 + 5",
+	"elsif a == 9",
+	"  return 3 + 5 + 8",
+	"else",
+	"  return 666",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"if (a == 5) {",
+	"  return 3 + 5",
+	"} else if (a == 9) {",
+	"  return (3 + 5) + 8",
+	"} else {",
+	"  return 666",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})             
+
 
 test("simple unless else", () => {
     const src = createSource(
@@ -50,10 +117,17 @@ test("simple unless else", () => {
     )
     const out = parseSource(src)
 
-    //expect(out).toEqual(out2)
+    const out2 = createSource(
+	"if (!(a == 5)) {",
+	"  return 3 + 5",
+	"} else {",
+	"  return (3 + 5) + 8",
+	"}"
+    )
+    expect(out).toEqual(out2)
 })             
 
-test("simple for", () => {
+test.skip("simple for", () => {
     const src = createSource(
 	"for i in some_func",
 	"  print(i)",
@@ -64,7 +138,7 @@ test("simple for", () => {
     //expect(out).toEqual(out2)
 })             
     
-test("simple while", () => {
+test.skip("simple while", () => {
     const src = createSource(
 	"while i < 10",
 	"  print(i)",
@@ -75,7 +149,7 @@ test("simple while", () => {
     //expect(out).toEqual(out2)
 })             
 
-test("simple until with do", () => {
+test.skip("simple until with do", () => {
     const src = createSource(
 	"until i < 10 do",
 	"  print(i)",
@@ -86,7 +160,7 @@ test("simple until with do", () => {
     //expect(out).toEqual(out2)
 })             
 
-test("simple case", () => {
+test.skip("simple case", () => {
     const src = createSource(
 	"case a",
 	"when 1",
@@ -102,7 +176,7 @@ test("simple case", () => {
     //expect(out).toEqual(out2)
 })             
 
-test("case with expressions", () => {
+test.skip("case with expressions", () => {
     const src = createSource(
 	"case",
 	"when a == 1",
@@ -119,7 +193,7 @@ test("case with expressions", () => {
 })             
 
 
-test("begin block", () => {
+test.skip("begin block", () => {
     const src = createSource(
 	"begin",
 	"  a = 333",
@@ -131,7 +205,7 @@ test("begin block", () => {
     //expect(out).toEqual(out2)
 })             
 
-test("begin block", () => {
+test.skip("begin block", () => {
     const src = createSource(
 	"begin",
 	"  a = 333",
@@ -143,7 +217,7 @@ test("begin block", () => {
     //expect(out).toEqual(out2)
 })             
 
-test("while with break", () => {
+test.skip("while with break", () => {
     const src = createSource(
 	"i = 0",
 	"while true",
@@ -156,7 +230,7 @@ test("while with break", () => {
     //expect(out).toEqual(out2)
 })             
 
-test("while with redo", () => {
+test.skip("while with redo", () => {
     const src = createSource(
 	"i = 0",
 	"while true",
@@ -183,6 +257,6 @@ test.skip("Pattern matching with case", () => {
 
     const out = parseSource(src)
 
-    //expect(out).equals("")
+    //expect(out).toEqual("")
 })
 

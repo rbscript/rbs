@@ -6,19 +6,56 @@ export class If extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
 	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_cond")
+	this.cond = tree.get(this, startLine, "nd_cond")
+	this.body = tree.get(this, startLine, "nd_body")
+	this.els = tree.get(this, startLine, "nd_else")
+    }
 
-	line = tree.nextLine(line.indent)
-	this.cond = resolveNode(this, tree, line)
-
-	line = tree.nextLine(startLine.indent, "attr", "nd_body")
-	line = tree.nextLine(line.indent)
-	this.body = resolveNode(this, tree, line)
-
-	line = tree.nextLine(startLine.indent, "attr", "nd_else")
-	line = tree.nextLine(line.indent)
-	this.els = resolveNode(this, tree, line)
+    convert(output) {
+	this.add(output, "if (")
+	this.add(output, this.cond)
+	this.add(output, ") {")
+	output.addLine()
 	
+	this.add(output, this.body)
+	output.addLine()
+	this.add(output, "}")
+
+	if (this.els != undefined) {
+	    if (this.els instanceof If) { // else if
+		this.convertElseIf(output, this.els)
+	    } else {
+		this.convertElse(output, this.els)
+	    }
+	}
+    }
+
+    convertElseIf(output, iff) {
+	this.add(output, " else if (")
+	this.add(output, iff.cond)
+	this.add(output, ") {")
+	output.addLine()
+
+	this.add(output, iff.body)
+	output.addLine()
+	this.add(output, "}")
+
+	if (iff.els != undefined) {
+	    if (iff.els instanceof If) { // else if
+		this.convertElseIf(output, iff.els)
+	    } else {
+		this.convertElse(output, iff.els)
+	    }
+	}
+    }
+
+    convertElse(output, els) {
+	this.add(output, " else {")
+	output.addLine()
+	
+	this.add(output, els)
+	output.addLine()
+	this.add(output, "}")
     }
 }
 
@@ -26,19 +63,29 @@ export class Unless extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
 
-	let line = tree.nextLine(startLine.indent, "attr", "nd_cond")
+	this.cond = tree.get(this, startLine, "nd_cond")
+	this.body = tree.get(this, startLine, "nd_body")
+	this.els = tree.get(this, startLine, "nd_else")
+    }
 
-	line = tree.nextLine(line.indent)
-	this.cond = resolveNode(this, tree, line)
-
-	line = tree.nextLine(startLine.indent, "attr", "nd_body")
-	line = tree.nextLine(line.indent)
-	this.body = resolveNode(this, tree, line)
-
-	line = tree.nextLine(startLine.indent, "attr", "nd_else")
-	line = tree.nextLine(line.indent)
-	this.els = resolveNode(this, tree, line)
+    convert(output) {
+	this.add(output, "if (!(")
+	this.add(output, this.cond)
+	this.add(output, ")) {")
+	output.addLine()
 	
+	this.add(output, this.body)
+	output.addLine()
+	this.add(output, "}")
+
+	if (this.els != undefined) {
+	    this.add(output, " else {")
+	    output.addLine()
+	    
+	    this.add(output, this.els)
+	    output.addLine()
+	    this.add(output, "}")
+	}
     }
 }
 
@@ -46,10 +93,15 @@ export class Return extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
 
-	let line = tree.nextLine(startLine.indent, "attr", "nd_stts")
+	this.stts = tree.get(this, startLine, "nd_stts")
+    }
 
-	line = tree.nextLine(line.indent)
-	this.stts = resolveNode(this, tree, line)
+    convert(output) {
+	this.add(output, "return")
+	if (this.stts != undefined) {
+	    this.add(output, " ")
+	    this.add(output, this.stts)
+	}
     }
 }
 

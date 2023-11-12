@@ -35,11 +35,25 @@ export class Block extends Artifact {
 	    }
 	    line = tree.nextLine(line.indent)
 
-	    this.statements.push(resolveNode(this, tree, line))
+	    const stm = resolveNode(this, tree, line)
+	    stm.parent = this
+	    this.statements.push(stm)
 	}
     }
 
-    
+    convert(output) {
+	// The responsibility of putting { and } belongs to the parent
+	//
+	let first = true
+	for (const stm of this.statements) {
+	    if (first) {
+		first = false
+	    } else {
+		output.addLine()
+	    }
+	    this.add(output, stm)
+	}
+    }
 }
 
 export class Begin extends Artifact {
