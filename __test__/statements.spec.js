@@ -144,7 +144,7 @@ test("simple for", () => {
     expect(out).toEqual(out2)
 })             
     
-test.skip("simple while", () => {
+test("simple while", () => {
     const src = createSource(
 	"while i < 10",
 	"  print(i)",
@@ -152,10 +152,15 @@ test.skip("simple while", () => {
     )
     const out = parseSource(src)
 
-    //expect(out).toEqual(out2)
+    const out2 = createSource(
+	"while (i < 10) {",
+	"  print(i)",
+	"}"
+    )
+    expect(out).toEqual(out2)
 })             
 
-test.skip("simple until with do", () => {
+test("simple until with do", () => {
     const src = createSource(
 	"until i < 10 do",
 	"  print(i)",
@@ -163,8 +168,30 @@ test.skip("simple until with do", () => {
     )
     const out = parseSource(src)
 
-    //expect(out).toEqual(out2)
+    const out2 = createSource(
+	"while (!(i < 10)) {",
+	"  print(i)",
+	"}"
+    )
+    expect(out).toEqual(out2)
 })             
+
+test("simple while at end", () => {
+    const src = createSource(
+	"begin",
+	"  print(i)",
+	"end while i < 10"
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"do {",
+	"  print(i)",
+	"} while (i < 10)"
+    )
+    expect(out).toEqual(out2)
+})             
+
 
 test.skip("simple case", () => {
     const src = createSource(

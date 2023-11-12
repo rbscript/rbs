@@ -162,16 +162,32 @@ export class While extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
 
-	let line = tree.nextLine(startLine.indent, "attr", "nd_state")
-	this.state = line.value
+	this.state = tree.get(this, startLine, "nd_state")
+	this.cond = tree.get(this, startLine, "nd_cond")
+	this.body = tree.get(this, startLine, "nd_body")
+    }
 
-	line = tree.nextLine(startLine.indent, "attr", "nd_cond")
-	line = tree.nextLine(line.indent)
-	this.cond = resolveNode(this, tree, line)
+    convert(output) {
+	if (this.state.startsWith("1")) {
+	    this.add(output, "while (")
+	    this.add(output, this.cond)
+	    this.add(output, ") {")
+	} else if (this.state.startsWith("0")) {
+	    this.add(output, "do {")
+	} else {
+	    throw "Unexpected state " + this.state + " for while"
+	}
+	output.addLine()
+	
+	this.add(output, this.body)
+	output.addLine()
+	this.add(output, "}")
 
-	line = tree.nextLine(startLine.indent, "attr", "nd_body")
-	line = tree.nextLine(line.indent)
-	this.body = resolveNode(this, tree, line)
+	if (this.state.startsWith("0")) {
+	    this.add(output, " while (")
+	    this.add(output, this.cond)
+	    this.add(output, ")")
+	}
     }
 }
 
@@ -179,16 +195,20 @@ export class Until extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
 
-	let line = tree.nextLine(startLine.indent, "attr", "nd_state")
-	this.state = line.value
+	this.state = tree.get(this, startLine, "nd_state")
+	this.cond = tree.get(this, startLine, "nd_cond")
+	this.body = tree.get(this, startLine, "nd_body")
+    }
 
-	line = tree.nextLine(startLine.indent, "attr", "nd_cond")
-	line = tree.nextLine(line.indent)
-	this.cond = resolveNode(this, tree, line)
+    convert(output) {
+	this.add(output, "while (!(")
+	this.add(output, this.cond)
+	this.add(output, ")) {")
+	output.addLine()
 
-	line = tree.nextLine(startLine.indent, "attr", "nd_body")
-	line = tree.nextLine(line.indent)
-	this.body = resolveNode(this, tree, line)
+	this.add(output, this.body)
+	output.addLine()
+	this.add(output, "}")
     }
 }
 
