@@ -49,6 +49,7 @@ export function resolveNode(parent, tree, line) {
 	return new DynamicString(parent, tree, line)
     case "NODE_EVSTR":
 	return new EvalString(parent, tree, line)
+    case "NODE_CALL":
     case "NODE_OPCALL":
 	return new OpCall(parent, tree, line)
     case "NODE_AND":
@@ -73,8 +74,6 @@ export function resolveNode(parent, tree, line) {
 	return new FuncCall(parent, tree, line)
     case "NODE_VCALL":
 	return new VarCall(parent, tree, line)
-    case "NODE_CALL":
-	return new Call(parent, tree, line)
     case "NODE_QCALL":
 	return new QCall(parent, tree, line)
     case "NODE_LIST":

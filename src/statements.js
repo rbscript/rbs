@@ -110,10 +110,15 @@ export class Break extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
 
-	let line = tree.nextLine(startLine.indent, "attr", "nd_stts")
+	this.stts = tree.get(this, startLine, "nd_stts")
+    }
 
-	line = tree.nextLine(line.indent)
-	this.stts = resolveNode(this, tree, line)
+    convert(output) {
+	this.add(output, "break")
+	if (this.stts != undefined) {
+	    this.add(output, " ")
+	    this.add(output, this.stts)
+	}
     }
 }
 
@@ -121,10 +126,14 @@ export class Next extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
 
-	let line = tree.nextLine(startLine.indent, "attr", "nd_stts")
+	this.stts = tree.get(this, startLine, "nd_stts")
+    }
 
-	line = tree.nextLine(line.indent)
-	this.stts = resolveNode(this, tree, line)
+    convert(output) {
+	this.add(output, "continue")
+	if (this.stts != undefined) {
+	    throw "Unexpected" // TODO what does it mean for next to return a value?
+	}
     }
 }
 
