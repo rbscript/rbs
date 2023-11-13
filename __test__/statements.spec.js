@@ -193,7 +193,7 @@ test("simple while at end", () => {
 })             
 
 
-test.skip("simple case", () => {
+test("simple case", () => {
     const src = createSource(
 	"case a",
 	"when 1",
@@ -205,11 +205,25 @@ test.skip("simple case", () => {
 	"end"
     )
     const out = parseSource(src)
-
-    //expect(out).toEqual(out2)
+    
+    const out2 = createSource(
+	"switch (a) {",
+	"case 1:",
+	"  print(i)",
+	"break",
+	"case 2:",
+	"case 3 + 5:",
+	"  const x = 333",
+	"break",
+	"default:",
+	"  const x = 666",
+	"break",
+	"}"
+    )
+    expect(out).toEqual(out2)
 })             
 
-test.skip("case with expressions", () => {
+test("case with expressions", () => {
     const src = createSource(
 	"case",
 	"when a == 1",
@@ -221,8 +235,18 @@ test.skip("case with expressions", () => {
 	"end"
     )
     const out = parseSource(src)
-
-    //expect(out).toEqual(out2)
+    
+    const out2 = createSource(
+	"if (a == 1) {",
+	"  print(i)",
+	"} else if ((a == 2) || (a < 3 + 5)) {",
+	"  const x = 333",
+	"} else {",
+	"     const x = 666",
+	"  const a = 333",
+	"}"
+    )
+    expect(out).toEqual(out2)
 })             
 
 
