@@ -1,20 +1,10 @@
-import {Scope} from './blocks'
-
-export class Program {
-    constructor(tree) {
-	let line = tree.nextLine(0, "NODE_SCOPE")
-	this.scope = new Scope(this, tree, line)
-    }
-
-    convert(output) {
-	this.scope.convert(output)
-	return output.toString()
-    }
-}
+import {resolveNode} from './node'
 
 export class Artifact {
     constructor(parent, startLine) {
-	this.location = startLine.location
+	if (startLine != undefined) {
+	    this.location = startLine.location
+	}
 	this.parent = parent
     }
 
@@ -25,4 +15,29 @@ export class Artifact {
     add(output, str) {
 	output.add(this.location.startCol, str)
     }
+
+    findOwner() {
+	if (this.parent == undefined) {
+	    return this
+	}
+	return this.parent.findOwner()
+    }
+
+    returnize(tree) {
+	return this
+    }
 }
+
+export class Program extends Artifact {
+    constructor(tree) {
+	super(undefined, undefined)
+	let line = tree.nextLine(0, "NODE_SCOPE")
+	this.scope = resolveNode(this, tree, line)
+    }
+
+    convert(output) {
+	this.scope.convert(output)
+	return output.toString()
+    }
+}
+
