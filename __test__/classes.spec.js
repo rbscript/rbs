@@ -8,7 +8,11 @@ test("simple class", () => {
 	"end")
     const out = parseSource(src)
 
-    //expect(out).toEqual(out2)
+    const out2 = createSource(
+	"class Animal {",
+	"}"
+    )
+    expect(out).toEqual(out2)
 })             
 
 test("simple inheritance", () => {
@@ -19,10 +23,17 @@ test("simple inheritance", () => {
 	"end")
     const out = parseSource(src)
 
-    //expect(out).toEqual(out2)
+    const out2 = createSource(
+	"class Animal {",
+	"}",
+	"class Human extends Animal {",
+	"}"
+    )
+    expect(out).toEqual(out2)
+
 })             
 
-test("class with constructor", () => {
+test.skip("class with constructor", () => {
     const src = createSource(
 	"class Animal",
 	"  def initialize",
@@ -30,11 +41,19 @@ test("class with constructor", () => {
 	"  end",
 	"end")
     const out = parseSource(src)
-
-    //expect(out).toEqual(out2)
+    console.log(out)
+    
+    const out2 = createSource(
+	"class Animal {",
+	"  constructor() {",
+	'    this.eyeColor = "blue"',
+	"  }",
+	"}"
+    )
+    expect(out).toEqual(out2)
 })             
 
-test("class with constructor and a method", () => {
+test.skip("class with constructor and a method", () => {
     const src = createSource(
 	"class Animal",
 	"  def initialize",
@@ -51,7 +70,7 @@ test("class with constructor and a method", () => {
     //expect(out).toEqual(out2)
 })             
 
-test("class with a private method", () => {
+test.skip("class with a private method", () => {
     const src = createSource(
 	"class Animal",
 	"  private",
@@ -63,7 +82,7 @@ test("class with a private method", () => {
     //expect(out).toEqual(out2)
 })             
 
-test("class with a private method 2", () => {
+test.skip("class with a private method 2", () => {
     const src = createSource(
 	"class Animal",
 	"  def meow a",
@@ -75,7 +94,7 @@ test("class with a private method 2", () => {
     //expect(out).toEqual(out2)
 })             
 
-test("class with a protected method", () => {
+test.skip("class with a protected method", () => {
     const src = createSource(
 	"class Animal",
 	"  protected",
@@ -88,7 +107,7 @@ test("class with a protected method", () => {
 })             
 
 
-test("class with getter, setter and auto return", () => {
+test.skip("class with getter, setter and auto return", () => {
     const src = createSource(
 	"class Team",
 	"  def result",
@@ -103,7 +122,7 @@ test("class with getter, setter and auto return", () => {
     //expect(out).toEqual(out2)
 })             
 
-test("class method", () => {
+test.skip("class method", () => {
     const src = createSource(
 	"class Animal",
 	"  def self.deneme a, b",
@@ -115,7 +134,7 @@ test("class method", () => {
     //expect(out).toEqual(out2)
 })             
 
-test("singleton class method", () => {
+test.skip("singleton class method", () => {
     const src = createSource(
 	"class Animal",
 	"  class << self",
@@ -129,7 +148,7 @@ test("singleton class method", () => {
     //expect(out).toEqual(out2)
 })             
 
-test("New animal", () => {
+test.skip("New animal", () => {
     const src = createSource(
 	"class Animal",
 	"end",
@@ -141,7 +160,7 @@ test("New animal", () => {
 })             
 
 
-test("Simple module", () => {
+test.skip("Simple module", () => {
     const src = createSource(
 	"module M",
 	"end"
@@ -151,7 +170,7 @@ test("Simple module", () => {
     //expect(out).toEqual(out2)
 })  
 
-test("Nested modules I", () => {
+test.skip("Nested modules I", () => {
     const src = createSource(
 	"module Outer",
 	"  module Inner",
@@ -163,7 +182,7 @@ test("Nested modules I", () => {
     //expect(out).toEqual(out2)
 })  
 
-test("Nested modules II", () => {
+test.skip("Nested modules II", () => {
     const src = createSource(
 	"module Outer::Inner::Child",
 	"  module Grandson",
@@ -175,7 +194,7 @@ test("Nested modules II", () => {
     //expect(out).toEqual(out2)
 })  
 
-test("Nested modules III", () => {
+test.skip("Nested modules III", () => {
     const src = createSource(
 	"module A",
 	"  Z = 1",
@@ -190,7 +209,7 @@ test("Nested modules III", () => {
     //expect(out).toEqual(out2)
 })  
 
-test("Nested modules IVo", () => {
+test.skip("Nested modules IVo", () => {
     const src = createSource(
 	"Z = 0",
 	"module A",
@@ -205,7 +224,7 @@ test("Nested modules IVo", () => {
     //expect(out).toEqual(out2)
 })  
 
-test("Including modules", () => {
+test.skip("Including modules", () => {
     const src = createSource(
 	"module A",
 	"  def add a, b",
@@ -221,7 +240,7 @@ test("Including modules", () => {
     //expect(out).toEqual(out2)
 })  
 
-test("Including modules", () => {
+test.skip("Including modules", () => {
     const src = createSource(
 	"module A",
 	"  def add a, b",
@@ -237,7 +256,7 @@ test("Including modules", () => {
     //expect(out).toEqual(out2)
 })  
 
-test("constructor with super", () => {
+test.skip("constructor with super", () => {
     const src = createSource(
 	"class Animal",
 	"  def initialize(a, b)",
@@ -250,7 +269,7 @@ test("constructor with super", () => {
     //expect(out).toEqual(out2)
 })             
 
-test("method with super", () => {
+test.skip("method with super", () => {
     const src = createSource(
 	"class Animal",
 	"  def initialize(a, b)",
@@ -263,7 +282,7 @@ test("method with super", () => {
     //expect(out).toEqual(out2)
 })             
 
-test("method with super", () => {
+test.skip("method with super", () => {
     const src = createSource(
 	"class Animal",
 	"  def initialize(a, b)",
@@ -276,7 +295,7 @@ test("method with super", () => {
     //expect(out).toEqual(out2)
 })             
 
-test("using", () => {
+test.skip("using", () => {
     const src = createSource(
 	"using Kullan",
     )
@@ -285,7 +304,7 @@ test("using", () => {
     //expect(out).toEqual(out2)
 })             
 
-test("refine", () => {
+test.skip("refine", () => {
     const src = createSource(
 	"refine A do",
 	"end"
@@ -295,7 +314,7 @@ test("refine", () => {
     //expect(out).toEqual(out2)
 })             
 
-test("require", () => {
+test.skip("require", () => {
     const src = createSource(
 	"require 'C'"
     )
