@@ -1,25 +1,38 @@
 import {Artifact} from './program'
 import {Body} from './body'
 import {resolveNode} from './node'
+import {Return} from './statements'
+import {symbol} from './literal'
 
 export class Scope extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
 
-	// Local variables
 	this.tbl = tree.get(this, startLine, "nd_tbl")
-
-	// Arguments to the method (more info is available ARGS node
 	this.args = tree.get(this, startLine, "nd_args")
-
-	// And the body
 	this.body = tree.get(this, startLine, "nd_body")
-
-	
     }
 
     convert(output) {
-	return this.body.convert(output)
+	this.add(output, this.body)
+    }
+
+    convertArgs(output) {
+	// Why this method?
+	// Because args are defined  in nd_tbl but inits are defined in elsewhere, etc
+
+	if (this.tbl == "(empty)") {
+	    return
+	}
+
+	const args = this.tbl.split(',')
+	const count = this.args.preArgsNum
+	for (let i = 0; i < count; ++i) {
+	    if (i > 0) {
+		this.add(output, ", ")
+	    }
+	    this.add(output, symbol(args[i]))
+	}
     }
 }
 
@@ -54,6 +67,16 @@ export class Block extends Artifact {
 	    this.add(output, stm)
 	}
     }
+
+    returnize(tree) {
+	const i = this.statements.length - 1
+	this.statements[i] = Return.ize(tree, this.statements[i])
+	return this
+    }
+
+    isReturn() {
+	return this.statements[this.statements.length - 1].isReturn()
+    }
 }
 
 export class Begin extends Artifact {
@@ -63,10 +86,10 @@ export class Begin extends Artifact {
     }
 
     convert(output) {
-	if (this.body == undefined) {
-	    return ""
+	if (this.body != undefined) {
+	    this.body.convert(output)
+	    output.addLine()
 	}
-	return this.body.convert(output)
     }
 }
 

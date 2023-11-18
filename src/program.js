@@ -26,6 +26,10 @@ export class Artifact {
     returnize(tree) {
 	return this
     }
+
+    isReturn() {
+	return false
+    }
 }
 
 export class Program extends Artifact {

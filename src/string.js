@@ -1,6 +1,7 @@
 import {resolveNode} from './node'
 import {Artifact} from './program'
 import {VarCall} from './methods'
+import {Return} from './statements'
 
 export class String extends Artifact {
     constructor(parent, tree, startLine) {
@@ -10,6 +11,10 @@ export class String extends Artifact {
 
     convert(output) {
 	this.add(output, this.lit)
+    }
+
+    returnize(tree) {
+	return Return.ize(tree, this)
     }
 }
 
@@ -70,6 +75,10 @@ export class DynamicString extends Artifact {
 	    }
 	}
     }
+
+    returnize(tree) {
+	return Return.ize(tree, this)
+    }
 }
 
 export class EvalString extends Artifact {
@@ -87,6 +96,10 @@ export class EvalString extends Artifact {
 	    this.add(output, this.body)
 	    this.add(output, ")")
 	}
+    }
+
+    returnize(tree) {
+	return Return.ize(tree, this)
     }
 }
 

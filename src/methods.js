@@ -1,6 +1,9 @@
 import {resolveNode} from './node'
-import {Artifact} from './program'
-import {symbol} from './literal'
+import {Artifact, Program} from './program'
+import {symbol, Literal} from './literal'
+import {Class, Module} from './classes'
+import {Return} from './statements'
+import {OpCall} from './operators'
 
 export class FuncCall extends Artifact {
     constructor(parent, tree, startLine) {
@@ -45,6 +48,14 @@ export class Call extends Artifact {
 	this.recv = tree.get(this, startLine, "nd_recv")
 	this.args = tree.get(this, startLine, "nd_args")
     }
+
+    convert(output) {
+	this.add(output, this.recv)
+	this.add(output, " ")
+	this.add(output, this.mid)
+	this.add(output, " ")
+	this.add(output, this.args)
+    }
 }
 
 export class QCall extends Artifact {
@@ -64,17 +75,43 @@ export class QCall extends Artifact {
     }
 }
 
-
 export class Method extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
 	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_mid")
-	this.name = line.value
+	this.mid = tree.get(this, startLine, "nd_mid")
+	this.defn = tree.get(this, startLine, "nd_defn")
 
-	line = tree.nextLine(startLine.indent, "attr", "nd_defn")
-	line = tree.nextLine(line.indent)
-	this.args = resolveNode(this, tree, line)
+	this.defn.body = this.defn.body.returnize(tree)
+    }
+
+    convert(output) {
+	const owner = this.findOwner()
+	if (owner instanceof Program) {
+	    this.add(output, "function ")
+	} else if (owner instanceof Module) {
+	    this.add(output, owner.name)
+	    this.add(output, ".")
+	}
+	
+	let mid = symbol(this.mid)
+	if (mid == "initialize") {
+	    mid = "constructor"
+	}
+	this.add(output, mid)
+
+	// From now on, we'll use defn's internal parts
+	// (defn is Scope, by the way)
+	//
+	this.add(output, "(")
+	this.defn.convertArgs(output) // See Scope.convertArgs()
+	this.add(output, ") {")
+	output.addLine()
+
+	this.add(output, this.defn.body)
+	
+	output.addLine()
+	this.add(output, "}")
     }
 }
 

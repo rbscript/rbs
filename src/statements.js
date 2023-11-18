@@ -12,6 +12,21 @@ export class If extends Artifact {
 	this.els = tree.get(this, startLine, "nd_else")
     }
 
+    returnize(tree) {
+	this.body = this.body.returnize(tree)
+	if (this.els != undefined) {
+	    this.els = this.els.returnize(tree)
+	}
+	return this
+    }
+
+    isReturn() {
+	if (this.els == undefined) {
+	    return false
+	}
+	return this.body.isReturn() && this.els.isReturn()
+    }
+    
     convert(output) {
 	this.add(output, "if (")
 	this.add(output, this.cond)
@@ -69,6 +84,21 @@ export class Unless extends Artifact {
 	this.els = tree.get(this, startLine, "nd_else")
     }
 
+    returnize(tree) {
+	this.body = this.body.returnize(tree)
+	if (this.els != undefined) {
+	    this.els = this.els.returnize(tree)
+	}
+	return this
+    }
+
+    isReturn() {
+	if (this.els == undefined) {
+	    return false
+	}
+	return this.body.isReturn() && this.els.isReturn()
+    }
+    
     convert(output) {
 	this.add(output, "if (!(")
 	this.add(output, this.cond)
@@ -93,8 +123,9 @@ export class Unless extends Artifact {
 export class Return extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
-
-	this.stts = tree.get(this, startLine, "nd_stts")
+	if (startLine != undefined) { // see Returnize() below 
+	    this.stts = tree.get(this, startLine, "nd_stts")
+	}
     }
 
     convert(output) {
@@ -103,6 +134,17 @@ export class Return extends Artifact {
 	    this.add(output, " ")
 	    this.add(output, this.stts)
 	}
+    }
+
+    static ize(tree, artifact) {
+	const ret = new Return(artifact.parent, undefined, undefined)
+	ret.location = artifact.location
+	ret.stts = artifact
+	return ret
+    }
+
+    isReturn() {
+	return true
     }
 }
 
@@ -240,6 +282,26 @@ export class Case extends Artifact {
 	}
     }
 
+    returnize(tree) {
+	let when = this.firstWhen
+	while (when != undefined) {
+	    when.returnize(tree)
+	    when = when.when
+	}
+	return this
+    }
+
+    isReturn() {
+	let when = this.firstWhen
+	while (when != undefined) {
+	    if (!when.isReturn()) {
+		return false
+	    }
+	    when = when.when
+	}
+	return when.els != undefined 
+    }
+    
     convert(output) {
 	if (this.head == undefined) {
 	    this.convertGlorifiedIfElse(output)
@@ -291,6 +353,23 @@ class When extends Artifact {
 	}
     }
 
+    returnize(tree) {
+	this.body = this.body.returnize(tree)
+	if (this.els != undefined) {
+	    this.els = this.els.returnize(tree)
+	}
+	return this
+    }
+
+    isReturn() {
+	if (this.body.isReturn()) {
+	    if (this.els != undefined) {
+		return this.els.isReturn()
+	    }
+	}
+	return false
+    }
+
     convert(output) {
 	for (const cond of this.head.array) {
 	    this.add(output, "case ")
@@ -300,17 +379,33 @@ class When extends Artifact {
 	}
 	this.add(output, this.body)
 	output.addLine()
-	this.add(output, "break")
-	output.addLine()
 
+	let addbreak = !(this.body instanceof Return) 
+	if (!addbreak) {
+	    addbreak = !this.body.isReturn()
+	}
+
+	if (addbreak) {
+	    this.add(output, "break")
+	    output.addLine()
+	}
+	
 	if (this.els != undefined) {
 	    this.add(output, "default:")
 	    output.addLine()
 
 	    this.add(output, this.els)
 	    output.addLine()
-	    this.add(output, "break")
-	    output.addLine()
+
+	    addbreak = this.els instanceof Return
+	    if (!addbreak) {
+		addbreak = !this.els.isReturn()
+	    }
+
+	    if (addbreak) {
+		this.add(output, "break")
+		output.addLine()
+	    }
 	}
     }
 

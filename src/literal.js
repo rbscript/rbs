@@ -1,4 +1,5 @@
 import {Artifact} from './program'
+import {Return} from './statements'
 
 const reAlphaChar = /[a-zA-Z_]/
 
@@ -44,6 +45,18 @@ export function symbol(str) {
     }
     text = newtext
 
+    if (text[0] == '@') {
+	text = "this." + text.slice(1)
+	// TODO handle @@ (via inspecting the parent)
+    }
+
+    // Handle converted? or just_do_it!
+    if (text.endsWith("?")) {
+	text = text.slice(0, -1) + "Q"
+    } else if (text.endsWith("!")) {
+	text = text.slice(0, -1) + "X"
+    }
+
     return text
 }
 
@@ -59,6 +72,10 @@ export class Literal extends Artifact {
 	} else {
 	    this.add(output, this.lit)
 	}
+    }
+
+    returnize(tree) {
+	return Return.ize(tree, this)
     }
 }
 

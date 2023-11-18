@@ -1,6 +1,7 @@
 import {resolveNode} from './node'
 import {Artifact} from './program'
 import {Literal, symbol} from './literal'
+import {Return} from './statements'
 
 export class LocalAssignment extends Artifact {
     constructor(parent, tree, startLine) {
@@ -21,13 +22,15 @@ export class LocalAssignment extends Artifact {
 export class MemberAssignment extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_vid")
-	this.name = line.value
 
-	line = tree.nextLine(startLine.indent, "attr", "nd_value")
-	line = tree.nextLine(line.indent)
-	this.value = resolveNode(this, tree, line)
+	this.vid = tree.get(this, startLine, "nd_vid")
+	this.value = tree.get(this, startLine, "nd_value")
+    }
+
+    convert(output) {
+	this.add(output, symbol(this.vid))
+	this.add(output, " = ")
+	this.add(output, this.value)
     }
 }
 
@@ -74,8 +77,14 @@ export class ConstDecl extends Artifact {
 	super(parent, startLine)
 
 	this.vid = tree.get(this, startLine, "nd_vid")
-	this.els = tree.get(this, startLine, "nd_else")
-	this.els = tree.get(this, startLine, "nd_value")
+	this.els = tree.get(this, startLine, "nd_else") // TODO What the fuck??
+	this.value = tree.get(this, startLine, "nd_value")
+    }
+
+    convert(output) {
+	this.add(output, this.vid)
+	this.add(output, " = ")
+	this.add(output, this.value)
     }
 }
 
@@ -114,6 +123,10 @@ export class LocalVariable extends Artifact {
     convert(output) {
 	this.add(output, symbol(this.vid))
     }
+
+    returnize(tree) {
+	return Return.ize(tree, this)
+    }
 }
 
 export class DynamicVariable extends Artifact {
@@ -121,6 +134,10 @@ export class DynamicVariable extends Artifact {
 	super(parent, startLine)
 
 	this.vid = tree.get(this, startLine, "nd_vid")
+    }
+
+    returnize(tree) {
+	return Return.ize(tree, this)
     }
 }
 
@@ -132,6 +149,10 @@ export class GlobalVariable extends Artifact {
 	let line = tree.nextLine(startLine.indent, "attr", "nd_entry")
 	this.name = line.value
     }
+
+    returnize(tree) {
+	return Return.ize(tree, this)
+    }
 }
 
 export class MemberVariable extends Artifact {
@@ -140,6 +161,10 @@ export class MemberVariable extends Artifact {
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_vid")
 	this.name = line.value
+    }
+
+    returnize(tree) {
+	return Return.ize(tree, this)
     }
 }
 
@@ -150,14 +175,22 @@ export class ClassVariable extends Artifact {
 	let line = tree.nextLine(startLine.indent, "attr", "nd_vid")
 	this.name = line.value
     }
+
+    returnize(tree) {
+	return Return.ize(tree, this)
+    }
+
 }
 
 export class Const extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_vid")
-	this.name = line.value
+
+	this.vid = tree.get(this, startLine, "nd_vid")
+    }
+
+    convert(output) {
+	this.add(output, symbol(this.vid))
     }
 }
 
@@ -169,6 +202,11 @@ export class Nil extends Artifact {
     convert(output) {
 	this.add(output, "undefined")
     }
+
+    returnize(tree) {
+	return Return.ize(tree, this)
+    }
+
 }
 
 export class True extends Artifact {
@@ -179,6 +217,11 @@ export class True extends Artifact {
     convert(output) {
 	this.add(output, "true")
     }
+
+    returnize(tree) {
+	return Return.ize(tree, this)
+    }
+
 }
 
 export class False extends Artifact {
@@ -188,6 +231,10 @@ export class False extends Artifact {
 
     convert(output) {
 	this.add(output, "false")
+    }
+
+    returnize(tree) {
+	return Return.ize(tree, this)
     }
 }
 

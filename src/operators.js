@@ -1,5 +1,6 @@
 import {resolveNode} from './node'
 import {Artifact} from './program'
+import {Return} from './statements'
 
 export class OpCall extends Artifact {
     constructor(parent, tree, startLine) {
@@ -31,6 +32,10 @@ export class OpCall extends Artifact {
 		this.add(output, this.args.array[i])
 	    }
 	}
+    }
+
+    returnize(tree) {
+	return Return.ize(tree, this)
     }
 }
 

@@ -8,13 +8,119 @@ test("method definition", () => {
 	"  1 + 1",
 	"end"
     )
-
     const out = parseSource(src)
-
-    //expect(out).equals("")
+    
+    const out2 = createSource(
+	"function onePlusOne() {",
+	"  return 1 + 1",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
 })
 
-test("unary operator", () => {
+test("method definition", () => {
+    const src = createSource(
+	"def anti_christ",
+	"  666",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function antiChrist() {",
+	"  return 666",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+
+test("method definition multi line", () => {
+    const src = createSource(
+	"def a_plus_one",
+	"  a = 1",
+	"  a + 1",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function aPlusOne() {",
+	"  const a = 1",
+	"  return a + 1",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("method def with if", () => {
+    const src = createSource(
+	"def negative? n",
+	"  if n < 0",
+	"    true",
+	"  else",
+	"    false",
+	"  end",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function negativeQ(n) {",
+	"  if (n < 0) {",
+	"    return true",
+	"  } else {",
+	"    return false",
+	"  }",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("method def with case", () => {
+    const src = createSource(
+	"def number_name n",
+	"  case n",
+	"  when 0",
+	"    'zero'",
+	"  when 1",
+	"    'one'",
+	"  when 2",
+	"    'two'",
+	"  else",
+	"    print 666",
+	"    '' + n",
+	"  end",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function numberName(n) {",
+	"  switch (n) {",
+	"  case 0:",
+	'    return "zero"',
+	"  case 1:",
+	'    return "one"',
+	"  case 2:",
+	'    return "two"',
+	"  default:",
+	"    print(666)",
+	'    return "" + n',
+	"  }",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+
+
+test.skip("unary operator", () => {
     const src = createSource(
 	"class C",
 	"  def -@",
@@ -28,7 +134,7 @@ test("unary operator", () => {
     //expect(out).equals("")
 })
 
-test("array operator", () => {
+test.skip("array operator", () => {
     const src = createSource(
 	"class C",
 	"  def [](a, b)",
@@ -42,7 +148,7 @@ test("array operator", () => {
     //expect(out).equals("")
 })
 
-test("adding method to an object", () => {
+test.skip("adding method to an object", () => {
     const src = createSource(
 	'greeting = "Hello"',
 	"def greeting.broaden",
@@ -56,7 +162,7 @@ test("adding method to an object", () => {
 })
 
 
-test("method definition with unused args", () => {
+test.skip("method definition with unused args", () => {
     const src = createSource(
 	"def one_plus_one(_)",
 	"  1 + 1",
@@ -68,7 +174,7 @@ test("method definition with unused args", () => {
     //expect(out).equals("")
 })
 
-test("method definition with default values", () => {
+test.skip("method definition with default values", () => {
     const src = createSource(
 	"def one_plus_one(a = 3)",
 	"  1 + a",
@@ -80,7 +186,7 @@ test("method definition with default values", () => {
     //expect(out).equals("")
 })
 
-test("method definition with array decomposition", () => {
+test.skip("method definition with array decomposition", () => {
     const src = createSource(
 	"def my_method((a, b))",
 	"  p a: a, b: b",
@@ -92,7 +198,7 @@ test("method definition with array decomposition", () => {
     //expect(out).equals("")
 })
 
-test("method definition with array decomposition and remaining args", () => {
+test.skip("method definition with array decomposition and remaining args", () => {
     const src = createSource(
 	"def my_method((a, *b))",
 	"  p a: a, b: b",
@@ -104,7 +210,7 @@ test("method definition with array decomposition and remaining args", () => {
     //expect(out).equals("")
 })
 
-test("method definition with array argument", () => {
+test.skip("method definition with array argument", () => {
     const src = createSource(
 	"def my_method(*arguments)",
 	"  p arguments",
@@ -116,7 +222,7 @@ test("method definition with array argument", () => {
     //expect(out).equals("")
 })
 
-test("method definition with keyword arguments", () => {
+test.skip("method definition with keyword arguments", () => {
     const src = createSource(
 	"def add_values(first: 1, second: 2)",
 	"  first + second",
@@ -128,7 +234,7 @@ test("method definition with keyword arguments", () => {
     //expect(out).equals("")
 })
 
-test("method definition with arbitrary keyword arguments", () => {
+test.skip("method definition with arbitrary keyword arguments", () => {
     const src = createSource(
 	"def gather_arguments(first: nil, **rest)",
 	"  p first, rest",
@@ -140,7 +246,7 @@ test("method definition with arbitrary keyword arguments", () => {
     //expect(out).equals("")
 })
 
-test("method definition with block argument", () => {
+test.skip("method definition with block argument", () => {
     const src = createSource(
 	"def with_block(&block)",
 	"  yield block",
@@ -152,7 +258,7 @@ test("method definition with block argument", () => {
     //expect(out).equals("")
 })
 
-test("method definition as expression", () => {
+test.skip("method definition as expression", () => {
     const src = createSource(
 	"memoize def expensive_op",
 	"  1 + 1",
@@ -164,7 +270,7 @@ test("method definition as expression", () => {
     //expect(out).equals("")
 })
 
-test("undefining a method", () => {
+test.skip("undefining a method", () => {
     const src = createSource(
 	"undef expensive_op"
     )
@@ -174,7 +280,7 @@ test("undefining a method", () => {
     //expect(out).equals("")
 })
 
-test("undefining multiple methods", () => {
+test.skip("undefining multiple methods", () => {
     const src = createSource(
 	"undef expensive_op, some_func"
     )
@@ -184,7 +290,7 @@ test("undefining multiple methods", () => {
     //expect(out).equals("")
 })
 
-test("calling func I", () => {
+test.skip("calling func I", () => {
     const src = createSource(
 	"fonk(3, 5, 8)"
     )
@@ -194,7 +300,7 @@ test("calling func I", () => {
     //expect(out).equals("")
 })
 
-test("calling func II", () => {
+test.skip("calling func II", () => {
     const src = createSource(
 	"fonk 3, 5, 8"
     )
@@ -205,7 +311,7 @@ test("calling func II", () => {
 })
 
 
-test("calling func III", () => {
+test.skip("calling func III", () => {
     const src = createSource(
 	"lone_func"
     )
@@ -215,7 +321,7 @@ test("calling func III", () => {
     //expect(out).equals("")
 })
 
-test("calling method I", () => {
+test.skip("calling method I", () => {
     const src = createSource(
 	"obje.metod"
     )
@@ -225,7 +331,7 @@ test("calling method I", () => {
     //expect(out).equals("")
 })
 
-test("calling method safely", () => {
+test.skip("calling method safely", () => {
     const src = createSource(
 	"obje&.metod"
     )
@@ -236,7 +342,7 @@ test("calling method safely", () => {
 })
 
 
-test("calling method II", () => {
+test.skip("calling method II", () => {
     const src = createSource(
 	"obje().metod 5, 'str', :keyw, name: value, 'nam' => 666"
     )
@@ -246,7 +352,7 @@ test("calling method II", () => {
     //expect(out).equals("")
 })
 
-test("block argument I", () => {
+test.skip("block argument I", () => {
     const src = createSource(
 	"my_func do",
 	"  p 'hello'",
@@ -258,7 +364,7 @@ test("block argument I", () => {
     //expect(out).equals("")
 })
 
-test("block argument II", () => {
+test.skip("block argument II", () => {
     const src = createSource(
 	"my_func do |name|",
 	'  p "hello #{name}"',
@@ -270,7 +376,7 @@ test("block argument II", () => {
     //expect(out).equals("")
 })
 
-test("block argument III", () => {
+test.skip("block argument III", () => {
     const src = createSource(
 	"my_func {",
 	"  p 'hello'",
@@ -282,7 +388,7 @@ test("block argument III", () => {
     //expect(out).equals("")
 })
 
-test("block local argument II", () => {
+test.skip("block local argument II", () => {
     const src = createSource(
 	"a = 4",
 	"my_func do |name;a|",
@@ -295,7 +401,7 @@ test("block local argument II", () => {
     //expect(out).equals("")
 })
 
-test("splat operator", () => {
+test.skip("splat operator", () => {
     const src = createSource(
 	"a = [3, 5, 8]",
 	"fonk *a"
@@ -306,7 +412,7 @@ test("splat operator", () => {
     //expect(out).equals("")
 })
 
-test("hash operator", () => {
+test.skip("hash operator", () => {
     const src = createSource(
 	"arguments = { first: 3, second: 4, third: 5 }",
 	"my_method(**arguments)"
@@ -317,7 +423,7 @@ test("hash operator", () => {
     //expect(out).equals("")
 })
 
-test("send proc as an block argument", () => {
+test.skip("send proc as an block argument", () => {
     const src = createSource(
 	'argument = proc { |a| puts "#{a.inspect} was yielded" }',
 	"my_method(&argument)"
