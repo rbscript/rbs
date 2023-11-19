@@ -33,7 +33,7 @@ test("simple inheritance", () => {
 
 })             
 
-test.skip("class with constructor", () => {
+test("class with constructor", () => {
     const src = createSource(
 	"class Animal",
 	"  def initialize",
@@ -41,7 +41,6 @@ test.skip("class with constructor", () => {
 	"  end",
 	"end")
     const out = parseSource(src)
-    console.log(out)
     
     const out2 = createSource(
 	"class Animal {",
@@ -53,7 +52,7 @@ test.skip("class with constructor", () => {
     expect(out).toEqual(out2)
 })             
 
-test.skip("class with constructor and a method", () => {
+test("class with constructor and a method", () => {
     const src = createSource(
 	"class Animal",
 	"  def initialize",
@@ -67,7 +66,20 @@ test.skip("class with constructor and a method", () => {
 	"end")
     const out = parseSource(src)
 
-    //expect(out).toEqual(out2)
+    const out2 = createSource(
+	"class Animal {",
+	"  constructor() {",
+	'    this.eyeColor = "blue"',
+	"  }",
+	"  meow(a) {",
+	'    if (this.eyeColor == "blue") {',
+	"      hello", // TODO NODE_VCALL Represents a local variable or a method call without an explicit receiver, to be determined at run-time.
+	"    }",
+	"  }",
+	"}"
+    )
+
+    expect(out).toEqual(out2)
 })             
 
 test.skip("class with a private method", () => {
@@ -256,17 +268,27 @@ test.skip("Including modules", () => {
     //expect(out).toEqual(out2)
 })  
 
-test.skip("constructor with super", () => {
+test("constructor with super", () => {
     const src = createSource(
-	"class Animal",
+	"class Animal < Creature",
 	"  def initialize(a, b)",
 	"    super(a, b)",
 	"    @eye_color = 'blue'",
 	"  end",
 	"end")
     const out = parseSource(src)
+    console.log(out)
+    
+    const out2 = createSource(
+	"class Animal extends Creature {",
+	"  constructor(a, b) {",
+	"    super(a, b)",
+	'    this.eyeColor = "blue"',
+	"  }",
+	"}"
+    )
 
-    //expect(out).toEqual(out2)
+    expect(out).toEqual(out2)
 })             
 
 test.skip("method with super", () => {

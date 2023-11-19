@@ -23,7 +23,7 @@ export class Class extends Artifact {
 
 	this.add(output, this.body)
 
-	this.add(output, "}")
+	this.addNewLine(output, "}")
     }
 
     findOwner() {
@@ -100,9 +100,21 @@ export class Super extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
 
-	let line = tree.nextLine(startLine.indent, "attr", "nd_args")
-	line = tree.nextLine(line.indent)
-	this.args  = resolveNode(this, tree, line)
+	this.args = tree.get(this, startLine, "nd_args")
+    }
+
+    convert(output) {
+	this.add(output, "super")
+
+	this.add(output, "(")
+	if (this.args != undefined && this.args.array.length > 0) {
+	    this.add(output, this.args.array[0])
+	    for (let i = 1; i < this.args.array.length; ++i) {
+		this.add(output, ", ")
+		this.add(output, this.args.array[i])
+	    }
+	}
+	this.add(output, ")")
     }
 }
 

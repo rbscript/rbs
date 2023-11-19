@@ -13,6 +13,13 @@ export class Output {
 	this.col = 0
     }
 
+    addNewLine(col, str) {
+	if (this.col != 0) {
+	    this.addLine()
+	}
+	this.add(col, str)
+    }
+    
     add(col, str) {
 	if (str == undefined) {
 	    console.warn("Trying to add undefined string")

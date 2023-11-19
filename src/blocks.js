@@ -57,20 +57,14 @@ export class Block extends Artifact {
     convert(output) {
 	// The responsibility of putting { and } belongs to the parent
 	//
-	let first = true
 	for (const stm of this.statements) {
-	    if (first) {
-		first = false
-	    } else {
-		output.addLine()
-	    }
-	    this.add(output, stm)
+	    this.addNewLine(output, stm)
 	}
     }
 
     returnize(tree) {
 	const i = this.statements.length - 1
-	this.statements[i] = Return.ize(tree, this.statements[i])
+	this.statements[i] = this.statements[i].returnize(tree)
 	return this
     }
 
@@ -88,7 +82,6 @@ export class Begin extends Artifact {
     convert(output) {
 	if (this.body != undefined) {
 	    this.body.convert(output)
-	    output.addLine()
 	}
     }
 }

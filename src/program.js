@@ -16,6 +16,10 @@ export class Artifact {
 	output.add(this.location.startCol, str)
     }
 
+    addNewLine(output, str) {
+	output.addNewLine(this.location.startCol, str)
+    }
+
     findOwner() {
 	if (this.parent == undefined) {
 	    return this

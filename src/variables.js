@@ -158,13 +158,16 @@ export class GlobalVariable extends Artifact {
 export class MemberVariable extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_vid")
-	this.name = line.value
+
+	this.vid = tree.get(this, startLine, "nd_vid")
     }
 
     returnize(tree) {
 	return Return.ize(tree, this)
+    }
+
+    convert(output) {
+	this.add(output, symbol(this.vid))
     }
 }
 
