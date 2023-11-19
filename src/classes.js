@@ -5,6 +5,7 @@ import {symbol} from './literal'
 export class Class extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
+	this.properties = []
 
 	this.cpath  = tree.get(this, startLine, "nd_cpath")
 	this.supper  = tree.get(this, startLine, "nd_super")
@@ -28,6 +29,14 @@ export class Class extends Artifact {
 
     findOwner() {
 	return this
+    }
+
+    addProperty(name) {
+	name = name.slice(2) // eliminate :@
+	if (this.properties.includes(name)) {
+	    return
+	}
+	this.properties.push(name)
     }
 }
 

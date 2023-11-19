@@ -45,7 +45,7 @@ test("class with constructor", () => {
     const out2 = createSource(
 	"class Animal {",
 	"  constructor() {",
-	'    this.eyeColor = "blue"',
+	'    this._eyeColor = "blue"',
 	"  }",
 	"}"
     )
@@ -69,10 +69,10 @@ test("class with constructor and a method", () => {
     const out2 = createSource(
 	"class Animal {",
 	"  constructor() {",
-	'    this.eyeColor = "blue"',
+	'    this._eyeColor = "blue"',
 	"  }",
 	"  meow(a) {",
-	'    if (this.eyeColor == "blue") {',
+	'    if (this._eyeColor == "blue") {',
 	"      hello", // TODO NODE_VCALL Represents a local variable or a method call without an explicit receiver, to be determined at run-time.
 	"    }",
 	"  }",
@@ -119,7 +119,7 @@ test.skip("class with a protected method", () => {
 })             
 
 
-test.skip("class with getter, setter and auto return", () => {
+test("class with getter, setter and auto return", () => {
     const src = createSource(
 	"class Team",
 	"  def result",
@@ -131,7 +131,18 @@ test.skip("class with getter, setter and auto return", () => {
 	"end")
     const out = parseSource(src)
 
-    //expect(out).toEqual(out2)
+    const out2 = createSource(
+	"class Team {",
+	"  get result() {",
+	"    return this._result",
+	"  }",
+	"  set result(value) {",
+	"    this._result = value",
+	"  }",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
 })             
 
 test.skip("class method", () => {
@@ -283,7 +294,7 @@ test("constructor with super", () => {
 	"class Animal extends Creature {",
 	"  constructor(a, b) {",
 	"    super(a, b)",
-	'    this.eyeColor = "blue"',
+	'    this._eyeColor = "blue"',
 	"  }",
 	"}"
     )

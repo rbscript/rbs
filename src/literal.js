@@ -46,7 +46,7 @@ export function symbol(str) {
     text = newtext
 
     if (text[0] == '@') {
-	text = "this." + text.slice(1)
+	text = "this._" + text.slice(1)
 	// TODO handle @@ (via inspecting the parent)
     }
 

@@ -86,15 +86,30 @@ export class Method extends Artifact {
     }
 
     convert(output) {
+	let mid = symbol(this.mid)
+	
 	const owner = this.findOwner()
 	if (owner instanceof Program) {
 	    this.add(output, "function ")
 	} else if (owner instanceof Module) {
 	    this.add(output, owner.name)
 	    this.add(output, ".")
+
+	} else {// class
+
+	    // Check if it is a property
+	    //
+	    if (this.mid.endsWith("=")) {
+		this.add(output, "set ")
+		mid = mid.slice(0, -1)
+	    } else if (owner.properties.includes(this.mid.slice(1))) {
+		if (this.defn.args.preArgsNum == 0) {
+		    this.add(output, "get ")
+		}
+	    }
 	}
 	
-	let mid = symbol(this.mid)
+
 	if (mid == "initialize") {
 	    mid = "constructor"
 	}

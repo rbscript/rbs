@@ -25,6 +25,8 @@ export class MemberAssignment extends Artifact {
 
 	this.vid = tree.get(this, startLine, "nd_vid")
 	this.value = tree.get(this, startLine, "nd_value")
+
+	this.findOwner().addProperty(this.vid)
     }
 
     convert(output) {
@@ -160,6 +162,8 @@ export class MemberVariable extends Artifact {
 	super(parent, startLine)
 
 	this.vid = tree.get(this, startLine, "nd_vid")
+
+	this.findOwner().addProperty(this.vid)
     }
 
     returnize(tree) {
