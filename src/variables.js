@@ -26,11 +26,13 @@ export class MemberAssignment extends Artifact {
 	this.vid = tree.get(this, startLine, "nd_vid")
 	this.value = tree.get(this, startLine, "nd_value")
 
-	this.findOwner().addProperty(this.vid)
+	const owner = this.findOwner()
+	owner.addProperty(this.vid)
+	this.name = symbol(owner.getProperty(this.vid.slice(2))) // Eliminate :@
     }
 
     convert(output) {
-	this.add(output, symbol(this.vid))
+	this.add(output, "this." + this.name)
 	this.add(output, " = ")
 	this.add(output, this.value)
     }
@@ -163,7 +165,9 @@ export class MemberVariable extends Artifact {
 
 	this.vid = tree.get(this, startLine, "nd_vid")
 
-	this.findOwner().addProperty(this.vid)
+	const owner = this.findOwner()
+	owner.addProperty(this.vid)
+	this.name = symbol(owner.getProperty(this.vid.slice(2))) // Eliminate :@
     }
 
     returnize(tree) {
@@ -171,7 +175,7 @@ export class MemberVariable extends Artifact {
     }
 
     convert(output) {
-	this.add(output, symbol(this.vid))
+	this.add(output, "this." + this.name)
     }
 }
 

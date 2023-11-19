@@ -5,8 +5,22 @@ import {symbol} from './literal'
 export class Class extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
-	this.properties = []
+	this.allProps = []
+	this.privateProps = []
+	this.protectedProps = []
+	this.allClassProps = []
+	this.privateClassProps = []
+	this.protectedClassProps = []
+	this.allMethods = []
+	this.privateMethods = []
+	this.protectedMethods = []
+	this.publicMethods = []
 
+	// public -> props are private, methods are public
+	// private -> everything is private, starts with #
+	// protected -> everything is protected, starts with _
+	this.mode = "public"
+	
 	this.cpath  = tree.get(this, startLine, "nd_cpath")
 	this.supper  = tree.get(this, startLine, "nd_super")
 	this.body  = tree.get(this, startLine, "nd_body")
@@ -33,10 +47,87 @@ export class Class extends Artifact {
 
     addProperty(name) {
 	name = name.slice(2) // eliminate :@
-	if (this.properties.includes(name)) {
+	if (this.allProps.includes(name)) {
 	    return
 	}
-	this.properties.push(name)
+
+	this.allProps.push(name)
+	
+	switch (this.mode) {
+	case "public":
+	case "private":
+	    this.privateProps.push(name)
+	    break
+	case "protected":
+	    this.protectedProps.push(name)
+	    break
+	}
+    }
+
+    addClassProperty(name) {
+	name = name.slice(3) // eliminate :@@
+	if (this.allClassProps.includes(name)) {
+	    return
+	}
+
+	this.allClassProps.push(name)
+	
+	switch (this.mode) {
+	case "public":
+	case "private":
+	    this.privateClassProps.push(name)
+	    break
+	case "protected":
+	    this.protectedClassProps.push(name)
+	    break
+	}
+    }
+
+    addMethod(name) {
+	name = name.slice(1) // eliminate :
+	if (this.allMethods.includes(name)) {
+	    return
+	}
+
+	this.allMethods.push(name)
+	
+	switch (this.mode) {
+	case "public":
+	    this.publicMethods.push(name)
+	    break
+	case "private":
+	    this.privateMethods.push(name)
+	    break
+	case "protected":
+	    this.protectedMethods.push(name)
+	    break
+	}
+    }
+
+    getProperty(name) {
+	if (this.privateProps.includes(name)) {
+	    return "#" + name
+	} else if (this.protectedProps.includes(name)) {
+	    return "_" + name
+	}
+    }
+
+    getClassProperty(name) {
+	if (this.privateClassProps.includes(name)) {
+	    return "#" + name
+	} else if (this.protectedClassProps.includes(name)) {
+	    return "_" + name
+	}
+    }
+
+    getMethod(name) {
+	if (this.publicMethods.includes(name)) {
+	    return name
+	} else if (this.privateMethods.includes(name)) {
+	    return "#" + name
+	} else if (this.protectedMethods.includes(name)) {
+	    return "_" + name
+	}
     }
 }
 

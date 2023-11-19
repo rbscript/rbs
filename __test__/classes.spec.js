@@ -45,7 +45,7 @@ test("class with constructor", () => {
     const out2 = createSource(
 	"class Animal {",
 	"  constructor() {",
-	'    this._eyeColor = "blue"',
+	'    this.#eyeColor = "blue"',
 	"  }",
 	"}"
     )
@@ -69,10 +69,10 @@ test("class with constructor and a method", () => {
     const out2 = createSource(
 	"class Animal {",
 	"  constructor() {",
-	'    this._eyeColor = "blue"',
+	'    this.#eyeColor = "blue"',
 	"  }",
 	"  meow(a) {",
-	'    if (this._eyeColor == "blue") {',
+	'    if (this.#eyeColor == "blue") {',
 	"      hello", // TODO NODE_VCALL Represents a local variable or a method call without an explicit receiver, to be determined at run-time.
 	"    }",
 	"  }",
@@ -134,10 +134,10 @@ test("class with getter, setter and auto return", () => {
     const out2 = createSource(
 	"class Team {",
 	"  get result() {",
-	"    return this._result",
+	"    return this.#result",
 	"  }",
 	"  set result(value) {",
-	"    this._result = value",
+	"    this.#result = value",
 	"  }",
 	"}"
     )
@@ -288,13 +288,12 @@ test("constructor with super", () => {
 	"  end",
 	"end")
     const out = parseSource(src)
-    console.log(out)
     
     const out2 = createSource(
 	"class Animal extends Creature {",
 	"  constructor(a, b) {",
 	"    super(a, b)",
-	'    this._eyeColor = "blue"',
+	'    this.#eyeColor = "blue"',
 	"  }",
 	"}"
     )

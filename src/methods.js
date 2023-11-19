@@ -102,13 +102,12 @@ export class Method extends Artifact {
 	    if (this.mid.endsWith("=")) {
 		this.add(output, "set ")
 		mid = mid.slice(0, -1)
-	    } else if (owner.properties.includes(this.mid.slice(1))) {
+	    } else if (owner.getProperty(this.mid.slice(1)) != undefined) {
 		if (this.defn.args.preArgsNum == 0) {
 		    this.add(output, "get ")
 		}
 	    }
 	}
-	
 
 	if (mid == "initialize") {
 	    mid = "constructor"

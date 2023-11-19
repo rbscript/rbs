@@ -45,11 +45,6 @@ export function symbol(str) {
     }
     text = newtext
 
-    if (text[0] == '@') {
-	text = "this._" + text.slice(1)
-	// TODO handle @@ (via inspecting the parent)
-    }
-
     // Handle converted? or just_do_it!
     if (text.endsWith("?")) {
 	text = text.slice(0, -1) + "Q"
