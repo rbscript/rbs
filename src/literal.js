@@ -23,9 +23,14 @@ export function symbol(str) {
 
     // Convert from first_name to firstName
     //
-    let flag = false
+    let start = 0
     let newtext = ""
-    for (let i = 0; i < text.length; ++i) {
+    if (text[0] == "_" || text[0] == "#") { // But do not count the first special character
+	start++
+	newtext = text[0]
+    }
+    let flag = false
+    for (let i = start; i < text.length; ++i) {
 	const c = text[i]
 
 	if (flag) {

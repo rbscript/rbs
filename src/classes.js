@@ -5,16 +5,10 @@ import {symbol} from './literal'
 export class Class extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
-	this.allProps = []
-	this.privateProps = []
-	this.protectedProps = []
-	this.allClassProps = []
-	this.privateClassProps = []
-	this.protectedClassProps = []
-	this.allMethods = []
-	this.privateMethods = []
-	this.protectedMethods = []
-	this.publicMethods = []
+	this.props = {}
+	this.methods = {}
+	this.classProps = {}
+	this.classMethods = {}
 
 	// public -> props are private, methods are public
 	// private -> everything is private, starts with #
@@ -24,8 +18,14 @@ export class Class extends Artifact {
 	this.cpath  = tree.get(this, startLine, "nd_cpath")
 	this.supper  = tree.get(this, startLine, "nd_super")
 	this.body  = tree.get(this, startLine, "nd_body")
+
+	this.addClass(this)
     }
 
+    get name() {
+	return this.cpath.mid
+    }
+    
     convert(output) {
 	this.add(output, "class ")
 	this.add(output, this.cpath)
@@ -45,91 +45,162 @@ export class Class extends Artifact {
 	return this
     }
 
-    addProperty(name) {
+    changeMode(mode) {
+	this.mode = mode
+    }
+
+    inClass() {
+	return true
+    }
+    
+    addProperty(artifact, name) {
 	name = name.slice(2) // eliminate :@
-	if (this.allProps.includes(name)) {
+	if (this.getProperty(name) != undefined) {
 	    return
 	}
 
-	this.allProps.push(name)
-	
-	switch (this.mode) {
-	case "public":
-	case "private":
-	    this.privateProps.push(name)
-	    break
-	case "protected":
-	    this.protectedProps.push(name)
-	    break
+	let mode = this.mode
+	if (mode == "public") {
+	    mode = "private" // The default is private for properties
+	} else if (mode == "protected") {
+	    if (!artifact.inClass()) {
+		mode = "private"
+	    }
 	}
+	
+	this.props[name] = new Property(artifact, name, mode)
     }
 
-    addClassProperty(name) {
+    get superClass() {
+	return this.getClass(this.supper.name)
+    }
+    
+    
+    addClassProperty(artifact, name) {
 	name = name.slice(3) // eliminate :@@
-	if (this.allClassProps.includes(name)) {
+	if (this.getClassProp(name) != undefined) {
 	    return
 	}
 
-	this.allClassProps.push(name)
-	
-	switch (this.mode) {
-	case "public":
-	case "private":
-	    this.privateClassProps.push(name)
-	    break
-	case "protected":
-	    this.protectedClassProps.push(name)
-	    break
+	let mode = this.mode
+	if (mode == "public") {
+	    mode = "private" // The default is private for properties
 	}
+	
+	this.classProps[name] = new Property(artifact, name, mode)
     }
 
-    addMethod(name) {
+    addMethod(artifact, name) {
 	name = name.slice(1) // eliminate :
-	if (this.allMethods.includes(name)) {
+	if (this.getMethod(name) != undefined) {
 	    return
 	}
 
-	this.allMethods.push(name)
-	
-	switch (this.mode) {
-	case "public":
-	    this.publicMethods.push(name)
-	    break
-	case "private":
-	    this.privateMethods.push(name)
-	    break
-	case "protected":
-	    this.protectedMethods.push(name)
-	    break
+	this.methods[name] = new Method(artifact, name, this.mode)
+    }
+
+    addClassMethod(artifact, name) {
+	name = name.slice(1) // eliminate :
+	if (this.getClassMethod(name) != undefined) {
+	    return
 	}
+
+	this.methods[name] = new Method(artifact, name, this.mode)
     }
 
     getProperty(name) {
-	if (this.privateProps.includes(name)) {
-	    return "#" + name
-	} else if (this.protectedProps.includes(name)) {
-	    return "_" + name
+	const prop = this.props[name]
+	if (prop != undefined) {
+	    return prop
 	}
+	if (this.supper != undefined && this.superClass != undefined) {
+	    return this.superClass.getProperty(name)
+	}
+	return undefined
     }
 
     getClassProperty(name) {
-	if (this.privateClassProps.includes(name)) {
-	    return "#" + name
-	} else if (this.protectedClassProps.includes(name)) {
-	    return "_" + name
+	const prop = this.classProps[name]
+	if (prop != undefined) {
+	    return prop
 	}
+	if (this.supper != undefined && this.superClass != undefined) {
+	    return this.superClass.getClassProperty(name)
+	}
+	return undefined
     }
 
     getMethod(name) {
-	if (this.publicMethods.includes(name)) {
-	    return name
-	} else if (this.privateMethods.includes(name)) {
-	    return "#" + name
-	} else if (this.protectedMethods.includes(name)) {
-	    return "_" + name
+	const met = this.methods[name]
+	if (met != undefined) {
+	    return met
+	}
+	if (this.supper != undefined && this.superClass != undefined) {
+	    return this.superClass.getMethod(name)
+	}
+	return undefined
+    }
+
+    getClassMethod(name) {
+	const met = this.classMethods[name]
+	if (met != undefined) {
+	    return met
+	}
+	if (this.supper != undefined && this.superClass != undefined) {
+	    return this.superClass.getClassMethod(name)
+	}
+	return undefined
+    }
+
+    addVisibility(mode, args) {
+	const names = []
+	for (const arg of args.array) {
+	    const name = arg.lit.slice(1) // eliminate :
+	    if (this.methods[name] != undefined) {
+		this.methods[name].visibility = mode
+	    }
 	}
     }
 }
+
+class Property {
+    constructor(artifact, name, visibility) {
+	this.artifact = artifact
+	this.name = name
+	this.visibility = visibility
+    }
+
+    get jsName() {
+	switch (this.visibility) {
+	case "private":
+	    return "#" + this.name
+	case "protected":
+	    return "_" + this.name
+	default:
+	    throw "A prop should either be private or protected"
+	}
+    }
+}
+
+class Method {
+    constructor(artifact, name, visibility) {
+	this.artifact = artifact
+	this.name = name
+	this.visibility = visibility
+    }
+
+    get jsName() {
+	switch (this.visibility) {
+	case "private":
+	    return "#" + this.name
+	case "protected":
+	    return "_" + this.name
+	default:
+	    return this.name
+	}
+    }
+}
+
 
 export class Self extends Artifact {
     constructor(parent, tree, startLine) {

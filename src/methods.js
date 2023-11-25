@@ -11,9 +11,27 @@ export class FuncCall extends Artifact {
 
 	this.mid = tree.get(this, startLine, "nd_mid")
 	this.args = tree.get(this, startLine, "nd_args")
+
+	// For example: private :meow
+	if (this.inClass()) {
+	    const klas = this.findOwner()
+		  
+	    switch (this.mid) {
+	    case ":public":
+	    case ":private":
+	    case ":protected":
+		klas.addVisibility(this.mid.slice(1), this.args)
+		this.mid = undefined // Signal that we won't be outputted
+		break
+	    }
+	}
     }
 
     convert(output) {
+	if (this.mid == undefined) {
+	    return
+	}
+	
 	this.add(output, symbol(this.mid))
 
 	this.add(output, "(")
@@ -33,10 +51,46 @@ export class VarCall extends Artifact {
 	super(parent, startLine)
 	
 	this.mid = tree.get(this, startLine, "nd_mid")
+
+	// Here we handle public, private and protected
+	//
+	if (this.inClass()) {
+	    const klas = this.findOwner()
+		  
+	    switch (this.mid) {
+	    case ":public":
+		klas.changeMode("public")
+		this.mid = undefined
+		break
+	    case ":private":
+		klas.changeMode("private")
+		this.mid = undefined
+		break
+	    case ":protected":
+		klas.changeMode("protected")
+		this.mid = undefined
+		break
+	    }
+	}
     }
 
     convert(output) {
-	this.add(output, symbol(this.mid))
+
+	if (this.mid == undefined) { // public, private, protected
+	    return
+	}
+	
+	// Convert to a method call if exists as a method
+	const owner = this.findOwner()
+	const method = owner.getMethod(this.mid.slice(1))
+	if (method != undefined && method.visibility != "private") {
+	    this.add(output, "this.")
+	    this.add(output, symbol(method.jsName))
+	    this.add(output, "()")
+	} else {
+	    // Put it as a single symbol and pray
+	    this.add(output, symbol(this.mid))
+	}
     }
 }
 
@@ -75,19 +129,23 @@ export class QCall extends Artifact {
     }
 }
 
-export class Method extends Artifact {
+export class Defn extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
 	
 	this.mid = tree.get(this, startLine, "nd_mid")
 	this.defn = tree.get(this, startLine, "nd_defn")
 
-	this.defn.body = this.defn.body.returnize(tree)
+	if (this.defn.body != undefined) { // Possible when method body is empty
+	    this.defn.body = this.defn.body.returnize(tree)
+	}
+
+	// Inform the class that it has a new method
+	const owner = this.findOwner()
+	owner.addMethod(this, this.mid)
     }
 
     convert(output) {
-	let mid = symbol(this.mid)
-	
 	const owner = this.findOwner()
 	if (owner instanceof Program) {
 	    this.add(output, "function ")
@@ -101,7 +159,6 @@ export class Method extends Artifact {
 	    //
 	    if (this.mid.endsWith("=")) {
 		this.add(output, "set ")
-		mid = mid.slice(0, -1)
 	    } else if (owner.getProperty(this.mid.slice(1)) != undefined) {
 		if (this.defn.args.preArgsNum == 0) {
 		    this.add(output, "get ")
@@ -109,10 +166,17 @@ export class Method extends Artifact {
 	    }
 	}
 
-	if (mid == "initialize") {
-	    mid = "constructor"
+	let name
+	
+	if (this.mid == ":initialize") {
+	    name = "constructor"
+	} else {
+	    name = symbol(owner.getMethod(this.mid.slice(1)).jsName)
+	    if (name.endsWith("=")) { // for setters
+		name = name.slice(0, -1)
+	    }
 	}
-	this.add(output, mid)
+	this.add(output, name)
 
 	// From now on, we'll use defn's internal parts
 	// (defn is Scope, by the way)
@@ -120,12 +184,17 @@ export class Method extends Artifact {
 	this.add(output, "(")
 	this.defn.convertArgs(output) // See Scope.convertArgs()
 	this.add(output, ") {")
-	output.addLine()
 
-	this.add(output, this.defn.body)
+	if (this.defn.body != undefined) { // Possible when method body is empty
+	    output.addLine()
+	    this.add(output, this.defn.body)
+	}
 	
-	output.addLine()
-	this.add(output, "}")
+	this.addNewLine(output, "}")
+    }
+
+    inClass() {
+	return false
     }
 }
 

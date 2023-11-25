@@ -82,7 +82,7 @@ test("class with constructor and a method", () => {
     expect(out).toEqual(out2)
 })             
 
-test.skip("class with a private method", () => {
+test("class with a private method", () => {
     const src = createSource(
 	"class Animal",
 	"  private",
@@ -90,11 +90,18 @@ test.skip("class with a private method", () => {
 	"  end",
 	"end")
     const out = parseSource(src)
-
-    //expect(out).toEqual(out2)
+    
+    const out2 = createSource(
+	"class Animal {",
+	"  #meow(a) {",
+	"  }",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
 })             
 
-test.skip("class with a private method 2", () => {
+test("class with a private method 2", () => {
     const src = createSource(
 	"class Animal",
 	"  def meow a",
@@ -102,11 +109,18 @@ test.skip("class with a private method 2", () => {
 	"  private :meow",
 	"end")
     const out = parseSource(src)
-
-    //expect(out).toEqual(out2)
+    
+    const out2 = createSource(
+	"class Animal {",
+	"  #meow(a) {",
+	"  }",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
 })             
 
-test.skip("class with a protected method", () => {
+test("class with a protected method", () => {
     const src = createSource(
 	"class Animal",
 	"  protected",
@@ -115,8 +129,159 @@ test.skip("class with a protected method", () => {
 	"end")
     const out = parseSource(src)
 
-    //expect(out).toEqual(out2)
+    const out2 = createSource(
+	"class Animal {",
+	"  _sayMeow(a) {",
+	"  }",
+	"}"
+    )
+
+    expect(out).toEqual(out2)
 })             
+
+test("class with a protected method but private property", () => {
+    const src = createSource(
+	"class Animal",
+	"  protected",
+	"  def say_meow a",
+	"    @said = true",
+	"  end",
+	"end")
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"class Animal {",
+	"  _sayMeow(a) {",
+	"    this.#said = true",
+	"  }",
+	"}"
+    )
+
+    expect(out).toEqual(out2)
+})             
+
+
+test("class with an ambigious no-param method", () => {
+    const src = createSource(
+	"class Animal",
+	"  def say_meow",
+	"    print 'miyav'",
+	"  end",
+	"  def f()",
+	"    say_meow",
+	"  end",
+	"end")
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"class Animal {",
+	"  sayMeow() {",
+	'    print("miyav")',
+	"  }",
+	"  f() {",
+	"    this.sayMeow()",
+	"  }",
+	"}"
+    )
+
+    expect(out).toEqual(out2)
+})             
+
+
+function animalClassForRuby() {
+    return createSource(
+	"class Animal",
+	"  def say_meow",
+	'    print "miyav"',
+	"  end",
+	"  protected",
+	"  @lives",
+	"  public",
+	"  def lives",
+	"    @lives",
+	"  end",
+	"end"
+    )
+}
+
+function animalClassForJs() {
+    return createSource(
+	"class Animal {",
+	"  sayMeow() {",
+	'    print("miyav")',
+	"  }",
+	"  _lives",
+	"  get lives() {",
+	"    return this._lives",
+	"  }",
+	"}"
+    )
+}
+
+test("class using protected & public property", () => {
+    const src = createSource(
+	animalClassForRuby()
+    )
+    const out = parseSource(src)
+    console.log(out)
+    
+    const out2 = createSource(
+	animalClassForJs()
+    )
+
+    expect(out).toEqual(out2)
+})
+
+test("class inheritance using protected & public property", () => {
+    const src = createSource(
+	animalClassForRuby(),
+	"class Human < Animal",
+	"  def g",
+	"    @lives = 1",
+	"  end",
+	"end"
+    )
+    const out = parseSource(src)
+    console.log(out)
+    
+    const out2 = createSource(
+	animalClassForJs(),
+	"class Human extends Animal {",
+	"  g() {",
+	"    this._lives = 1",
+	"  }",
+	"}"
+    )
+
+    expect(out).toEqual(out2)
+})
+
+
+
+test("class with a protected method but private property", () => {
+    const src = createSource(
+	"class Animal",
+	"  protected",
+	"  @said = false",
+	"  def say_meow a",
+	"    @said = true",
+	"  end",
+	"end")
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"class Animal {",
+	"  _said = false",
+	"  _sayMeow(a) {",
+	"    this._said = true",
+	"  }",
+	"}"
+    )
+
+    expect(out).toEqual(out2)
+})             
+
+
 
 
 test("class with getter, setter and auto return", () => {
