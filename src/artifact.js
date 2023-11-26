@@ -1,5 +1,3 @@
-import {resolveNode} from './node'
-
 export class Artifact {
     constructor(parent, startLine) {
 	if (startLine != undefined) {
@@ -57,28 +55,3 @@ export class Artifact {
 	throw "No object is found to get the class " + name
     }
 }
-
-export class Program extends Artifact {
-    constructor(tree) {
-	super(undefined, undefined)
-
-	this.classes = {}
-
-	let line = tree.nextLine(0, "NODE_SCOPE")
-	this.scope = resolveNode(this, tree, line)
-    }
-
-    convert(output) {
-	this.scope.convert(output)
-	return output.toString()
-    }
-
-    addClass(klass) {
-	this.classes[klass.name] = klass
-    }
-
-    getClass(name) {
-	return this.classes[name]
-    }
-}
-

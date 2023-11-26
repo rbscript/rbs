@@ -1,4 +1,4 @@
-import {Artifact} from './program'
+import {Artifact} from './artifact'
 
 export class Output {
     constructor() {

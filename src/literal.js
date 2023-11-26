@@ -1,4 +1,4 @@
-import {Artifact} from './program'
+import {Artifact} from './artifact'
 import {Return} from './statements'
 
 const reAlphaChar = /[a-zA-Z_]/

@@ -1,5 +1,4 @@
-import {Artifact} from './program'
-import {Body} from './body'
+import {Artifact} from './artifact'
 import {resolveNode} from './node'
 import {Return} from './statements'
 import {symbol} from './literal'
@@ -72,6 +71,26 @@ export class Block extends Artifact {
 	return this.statements[this.statements.length - 1].isReturn()
     }
 }
+
+export class Body extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
+	
+	this.children = []
+	
+	let line = tree.nextLine()
+	const indent = line.indent
+	do {
+	    let nev = resolveNode(this, tree, line)
+	    if (nev == undefined) {
+		return
+	    }
+	    this.children.push(nev)
+	    
+	} while (line = tree.nextLine(indent))
+    }
+}
+
 
 export class Begin extends Artifact {
     constructor(parent, tree, startLine) {

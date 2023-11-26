@@ -1,10 +1,14 @@
 import {resolveNode} from './node'
-import {Artifact} from './program'
+import {Artifact} from './artifact'
 import {symbol} from './literal'
 
-export class Class extends Artifact {
+// Program, Module and Class derives from this class
+// It is called Owner because of findOwner() method
+class Owner extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
+	this.classes = {}
+	this.modules = {}
 	this.props = {}
 	this.methods = {}
 	this.classProps = {}
@@ -14,31 +18,6 @@ export class Class extends Artifact {
 	// private -> everything is private, starts with #
 	// protected -> everything is protected, starts with _
 	this.mode = "public"
-	
-	this.cpath  = tree.get(this, startLine, "nd_cpath")
-	this.supper  = tree.get(this, startLine, "nd_super")
-	this.body  = tree.get(this, startLine, "nd_body")
-
-	this.addClass(this)
-    }
-
-    get name() {
-	return this.cpath.mid
-    }
-    
-    convert(output) {
-	this.add(output, "class ")
-	this.add(output, this.cpath)
-	if (this.supper != undefined) {
-	    this.add(output, " extends ")
-	    this.add(output, this.supper)
-	}
-	this.add(output, " {")
-	output.addLine()
-
-	this.add(output, this.body)
-
-	this.addNewLine(output, "}")
     }
 
     findOwner() {
@@ -48,11 +27,23 @@ export class Class extends Artifact {
     changeMode(mode) {
 	this.mode = mode
     }
-
-    inClass() {
-	return true
-    }
     
+    addClass(klass) {
+	this.classes[klass.name] = klass
+    }
+
+    getClass(name) {
+	return this.classes[name]
+    }
+
+    addModule(module) {
+	this.modules[module.name] = module
+    }
+
+    getModule(name) {
+	return this.modules[name]
+    }
+
     addProperty(artifact, name) {
 	name = name.slice(2) // eliminate :@
 	if (this.getProperty(name) != undefined) {
@@ -71,10 +62,6 @@ export class Class extends Artifact {
 	this.props[name] = new Property(artifact, name, mode)
     }
 
-    get superClass() {
-	return this.getClass(this.supper.name)
-    }
-    
     
     addClassProperty(artifact, name) {
 	name = name.slice(3) // eliminate :@@
@@ -163,6 +150,46 @@ export class Class extends Artifact {
     }
 }
 
+export class Class extends Owner {
+    constructor(parent, tree, startLine) {
+	super(parent, tree, startLine)
+	
+	this.cpath  = tree.get(this, startLine, "nd_cpath")
+	this.supper  = tree.get(this, startLine, "nd_super")
+	this.body  = tree.get(this, startLine, "nd_body")
+
+	this.parent.addClass(this)
+    }
+
+    get name() {
+	return this.cpath.mid
+    }
+    
+    convert(output) {
+	this.add(output, "class ")
+	this.add(output, this.cpath)
+	if (this.supper != undefined) {
+	    this.add(output, " extends ")
+	    this.add(output, this.supper)
+	}
+	this.add(output, " {")
+	output.addLine()
+
+	this.add(output, this.body)
+
+	this.addNewLine(output, "}")
+    }
+
+    inClass() {
+	return true
+    }
+    
+    get superClass() {
+	return this.parent.getClass(this.supper.name)
+    }
+    
+}
+
 class Property {
     constructor(artifact, name, visibility) {
 	this.artifact = artifact
@@ -201,6 +228,23 @@ class Method {
     }
 }
 
+export class Program extends Owner {
+    constructor(tree) {
+	super(undefined, undefined, undefined)
+
+	
+
+	let line = tree.nextLine(0, "NODE_SCOPE")
+	this.scope = resolveNode(this, tree, line)
+    }
+
+    convert(output) {
+	this.scope.convert(output)
+	return output.toString()
+    }
+}
+
+
 
 export class Self extends Artifact {
     constructor(parent, tree, startLine) {
@@ -222,17 +266,14 @@ export class Singleton extends Artifact {
     }
 }
 
-export class Module extends Artifact {
+export class Module extends Owner {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
-	let line = tree.nextLine(startLine.indent, "attr", "nd_cpath")
-	line = tree.nextLine(line.indent)
-	this.cpath  = resolveNode(this, tree, line)
+	this.cpath  = tree.get(this, startLine, "nd_cpath")
+	this.body  = tree.get(this, startLine, "nd_body")
 
-	line = tree.nextLine(startLine.indent, "attr", "nd_body")
-	line = tree.nextLine(line.indent)
-	this.body = resolveNode(this, tree, line)
+	this.parent.addModule(this)
     }
 
     findOwner() {

@@ -1,6 +1,6 @@
 import {resolveNode} from './node'
 import {spawnSync} from 'node:child_process'
-import {Program} from './program'
+import {Program} from './classes'
 import {buffer} from 'node:buffer'
 
 export function parse(source, dump) {

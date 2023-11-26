@@ -1,5 +1,5 @@
 import {resolveNode} from './node'
-import {Artifact} from './program'
+import {Artifact} from './artifact'
 
 export class List extends Artifact {
     constructor(parent, tree, startLine) {

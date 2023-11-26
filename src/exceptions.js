@@ -1,6 +1,6 @@
-import {Body} from './body'
+import {Body} from './blocks'
 import {resolveNode} from './node'
-import {Artifact} from './program'
+import {Artifact} from './artifact'
 
 export class Ensure extends Artifact {
     constructor(parent, tree, startLine) {

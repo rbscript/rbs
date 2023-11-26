@@ -1,5 +1,5 @@
 import {resolveNode} from './node'
-import {Artifact} from './program'
+import {Artifact} from './artifact'
 import {Return} from './statements'
 
 export class OpCall extends Artifact {

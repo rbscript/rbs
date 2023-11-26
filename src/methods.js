@@ -1,7 +1,7 @@
 import {resolveNode} from './node'
-import {Artifact, Program} from './program'
+import {Artifact} from './artifact'
 import {symbol, Literal} from './literal'
-import {Class, Module} from './classes'
+import {Class, Module, Program} from './classes'
 import {Return} from './statements'
 import {OpCall} from './operators'
 
