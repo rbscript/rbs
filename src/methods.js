@@ -94,24 +94,6 @@ export class VarCall extends Artifact {
     }
 }
 
-export class Call extends Artifact {
-    constructor(parent, tree, startLine) {
-	super(parent, startLine)
-	
-	this.mid = tree.get(this, startLine, "nd_mid")
-	this.recv = tree.get(this, startLine, "nd_recv")
-	this.args = tree.get(this, startLine, "nd_args")
-    }
-
-    convert(output) {
-	this.add(output, this.recv)
-	this.add(output, " ")
-	this.add(output, this.mid)
-	this.add(output, " ")
-	this.add(output, this.args)
-    }
-}
-
 export class QCall extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)

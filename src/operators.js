@@ -12,6 +12,12 @@ export class OpCall extends Artifact {
     }
 
     convert(output) {
+
+	if (this.mid == ":new") {
+	    this.convertForNew(output)
+	    return
+	}
+	
 	if (this.recv instanceof OpCall) {
 	    this.add(output, "(")
 	    this.add(output, this.recv)
@@ -34,6 +40,21 @@ export class OpCall extends Artifact {
 	}
     }
 
+    convertForNew(output) {
+	this.add(output, "new ")
+	this.add(output, this.recv)
+
+	this.add(output, "(")
+	if (this.args != undefined && this.args.array.length > 0) {
+	    this.add(output, this.args.array[0])
+	    for (let i = 1; i < this.args.array.length; ++i) {
+		this.add(output, ", ")
+		this.add(output, this.args.array[i])
+	    }
+	}
+	this.add(output, ")")
+    }
+    
     returnize(tree) {
 	return Return.ize(tree, this)
     }

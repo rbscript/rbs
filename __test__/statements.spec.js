@@ -332,3 +332,51 @@ test.skip("Pattern matching with case", () => {
     //expect(out).toEqual("")
 })
 
+test("simple new", () => {
+    const src = createSource(
+	"a = Klas.new",
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"const a = new Klas()"
+    )
+    expect(out).toEqual(out2)
+})             
+
+test("simple new with params", () => {
+    const src = createSource(
+	"a = Klas.new 333, 666 + 3",
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"const a = new Klas(333, 666 + 3)"
+    )
+    expect(out).toEqual(out2)
+})             
+
+test.skip("new and method call", () => {
+    const src = createSource(
+	"Klas.new(333, 666 + 3).call_me",
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"new Klas(333, 666 + 3).callMe()"
+    )
+    expect(out).toEqual(out2)
+})             
+
+test.skip("new in an expression", () => {
+    const src = createSource(
+	"a = Klas.new(333, 666 + 3) / 2",
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"const a = new Klas(333, 666 + 3) / 2"
+    )
+    expect(out).toEqual(out2)
+})             
+
