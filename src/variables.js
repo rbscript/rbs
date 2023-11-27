@@ -2,6 +2,7 @@ import {resolveNode} from './node'
 import {Artifact} from './artifact'
 import {Literal, symbol} from './literal'
 import {Return} from './statements'
+import {Call} from './operators'
 
 export class LocalAssignment extends Artifact {
     constructor(parent, tree, startLine) {
@@ -14,8 +15,26 @@ export class LocalAssignment extends Artifact {
     convert(output) {
 	this.add(output, "const ") // TODO determine if const or let or nothing
 	this.add(output, symbol(this.vid))
-	this.add(output, " = ")
-	this.add(output, this.value)
+	this.add(output, " ")
+	
+	if (!(this.value instanceof Call) ||
+	    this.value.mid == ":new") {
+
+	    // Normal assignment
+	    //
+	    this.add(output, "= ")
+	    this.add(output, this.value)
+	    
+	} else {
+
+	    // This is an assignment like x += 1
+	    //
+	    this.add(output, this.value.mid.slice(1)) // :+
+	    this.add(output, "= ")
+
+	    // For some reason, args is a list with one element
+	    this.add(output, this.value.args.array[0])
+	}
     }
 }
 

@@ -277,12 +277,11 @@ test("while with break", () => {
 	"end"
     )
     const out = parseSource(src)
-    console.log(out)
     
     const out2 = createSource(
 	"const i = 0", // temporary..it should be let
 	"while (true) {",
-	"  const i = i + 3",
+	"  const i += 3",
 	"  if (i > 10) {",
 	"  break",
 	"  }",
@@ -304,7 +303,7 @@ test("while with next", () => {
     const out2 = createSource(
 	"const i = 0", // temporary..it should be let
 	"while (true) {",
-	"  const i = i + 3",
+	"  const i += 3",
 	"  if (i > 10) {",
 	"  continue",
 	"  }",
@@ -356,9 +355,9 @@ test("simple new with params", () => {
     expect(out).toEqual(out2)
 })             
 
-test.skip("new and method call", () => {
+test("new and method call", () => {
     const src = createSource(
-	"Klas.new(333, 666 + 3).call_me",
+	"Klas.new(333, 666 + 3).call_me()",
     )
     const out = parseSource(src)
 
@@ -368,7 +367,7 @@ test.skip("new and method call", () => {
     expect(out).toEqual(out2)
 })             
 
-test.skip("new in an expression", () => {
+test("new in an expression", () => {
     const src = createSource(
 	"a = Klas.new(333, 666 + 3) / 2",
     )
@@ -380,3 +379,68 @@ test.skip("new in an expression", () => {
     expect(out).toEqual(out2)
 })             
 
+test("nested expr", () => {
+    const src = createSource(
+	"a.b",
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"a.b()"
+    )
+    expect(out).toEqual(out2)
+})             
+
+test("very nested expr", () => {
+    const src = createSource(
+	"a.b.c.d",
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"a.b().c().d()"
+    )
+    expect(out).toEqual(out2)
+})             
+
+test("Assign with operator I", () => {
+    const src = createSource(
+	"i = 0",
+	"i += 3",
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"const i = 0", // temporary..it should be let
+	"const i += 3"
+    )
+    expect(out).toEqual(out2)
+})             
+
+test("Assign with operator II", () => {
+    const src = createSource(
+	"i = 0",
+	"i += 3 * 2",
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"const i = 0", // temporary..it should be let
+	"const i += 3 * 2"
+    )
+    expect(out).toEqual(out2)
+})             
+
+test("Assign with operator III", () => {
+    const src = createSource(
+	"i = 0",
+	"i += 3 * 2 / 89 - 5",
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"const i = 0", // temporary..it should be let
+	"const i += ((3 * 2) / 89) - 5"
+    )
+    expect(out).toEqual(out2)
+})             

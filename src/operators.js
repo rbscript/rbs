@@ -1,6 +1,43 @@
 import {resolveNode} from './node'
 import {Artifact} from './artifact'
 import {Return} from './statements'
+import {symbol} from './literal'
+
+export class Call extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, startLine)
+
+	this.mid = tree.get(this, startLine, "nd_mid")
+	this.recv = tree.get(this, startLine, "nd_recv")
+	this.args = tree.get(this, startLine, "nd_args")
+    }
+
+    convert(output) {
+
+	if (this.mid == ":new") {
+	    this.add(output, "new ")
+	    this.add(output, this.recv)
+	} else {
+	    this.add(output, this.recv)
+	    this.add(output, ".")
+	    this.add(output, symbol(this.mid.slice(1))) // ops are like :+
+	}
+
+	this.add(output, "(")
+	if (this.args != undefined && this.args.array.length > 0) {
+	    this.add(output, this.args.array[0])
+	    for (let i = 1; i < this.args.array.length; ++i) {
+		this.add(output, ", ")
+		this.add(output, this.args.array[i])
+	    }
+	}
+	this.add(output, ")")
+    }
+
+    returnize(tree) {
+	return Return.ize(tree, this)
+    }
+}
 
 export class OpCall extends Artifact {
     constructor(parent, tree, startLine) {
@@ -13,11 +50,6 @@ export class OpCall extends Artifact {
 
     convert(output) {
 
-	if (this.mid == ":new") {
-	    this.convertForNew(output)
-	    return
-	}
-	
 	if (this.recv instanceof OpCall) {
 	    this.add(output, "(")
 	    this.add(output, this.recv)
@@ -29,6 +61,7 @@ export class OpCall extends Artifact {
 	this.add(output, " ")
 	this.add(output, this.mid.slice(1)) // ops are like :+
 	this.add(output, " ")
+	
 	this.add(output, this.args.array[0])
 	if (this.args.array.length > 1) {
 	    for (let i = 1; i < this.args.array.length; ++i) {
@@ -40,21 +73,6 @@ export class OpCall extends Artifact {
 	}
     }
 
-    convertForNew(output) {
-	this.add(output, "new ")
-	this.add(output, this.recv)
-
-	this.add(output, "(")
-	if (this.args != undefined && this.args.array.length > 0) {
-	    this.add(output, this.args.array[0])
-	    for (let i = 1; i < this.args.array.length; ++i) {
-		this.add(output, ", ")
-		this.add(output, this.args.array[i])
-	    }
-	}
-	this.add(output, ")")
-    }
-    
     returnize(tree) {
 	return Return.ize(tree, this)
     }
