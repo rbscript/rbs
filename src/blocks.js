@@ -2,6 +2,7 @@ import {Artifact} from './artifact'
 import {resolveNode} from './node'
 import {Return} from './statements'
 import {symbol} from './literal'
+import {LocalAssignment} from './variables'
 
 export class Scope extends Artifact {
     constructor(parent, tree, startLine) {
@@ -69,6 +70,57 @@ export class Block extends Artifact {
 
     isReturn() {
 	return this.statements[this.statements.length - 1].isReturn()
+    }
+
+    // Returns -1 if found before, +1 after, and 0 if not found
+    findLocalVar(la, search) { // la == LocalAssignment
+	let index = this.statements.length - 1
+	if (search) {
+	    index = this.statements.indexOf(la)
+	}
+	
+	// Search backwards for -1
+	//
+	for (let i = index - 1; i >= 0; --i) {
+	    const stm = this.statements[i]
+	    if (stm instanceof LocalAssignment) {
+		if (stm.vid == la.vid) {
+		    return -1
+		}
+	    }
+	}
+
+	// Search parent blocks
+	//
+	let block = this.parent
+	while (block != undefined) {
+	    if (block instanceof Block) {
+		const ret = block.findLocalVar(la, false)
+		if (ret != 0) {
+		    return -1
+		}
+	    }
+	    block = block.parent
+	}
+
+	if (search) {
+	    // Search forward
+	    //
+	    for (let i = index + 1; i < this.statements.length; ++i) {
+		const stm = this.statements[i]
+		if (stm instanceof LocalAssignment) {
+		    if (stm.vid == la.vid) {
+			return 1
+		    }
+		} else if (stm.hasLocalVar != undefined) {
+		    if (stm.hasLocalVar(la)) {
+			return 1
+		    }
+		}
+	    }
+	}
+
+	return 0
     }
 }
 

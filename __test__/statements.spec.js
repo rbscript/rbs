@@ -279,9 +279,9 @@ test("while with break", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"const i = 0", // temporary..it should be let
+	"let i = 0",
 	"while (true) {",
-	"  const i += 3",
+	"  i += 3",
 	"  if (i > 10) {",
 	"  break",
 	"  }",
@@ -301,9 +301,9 @@ test("while with next", () => {
     const out = parseSource(src)
 
     const out2 = createSource(
-	"const i = 0", // temporary..it should be let
+	"let i = 0",
 	"while (true) {",
-	"  const i += 3",
+	"  i += 3",
 	"  if (i > 10) {",
 	"  continue",
 	"  }",
@@ -411,8 +411,8 @@ test("Assign with operator I", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"const i = 0", // temporary..it should be let
-	"const i += 3"
+	"let i = 0",
+	"i += 3"
     )
     expect(out).toEqual(out2)
 })             
@@ -425,8 +425,8 @@ test("Assign with operator II", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"const i = 0", // temporary..it should be let
-	"const i += 3 * 2"
+	"let i = 0",
+	"i += 3 * 2"
     )
     expect(out).toEqual(out2)
 })             
@@ -439,8 +439,8 @@ test("Assign with operator III", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"const i = 0", // temporary..it should be let
-	"const i += ((3 * 2) / 89) - 5"
+	"let i = 0",
+	"i += ((3 * 2) / 89) - 5"
     )
     expect(out).toEqual(out2)
 })             

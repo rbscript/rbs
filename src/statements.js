@@ -3,9 +3,19 @@ import {Artifact} from './artifact'
 import {List} from './lists'
 import {symbol} from './literal'
 
-export class If extends Artifact {
+class StmWithBlock extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
+    }
+
+    hasLocalVar(la) { // la is a LocalAssignment
+	return this.body.findLocalVar(la, false) != 0
+    }
+}
+
+export class If extends StmWithBlock {
+    constructor(parent, tree, startLine) {
+	super(parent, tree, startLine)
 	
 	this.cond = tree.get(this, startLine, "nd_cond")
 	this.body = tree.get(this, startLine, "nd_body")
@@ -25,6 +35,11 @@ export class If extends Artifact {
 	    return false
 	}
 	return this.body.isReturn() && this.els.isReturn()
+    }
+
+    hasLocalVar(la) { // la is a LocalAssignment
+	return (this.body.findLocalVar(la, false) != 0) ||
+	    (this.els.findLocalVar(la, false) != 0)
     }
     
     convert(output) {
@@ -75,9 +90,9 @@ export class If extends Artifact {
     }
 }
 
-export class Unless extends Artifact {
+export class Unless extends StmWithBlock {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.cond = tree.get(this, startLine, "nd_cond")
 	this.body = tree.get(this, startLine, "nd_body")
@@ -187,9 +202,9 @@ export class Redo extends Artifact {
 
 
 
-export class For extends Artifact {
+export class For extends StmWithBlock {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.iter = tree.get(this, startLine, "nd_iter")
 	this.body = tree.get(this, startLine, "nd_body")
@@ -209,9 +224,9 @@ export class For extends Artifact {
     }
 }
 
-export class While extends Artifact {
+export class While extends StmWithBlock {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.state = tree.get(this, startLine, "nd_state")
 	this.cond = tree.get(this, startLine, "nd_cond")
@@ -242,9 +257,9 @@ export class While extends Artifact {
     }
 }
 
-export class Until extends Artifact {
+export class Until extends StmWithBlock {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.state = tree.get(this, startLine, "nd_state")
 	this.cond = tree.get(this, startLine, "nd_cond")
@@ -263,9 +278,9 @@ export class Until extends Artifact {
     }
 }
 
-export class Case extends Artifact {
+export class Case extends StmWithBlock {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	this.type = startLine.type
 	
 	this.head = tree.get(this, startLine, "nd_head")
@@ -282,6 +297,17 @@ export class Case extends Artifact {
 	}
     }
 
+    hasLocalVar(la) { // la is a LocalAssignment
+	let when = this.firstWhen
+	while (when != undefined) {
+	    if (when.hasLocalVar(la)) {
+		return true
+	    }
+	    when = when.when
+	}
+	return false
+    }
+    
     returnize(tree) {
 	let when = this.firstWhen
 	while (when != undefined) {
@@ -332,9 +358,9 @@ export class Case extends Artifact {
     }
 }
 
-class When extends Artifact {
+class When extends StmWithBlock {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.head = tree.get(this, startLine, "nd_head")
 	this.body = tree.get(this, startLine, "nd_body")

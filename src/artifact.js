@@ -54,4 +54,9 @@ export class Artifact {
 	}
 	throw "No object is found to get the class " + name
     }
+
+    // About let/const
+    findLocalVar(la) {
+	return 0
+    }
 }

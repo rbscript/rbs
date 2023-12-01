@@ -3,6 +3,7 @@ import {Artifact} from './artifact'
 import {Literal, symbol} from './literal'
 import {Return} from './statements'
 import {Call} from './operators'
+import {Block} from './blocks'
 
 export class LocalAssignment extends Artifact {
     constructor(parent, tree, startLine) {
@@ -13,8 +14,7 @@ export class LocalAssignment extends Artifact {
     }
 
     convert(output) {
-	this.add(output, "const ") // TODO determine if const or let or nothing
-	this.add(output, symbol(this.vid))
+	this.add(output, this.determine() + symbol(this.vid)) // determine if const or let or nothing
 	this.add(output, " ")
 	
 	if (!(this.value instanceof Call) ||
@@ -34,6 +34,42 @@ export class LocalAssignment extends Artifact {
 
 	    // For some reason, args is a list with one element
 	    this.add(output, this.value.args.array[0])
+	}
+    }
+
+    determine() { // const or let or nothing
+
+	let result
+	
+	if (!(this.parent instanceof Block)) { // Sometimes there is single stm under If etc.
+	    let block = this.parent.parent
+	    while (block != undefined) {
+		if (block instanceof Block) {
+		    result = block.findLocalVar(this, false)
+		}
+		block = block.parent
+	    }
+	    if (result == undefined) {
+		result = 0
+	    }
+	} else {
+	    // Common case when the parent is a block
+	    //
+	    result = this.parent.findLocalVar(this, true)
+	}
+
+	switch (result) {
+	case 0: return "const "
+	case -1: return ""
+	case 1: return "let "
+	}
+    }
+
+    findLocalVar(la) {
+	if (this.vid == la.vid) {
+	    return 1
+	} else {
+	    return 0
 	}
     }
 }
