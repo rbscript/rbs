@@ -144,19 +144,6 @@ export class Body extends Artifact {
 }
 
 
-export class Begin extends Artifact {
-    constructor(parent, tree, startLine) {
-	super(parent, startLine)
-	this.body = tree.get(this, startLine, "nd_body")
-    }
-
-    convert(output) {
-	if (this.body != undefined) {
-	    this.body.convert(output)
-	}
-    }
-}
-
 export class Yield extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)

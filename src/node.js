@@ -1,4 +1,4 @@
-import {Scope, Begin, Block, Yield, Iter, BlockPass} from './blocks'
+import {Scope, Block, Yield, Iter, BlockPass} from './blocks'
 import {Literal, DynamicSymbol} from './literal'
 import {String, DynamicString, EvalString, XString, DXString,
 	Match, Match2, Match3, NthRef, DynamicRegExp, BackRef} from './string'
@@ -12,7 +12,7 @@ import {LocalAssignment, GlobalAssignment, ClassVarAssignment, MemberAssignment,
 	ConstDecl, LocalVariable, GlobalVariable, MemberVariable, AttributeAssignment,
 	ClassVariable, Const, Nil, True, False, Alias,
 	DynamicVariable, DynamicAssignment, DynamicAssignmentCurrent} from './variables'
-import {If, Unless, Return, For, While, Until, Case, Break, Next, Redo} from './statements'
+import {If, Unless, Return, For, While, Until, Case, Break, Next, Redo, Begin} from './statements'
 import {Class, Self, Singleton, Module, Colon2, Colon3, Super, ZSuper} from './classes'
 import {Ensure, Rescue, RescueBody, Retry, ErrInfo} from './exceptions'
 

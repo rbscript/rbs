@@ -191,3 +191,171 @@ test.skip("attribute assignment", () => {
 
     //expect(out).toEqual(out2)
 })
+
+test("return from stm I", () => {
+    const src = createSource(
+	"a = if true",
+	"       333",
+	"    else",
+	"       666",
+	"    end"
+    )
+
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"const a = (() => {",
+	"    if (true) {",
+	"       return 333",
+	"    } else {",
+	"       return 666",
+	"    }",
+	"    })()"
+    )
+    expect(out).toEqual(out2)
+})
+
+test("return from stm II", () => {
+    const src = createSource(
+	"a = ",
+	"    if true",
+	"       333",
+	"    else",
+	"       666",
+	"    end"
+    )
+
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"const a = (() => {",
+	"    if (true) {",
+	"       return 333",
+	"    } else {",
+	"       return 666",
+	"    }",
+	"    })()"
+    )
+    expect(out).toEqual(out2)
+})
+
+test("return from stm as param I", () => {
+    const src = createSource(
+	"print(if true",
+	'       "333"',
+	"    else",
+	'       "666"',
+	"    end)"
+    )
+
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"print((() => {",
+	"      if (true) {",
+	'       return "333"',
+	"      } else {",
+	'       return "666"',
+	"      }",
+	"      })())"
+    )
+    expect(out).toEqual(out2)
+})
+
+test("return from stm III", () => {
+    const src = createSource(
+	"a = if true",
+	"       333",
+	"    else",
+	"       666",
+	"    end + ",
+	"    case x",
+	"    when 1 then 2",
+	"    when 2 then 3",
+	"    end"
+    )
+
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"const a = (() => {",
+	"    if (true) {",
+	"       return 333",
+	"    } else {",
+	"       return 666",
+	"    }",
+	"    })() + (() => {",
+	"    switch (x) {",
+	"    case 1:",
+	"                return 2",
+	"    case 2:",
+	"                return 3",
+	"    }",
+	"    })()"
+    )
+    expect(out).toEqual(out2)
+})
+
+test("return from begin I", () => {
+    const src = createSource(
+	"a = begin",
+	"       333",
+	"    end"
+    )
+
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"const a = (() => {",
+	"    {",
+	"       return 333",
+	"    }",
+	"    })()"
+    )
+    expect(out).toEqual(out2)
+})
+
+test("return from begin II", () => {
+    const src = createSource(
+	"a = begin",
+	"       y = 22",
+	"       333",
+	"    end"
+    )
+
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"const a = (() => {",
+	"    {",
+	"       const y = 22",
+	"       return 333",
+	"    }",
+	"    })()"
+    )
+    expect(out).toEqual(out2)
+})
+
+test.skip("return from begin with let/const problem", () => {
+    const src = createSource(
+	"y = 11",
+	"a = begin",
+	"       y = 22",
+	"       333",
+	"    end"
+    )
+
+    const out = parseSource(src)
+    console.log(out)
+
+    const out2 = createSource(
+	"let y = 11",
+	"const a = (() => {",
+	"    {",
+	"       y = 22",
+	"       return 333",
+	"    }",
+	"    })()"
+    )
+    expect(out).toEqual(out2)
+})

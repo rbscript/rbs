@@ -2,6 +2,7 @@ import {resolveNode} from './node'
 import {Artifact} from './artifact'
 import {List} from './lists'
 import {symbol} from './literal'
+import {Scope, Block} from './blocks'
 
 class StmWithBlock extends Artifact {
     constructor(parent, tree, startLine) {
@@ -10,6 +11,27 @@ class StmWithBlock extends Artifact {
 
     hasLocalVar(la) { // la is a LocalAssignment
 	return this.body.findLocalVar(la, false) != 0
+    }
+
+    functionize1(output) {
+	this.add(output, "(() => {")
+	output.addLine()
+    }
+
+    functionize2(output) {
+	output.addLine()
+	this.add(output, "})()")
+    }
+
+    asExpr() {
+	if (this.parent instanceof Scope) {
+	    return false
+	}
+	if (this.parent instanceof Block) {
+	    return false
+	}
+
+	return true
     }
 }
 
@@ -20,6 +42,10 @@ export class If extends StmWithBlock {
 	this.cond = tree.get(this, startLine, "nd_cond")
 	this.body = tree.get(this, startLine, "nd_body")
 	this.els = tree.get(this, startLine, "nd_else")
+
+	if (this.asExpr()) {
+	    this.returnize(tree)
+	}
     }
 
     returnize(tree) {
@@ -43,6 +69,11 @@ export class If extends StmWithBlock {
     }
     
     convert(output) {
+
+	if (this.asExpr()) {
+	    this.functionize1(output)
+	}
+	
 	this.add(output, "if (")
 	this.add(output, this.cond)
 	this.add(output, ") {")
@@ -58,6 +89,10 @@ export class If extends StmWithBlock {
 	    } else {
 		this.convertElse(output, this.els)
 	    }
+	}
+
+	if (this.asExpr()) {
+	    this.functionize2(output)
 	}
     }
 
@@ -97,6 +132,10 @@ export class Unless extends StmWithBlock {
 	this.cond = tree.get(this, startLine, "nd_cond")
 	this.body = tree.get(this, startLine, "nd_body")
 	this.els = tree.get(this, startLine, "nd_else")
+
+	if (this.asExpr()) {
+	    this.returnize(tree)
+	}
     }
 
     returnize(tree) {
@@ -115,6 +154,11 @@ export class Unless extends StmWithBlock {
     }
     
     convert(output) {
+
+	if (this.asExpr()) {
+	    this.functionize1(output)
+	}
+	
 	this.add(output, "if (!(")
 	this.add(output, this.cond)
 	this.add(output, ")) {")
@@ -131,6 +175,10 @@ export class Unless extends StmWithBlock {
 	    this.add(output, this.els)
 	    output.addLine()
 	    this.add(output, "}")
+	}
+
+	if (this.asExpr()) {
+	    this.functionize2(output)
 	}
     }
 }
@@ -295,6 +343,10 @@ export class Case extends StmWithBlock {
 	} else {
 	    throw "Unexpected node " + line.type + " while resolving case"
 	}
+
+	if (this.asExpr()) {
+	    this.returnize(tree)
+	}
     }
 
     hasLocalVar(la) { // la is a LocalAssignment
@@ -329,10 +381,16 @@ export class Case extends StmWithBlock {
     }
     
     convert(output) {
+
 	if (this.head == undefined) {
 	    this.convertGlorifiedIfElse(output)
 	    return
 	}
+
+	if (this.asExpr()) {
+	    this.functionize1(output)
+	}
+
 	this.add(output, "switch (")
 	this.add(output, this.head)
 	this.add(output, ") {")
@@ -345,15 +403,27 @@ export class Case extends StmWithBlock {
 	}
 
 	this.add(output, "}")
+
+	if (this.asExpr()) {
+	    this.functionize2(output)
+	}
     }
 
     convertGlorifiedIfElse(output) {
+	if (this.asExpr()) {
+	    this.functionize1(output)
+	}
+	
 	let when = this.firstWhen
 	let first = true
 	while (when != undefined) {
 	    when.convertGlorifiedIfElse(output, first)
 	    first = false
 	    when = when.when
+	}
+
+	if (this.asExpr()) {
+	    this.functionize2(output)
 	}
     }
 }
@@ -471,9 +541,9 @@ class When extends StmWithBlock {
     }
 }
 
-class In extends Artifact {
+class In extends StmWithBlock {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
 	line = tree.nextLine(line.indent)
@@ -495,5 +565,41 @@ class In extends Artifact {
 	    this.els = resolveNode(this, tree, line)
 	    break
 	}
+    }
+}
+
+export class Begin extends StmWithBlock {
+    constructor(parent, tree, startLine) {
+	super(parent, tree, startLine)
+	this.body = tree.get(this, startLine, "nd_body")
+
+	if (this.asExpr()) {
+	    this.returnize(tree)
+	}
+    }
+
+    returnize(tree) {
+	this.body = this.body.returnize(tree)
+    }
+    
+    convert(output) {
+	if (this.body != undefined) {
+
+	    if (this.asExpr()) {
+		this.functionize1(output)
+	    }
+
+	    this.add(output, "{")
+	    output.addLine()
+	    
+	    this.body.convert(output)
+	    output.addLine()
+	    this.add(output, "}")
+	    
+	    if (this.asExpr()) {
+		this.functionize2(output)
+	    }
+	} // else, nothing else matters
+	// In fact, class definitions etc have empty NDL_BEGIN constructs for some reason
     }
 }
