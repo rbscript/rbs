@@ -5,7 +5,7 @@ import {Return} from './statements'
 import {Call} from './operators'
 import {Block} from './blocks'
 
-export class LocalAssignment extends Artifact {
+class Assignment extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
 	
@@ -13,10 +13,13 @@ export class LocalAssignment extends Artifact {
 	this.value = tree.get(this, startLine, "nd_value")
     }
 
+    convertLeft(output) {
+	throw "Implement in subclasses"
+    }
+    
     convert(output) {
-	this.add(output, this.determine() + symbol(this.vid)) // determine if const or let or nothing
-	this.add(output, " ")
-	
+	this.convertLeft(output)
+
 	if (!(this.value instanceof Call) ||
 	    this.value.mid == ":new") {
 
@@ -35,6 +38,21 @@ export class LocalAssignment extends Artifact {
 	    // For some reason, args is a list with one element
 	    this.add(output, this.value.args.array[0])
 	}
+    }
+
+    findLocalVar(la, search) { // la is a LocalAssignment
+	return this.value.findLocalVar(la, false)
+    }    
+}
+
+export class LocalAssignment extends Assignment {
+    constructor(parent, tree, startLine) {
+	super(parent, tree, startLine)
+    }
+
+    convertLeft(output) {
+	this.add(output, this.determine() + symbol(this.vid)) // determine if const or let or nothing
+	this.add(output, " ")
     }
 
     determine() { // const or let or nothing
@@ -69,7 +87,7 @@ export class LocalAssignment extends Artifact {
 	if (this.vid == la.vid) {
 	    return 1
 	} else {
-	    return 0
+	    return super.findLocalVar(la)
 	}
     }
 }

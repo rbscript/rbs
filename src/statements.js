@@ -9,8 +9,8 @@ class StmWithBlock extends Artifact {
 	super(parent, startLine)
     }
 
-    hasLocalVar(la) { // la is a LocalAssignment
-	return this.body.findLocalVar(la, false) != 0
+    findLocalVar(la, search) { // la is a LocalAssignment
+	return this.body.findLocalVar(la, search)
     }
 
     functionize1(output) {
@@ -63,9 +63,15 @@ export class If extends StmWithBlock {
 	return this.body.isReturn() && this.els.isReturn()
     }
 
-    hasLocalVar(la) { // la is a LocalAssignment
-	return (this.body.findLocalVar(la, false) != 0) ||
-	    (this.els.findLocalVar(la, false) != 0)
+    findLocalVar(la, search) { // la is a LocalAssignment
+	const ret = this.body.findLocalVar(la, false)
+	if (ret != 0) {
+	    return ret
+	}
+	if (this.els != undefined) {
+	    return this.els.findLocalVar(la, false)
+	}
+	return 0
     }
     
     convert(output) {
@@ -349,15 +355,17 @@ export class Case extends StmWithBlock {
 	}
     }
 
-    hasLocalVar(la) { // la is a LocalAssignment
+    findLocalVarSearch(la, search) { // la is a LocalAssignment
 	let when = this.firstWhen
 	while (when != undefined) {
-	    if (when.hasLocalVar(la)) {
-		return true
+	    
+	    const ret = when.findLocalVar(la, search)
+	    if (ret != 0) {
+		return ret
 	    }
 	    when = when.when
 	}
-	return false
+	return 0
     }
     
     returnize(tree) {

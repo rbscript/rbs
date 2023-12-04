@@ -83,10 +83,8 @@ export class Block extends Artifact {
 	//
 	for (let i = index - 1; i >= 0; --i) {
 	    const stm = this.statements[i]
-	    if (stm instanceof LocalAssignment) {
-		if (stm.vid == la.vid) {
-		    return -1
-		}
+	    if (stm.findLocalVar(la, false) != 0) {
+		return -1
 	    }
 	}
 
@@ -108,14 +106,9 @@ export class Block extends Artifact {
 	    //
 	    for (let i = index + 1; i < this.statements.length; ++i) {
 		const stm = this.statements[i]
-		if (stm instanceof LocalAssignment) {
-		    if (stm.vid == la.vid) {
-			return 1
-		    }
-		} else if (stm.hasLocalVar != undefined) {
-		    if (stm.hasLocalVar(la)) {
-			return 1
-		    }
+
+		if (stm.findLocalVar(la, false) != 0) {
+		    return 1
 		}
 	    }
 	}

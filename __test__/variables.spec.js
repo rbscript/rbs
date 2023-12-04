@@ -336,7 +336,7 @@ test("return from begin II", () => {
     expect(out).toEqual(out2)
 })
 
-test.skip("return from begin with let/const problem", () => {
+test("return from begin with let/const problem", () => {
     const src = createSource(
 	"y = 11",
 	"a = begin",
@@ -346,7 +346,6 @@ test.skip("return from begin with let/const problem", () => {
     )
 
     const out = parseSource(src)
-    console.log(out)
 
     const out2 = createSource(
 	"let y = 11",
