@@ -8,11 +8,11 @@ import {FuncCall, VarCall, Defn, ClassMethod, Lambda, Undefine, QCall,
 	OptionalArgument, KeywordArgument, ArgsPush, ArgsCat, PostArg} from './methods'
 import {List, Args, Range, Splat, ZList, Values} from './lists'
 import {Hash, HashPattern} from './hashes'
-import {LocalAssignment, GlobalAssignment, ClassVarAssignment, MemberAssignment, MultiAssignment,
-	ConstDecl, LocalVariable, GlobalVariable, MemberVariable, AttributeAssignment,
-	ClassVariable, Const, Nil, True, False, Alias,
-	DynamicVariable, DynamicAssignment, DynamicAssignmentCurrent} from './variables'
 import {If, Unless, Return, For, While, Until, Case, Break, Next, Redo, Begin} from './statements'
+import {LocalAssignment, GlobalAssignment, ClassVarAssignment, MemberAssignment,
+	MultiAssignment, AttributeAssignment, DynamicAssignment, DynamicAssignmentCurrent,
+	LocalVariable, GlobalVariable, MemberVariable, ClassVariable, DynamicVariable,
+	ConstDecl, Const, Nil, True, False, Alias} from './variables'
 import {Class, Self, Singleton, Module, Colon2, Colon3, Super, ZSuper} from './classes'
 import {Ensure, Rescue, RescueBody, Retry, ErrInfo} from './exceptions'
 
