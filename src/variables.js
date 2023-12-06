@@ -3,7 +3,7 @@ import {Artifact} from './artifact'
 import {Literal, symbol} from './literal'
 import {Return} from './statements'
 import {Call} from './operators'
-import {Block} from './blocks'
+import {Block, Scope} from './blocks'
 
 class Assignment extends Artifact {
     constructor(parent, tree, startLine) {
@@ -51,11 +51,11 @@ export class LocalAssignment extends Assignment {
     }
 
     convertLeft(output) {
-	this.add(output, this.determine() + symbol(this.vid)) // determine if const or let or nothing
+	this.add(output, this.determine() + symbol(this.vid))
 	this.add(output, " ")
     }
 
-    determine() { // const or let or nothing
+    exploreLocalVar() { // const or let or nothing
 
 	let result
 	
@@ -64,19 +64,28 @@ export class LocalAssignment extends Assignment {
 	    while (block != undefined) {
 		if (block instanceof Block) {
 		    result = block.findLocalVar(this, false)
+		} else if (block instanceof Scope) {
+		    // We are bounded by the scope which the variable is defined
+		    if (block.hasVar(this.vid)) {
+			break
+		    }
 		}
 		block = block.parent
 	    }
 	    if (result == undefined) {
-		result = 0
+		return 0
+	    } else {
+		return result
 	    }
 	} else {
 	    // Common case when the parent is a block
 	    //
-	    result = this.parent.findLocalVar(this, true)
+	    return this.parent.findLocalVar(this, true)
 	}
+    }
 
-	switch (result) {
+    determine() { // const or let or nothing
+	switch (this.exploreLocalVar()) {
 	case 0: return "const "
 	case -1: return ""
 	case 1: return "let "
@@ -131,26 +140,16 @@ export class ClassVarAssignment extends Artifact {
 }
 
 // https://www.rubydoc.info/gems/ruby-internal/Node/DASGN
-export class DynamicAssignment extends Artifact {
+export class DynamicAssignment extends LocalAssignment {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_vid")
-	this.name = line.value
-
-	line = tree.nextLine(startLine.indent, "attr", "nd_value")
-	line = tree.nextLine(line.indent)
-	this.value = resolveNode(this, tree, line)
+	super(parent, tree, startLine)
     }
 }
 
 // https://www.rubydoc.info/gems/ruby-internal/Node/DASGN_CURR
-export class DynamicAssignmentCurrent extends Artifact {
+export class DynamicAssignmentCurrent extends LocalAssignment {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
-	
-	this.vid = tree.get(this, startLine, "nd_vid")
-	this.value = tree.get(this, startLine, "nd_value")
+	super(parent, tree, startLine)
     }
 }
 
@@ -219,6 +218,10 @@ export class DynamicVariable extends Artifact {
 	this.vid = tree.get(this, startLine, "nd_vid")
     }
 
+    convert(output) {
+	this.add(output, symbol(this.vid))
+    }
+    
     returnize(tree) {
 	return Return.ize(tree, this)
     }

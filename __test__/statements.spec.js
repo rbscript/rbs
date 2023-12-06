@@ -444,3 +444,149 @@ test("Assign with operator III", () => {
     )
     expect(out).toEqual(out2)
 })             
+
+test("do block I", () => {
+    const src = createSource(
+	"make_it do",
+	'  print "666"',
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"makeIt(() => {",
+	'  print("666")',
+	"})"
+    )
+    expect(out).toEqual(out2)
+})             
+
+test("do block II", () => {
+    const src = createSource(
+	"make_it(333) do |x|",
+	'  print "666"',
+	'  print "777"',
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"makeIt(333, (x) => {",
+	'  print("666")',
+	'  print("777")',
+	"})"
+    )
+    expect(out).toEqual(out2)
+})             
+
+test("method do block I", () => {
+    const src = createSource(
+	"o.make_it do",
+	'  print "666"',
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"o.makeIt(() => {",
+	'  print("666")',
+	"})"
+    )
+    expect(out).toEqual(out2)
+})             
+
+test("do block regarding let/const I", () => {
+    const src = createSource(
+	"a = 3",
+	"o.make_it do",
+	"  a = 5",
+	'  print "666"',
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"let a = 3",
+	"o.makeIt(() => {",
+	"  a = 5",
+	'  print("666")',
+	"})"
+    )
+    expect(out).toEqual(out2)
+})             
+
+test("do block regarding let/const II", () => {
+    const src = createSource(
+	"a = 3",
+	"o.make_it do |;a|",
+	"  a = 5",
+	'  print "666"',
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"const a = 3",
+	"o.makeIt(() => {",
+	"  const a = 5",
+	'  print("666")',
+	"})"
+    )
+    expect(out).toEqual(out2)
+})             
+
+test("do block regarding let/const III", () => {
+    const src = createSource(
+	"a = 3",
+	"o.make_it do |;a|",
+	"  a = 5",
+	'  print "666"',
+	"  a = 77",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"const a = 3",
+	"o.makeIt(() => {",
+	"  let a = 5",
+	'  print("666")',
+	"  a = 77",
+	"})"
+    )
+    expect(out).toEqual(out2)
+})             
+
+test("do block regarding let/const IV", () => {
+    const src = createSource(
+	"a = 3",
+	"b = 44",
+	"c = 55",
+	"o.make_it do |c;a|",
+	"  a = 5",
+	'  print "666"',
+	"  a = 77",
+	"  c = 99",
+	"  if b == 91",
+	"    b = 91",
+	"  end",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"const a = 3",
+	"let b = 44",
+	"const c = 55",
+	"o.makeIt((c) => {",
+	"  let a = 5",
+	'  print("666")',
+	"  a = 77",
+	"  c = 99",
+	"  if (b == 91) {",
+	"    b = 91",
+	"  }",
+	"})"
+    )
+    expect(out).toEqual(out2)
+})             

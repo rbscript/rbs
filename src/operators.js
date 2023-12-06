@@ -12,7 +12,7 @@ export class Call extends Artifact {
 	this.args = tree.get(this, startLine, "nd_args")
     }
 
-    convert(output) {
+    convert(output, withDo) {
 
 	if (this.mid == ":new") {
 	    this.add(output, "new ")
@@ -30,8 +30,17 @@ export class Call extends Artifact {
 		this.add(output, ", ")
 		this.add(output, this.args.array[i])
 	    }
+
+	    if (withDo) {
+		this.add(output, ", ")
+	    }
 	}
-	this.add(output, ")")
+
+	if (!withDo) {
+	    // Common case
+	    //
+	    this.add(output, ")")
+	}
     }
 
     returnize(tree) {

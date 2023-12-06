@@ -27,7 +27,7 @@ export class FuncCall extends Artifact {
 	}
     }
 
-    convert(output) {
+    convert(output, withDo) {
 	if (this.mid == undefined) {
 	    return
 	}
@@ -41,8 +41,17 @@ export class FuncCall extends Artifact {
 		this.add(output, ", ")
 		this.add(output, this.args.array[i])
 	    }
+
+	    if (withDo) {
+		this.add(output, ", ")
+	    }
 	}
-	this.add(output, ")")
+
+	if (!withDo) {
+	    // Common case is just closing the paranthesis
+	    //
+	    this.add(output, ")")
+	}
     }
 }
 

@@ -611,3 +611,27 @@ export class Begin extends StmWithBlock {
 	// In fact, class definitions etc have empty NDL_BEGIN constructs for some reason
     }
 }
+
+export class Iter extends StmWithBlock {
+    constructor(parent, tree, startLine) {
+	
+	super(parent, tree, startLine)
+
+	this.iter = tree.get(this, startLine, "nd_iter")
+	this.body = tree.get(this, startLine, "nd_body")
+    }
+
+    convert(output) {
+	this.iter.convert(output, true) // see FuncCall.convert()
+
+	this.add(output, "(")
+	this.body.convertArgs(output)
+	this.add(output, ") => {")
+
+	output.addLine()
+	this.add(output, this.body)
+	output.addLine()
+	this.add(output, "})")
+    }
+}
+

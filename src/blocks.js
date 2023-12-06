@@ -11,6 +11,23 @@ export class Scope extends Artifact {
 	this.tbl = tree.get(this, startLine, "nd_tbl")
 	this.args = tree.get(this, startLine, "nd_args")
 	this.body = tree.get(this, startLine, "nd_body")
+
+	// Analyze parameters and local variables
+	//
+	const symbols = this.tbl.split(',')
+	if (this.args != undefined) {
+	    this.params = []
+	    for (let i = 0; i < this.args.preArgsNum; ++i) {
+		this.params.push(symbols[i])
+	    }
+	    this.vars = []
+	    for (let i = this.args.preArgsNum; i < symbols.length; ++i) {
+		this.vars.push(symbols[i])
+	    }
+	} else {
+	    this.vars = symbols
+	}
+	    
     }
 
     convert(output) {
@@ -25,6 +42,11 @@ export class Scope extends Artifact {
 	    return
 	}
 
+	// Possible if used as do |;a|
+	if (this.args == undefined) {
+	    return
+	}
+
 	const args = this.tbl.split(',')
 	const count = this.args.preArgsNum
 	for (let i = 0; i < count; ++i) {
@@ -33,6 +55,17 @@ export class Scope extends Artifact {
 	    }
 	    this.add(output, symbol(args[i]))
 	}
+    }
+
+    findLocalVar(la, search) { // la == LocalAssignment
+	if (this.hasVar(la.vid)) {
+	    return 0
+	}
+	return this.body.findLocalVar(la, search)
+    }
+
+    hasVar(symbol) {
+	return this.vars.includes(symbol)
     }
 }
 
@@ -97,6 +130,10 @@ export class Block extends Artifact {
 		if (ret != 0) {
 		    return -1
 		}
+	    } else if (block instanceof Scope) {
+		if (block.hasVar(la.vid)) {
+		    break
+		}
 	    }
 	    block = block.parent
 	}
@@ -106,7 +143,6 @@ export class Block extends Artifact {
 	    //
 	    for (let i = index + 1; i < this.statements.length; ++i) {
 		const stm = this.statements[i]
-
 		if (stm.findLocalVar(la, false) != 0) {
 		    return 1
 		}
@@ -143,16 +179,6 @@ export class Yield extends Artifact {
 	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
 	line = tree.nextLine(line.indent)
 	this.head = resolveNode(this, tree, line)
-    }
-}
-
-export class Iter extends Artifact {
-    constructor(parent, tree, startLine) {
-	
-	super(parent, startLine)
-
-	this.iter = tree.get(this, startLine, "nd_iter")
-	this.body = tree.get(this, startLine, "nd_body")
     }
 }
 

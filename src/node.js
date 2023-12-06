@@ -1,4 +1,4 @@
-import {Scope, Block, Yield, Iter, BlockPass} from './blocks'
+import {Scope, Block, Yield, BlockPass} from './blocks'
 import {Literal, DynamicSymbol} from './literal'
 import {String, DynamicString, EvalString, XString, DXString,
 	Match, Match2, Match3, NthRef, DynamicRegExp, BackRef} from './string'
@@ -8,11 +8,12 @@ import {FuncCall, VarCall, Defn, ClassMethod, Lambda, Undefine, QCall,
 	OptionalArgument, KeywordArgument, ArgsPush, ArgsCat, PostArg} from './methods'
 import {List, Args, Range, Splat, ZList, Values} from './lists'
 import {Hash, HashPattern} from './hashes'
-import {If, Unless, Return, For, While, Until, Case, Break, Next, Redo, Begin} from './statements'
 import {LocalAssignment, GlobalAssignment, ClassVarAssignment, MemberAssignment,
 	MultiAssignment, AttributeAssignment, DynamicAssignment, DynamicAssignmentCurrent,
 	LocalVariable, GlobalVariable, MemberVariable, ClassVariable, DynamicVariable,
 	ConstDecl, Const, Nil, True, False, Alias} from './variables'
+import {If, Unless, Return, For, While, Until, Case, Break, Next, Redo,
+	Begin, Iter} from './statements'
 import {Class, Self, Singleton, Module, Colon2, Colon3, Super, ZSuper} from './classes'
 import {Ensure, Rescue, RescueBody, Retry, ErrInfo} from './exceptions'
 
