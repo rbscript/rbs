@@ -230,6 +230,10 @@ export class Location {
 	index = sub.indexOf(")")
 	this.endCol = parseInt(sub.slice(0, index))
     }
+
+    toString() {
+	return "(" + this.startLine + ":" + this.startCol + ")"
+    }
 }
 
 

@@ -6,6 +6,10 @@ export class Artifact {
 	this.parent = parent
     }
 
+    toString() {
+	return this.constructor.name + " AT " + this.location
+    }
+    
     convert(output) {
 	throw "convert() not implemented for " + this.constructor.name
     }

@@ -223,7 +223,6 @@ test("class using protected & public property", () => {
 	animalClassForRuby()
     )
     const out = parseSource(src)
-    console.log(out)
     
     const out2 = createSource(
 	animalClassForJs()
@@ -242,7 +241,6 @@ test("class inheritance using protected & public property", () => {
 	"end"
     )
     const out = parseSource(src)
-    console.log(out)
     
     const out2 = createSource(
 	animalClassForJs(),
