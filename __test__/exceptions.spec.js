@@ -15,6 +15,20 @@ test("simple raise", () => {
     expect(out).toEqual(out2)
 })
 
+test("simple fail", () => {
+    const src = createSource(
+	"fail"
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"throw;"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+
 test("raise a string", () => {
     const src = createSource(
 	"raise 'error'"

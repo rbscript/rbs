@@ -34,7 +34,7 @@ export class FuncCall extends Artifact {
 	    return
 	}
 
-	if (this.mid == ':raise') {
+	if (this.mid == ':raise' || this.mid == ':fail') {
 	    return this.convertRaise(output)
 	}
 	
@@ -130,7 +130,7 @@ export class VarCall extends Artifact {
 	    
 	    // but, :raise is different
 	    //
-	    if (this.mid == ':raise') {
+	    if (this.mid == ':raise' || this.mid == ':fail') {
 		this.add(output, "throw;")
 	    } else {
 		// Common case
