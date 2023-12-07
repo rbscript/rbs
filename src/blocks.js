@@ -101,6 +101,15 @@ export class Block extends Artifact {
 	return this
     }
 
+    returnizeForBreak(tree) {
+	// Beware: This work for only 1 level. If there is another
+	//         break in a loop, it won't be counted as a return
+	for (let i = 0; i < this.statements.length; ++i) {
+	    this.statements[i] = this.statements[i].returnize(tree)
+	}
+	return this
+    }
+
     isReturn() {
 	return this.statements[this.statements.length - 1].isReturn()
     }

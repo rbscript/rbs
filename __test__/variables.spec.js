@@ -358,3 +358,56 @@ test("return from begin with let/const problem", () => {
     )
     expect(out).toEqual(out2)
 })
+
+test("return from while I", () => {
+    const src = createSource(
+	"i = 0",
+	"a = while i < 10",
+	"      break 666 if i == 5",
+	"      i += 1",
+	"    end"
+    )
+
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"let i = 0",
+	"const a = (() => {",
+	"    while (i < 10) {",
+	"      if (i == 5) {",
+	"            return 666",
+	"      }",
+	"      i += 1",
+	"    }",
+	"    })()"
+    )
+    expect(out).toEqual(out2)
+})
+
+test("return from while II", () => {
+    const src = createSource(
+	"i = 0",
+	"a = while i < 10",
+	"      333",
+	"      break 666 if i == 5",
+	"      i += 1",
+	"    end"
+    )
+
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"let i = 0",
+	"const a = (() => {",
+	"    while (i < 10) {",
+	// No 333 here because Ruby surppresses it
+	"      if (i == 5) {",
+	"            return 666",
+	"      }",
+	"      i += 1",
+	"    }",
+	"    })()"
+    )
+    expect(out).toEqual(out2)
+})
+

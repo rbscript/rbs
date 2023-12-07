@@ -33,6 +33,11 @@ class StmWithBlock extends Artifact {
 
 	return true
     }
+
+    returnize(tree) {
+	this.body = this.body.returnize(tree)
+	return this
+    }
 }
 
 export class If extends StmWithBlock {
@@ -224,6 +229,14 @@ export class Break extends Artifact {
 	this.stts = tree.get(this, startLine, "nd_stts")
     }
 
+    returnize(tree) {
+	if (this.stts != undefined) {
+	    return Return.ize(tree, this.stts)
+	} else {
+	    return this
+	}
+    }
+
     convert(output) {
 	this.add(output, "break")
 	if (this.stts != undefined) {
@@ -254,17 +267,34 @@ export class Redo extends Artifact {
     }
 }
 
+class Loop extends StmWithBlock {
+    constructor(parent, tree, startLine) {
+	super(parent, tree, startLine)
+    }
 
+    returnize(tree) {
+	this.body = this.body.returnizeForBreak(tree)
+	return this
+    }
+}
 
-export class For extends StmWithBlock {
+export class For extends Loop {
     constructor(parent, tree, startLine) {
 	super(parent, tree, startLine)
 
 	this.iter = tree.get(this, startLine, "nd_iter")
 	this.body = tree.get(this, startLine, "nd_body")
+	
+	if (this.asExpr()) {
+	    this.returnize(tree)
+	}
     }
 
     convert(output) {
+	if (this.asExpr()) {
+	    this.functionize1(output)
+	}
+	
 	this.add(output, "for (const ")
 	this.add(output, symbol(this.body.args.preInit.vid))
 	this.add(output, " in ")
@@ -275,19 +305,32 @@ export class For extends StmWithBlock {
 	this.add(output, this.body)
 	output.addLine()
 	this.add(output, "}")
+
+	if (this.asExpr()) {
+	    this.functionize2(output)
+	}
     }
 }
 
-export class While extends StmWithBlock {
+export class While extends Loop {
     constructor(parent, tree, startLine) {
 	super(parent, tree, startLine)
 
 	this.state = tree.get(this, startLine, "nd_state")
 	this.cond = tree.get(this, startLine, "nd_cond")
 	this.body = tree.get(this, startLine, "nd_body")
+
+	if (this.asExpr()) {
+	    this.returnize(tree)
+	}
     }
 
     convert(output) {
+
+	if (this.asExpr()) {
+	    this.functionize1(output)
+	}
+	
 	if (this.state.startsWith("1")) {
 	    this.add(output, "while (")
 	    this.add(output, this.cond)
@@ -308,19 +351,32 @@ export class While extends StmWithBlock {
 	    this.add(output, this.cond)
 	    this.add(output, ")")
 	}
+
+	if (this.asExpr()) {
+	    this.functionize2(output)
+	}
     }
 }
 
-export class Until extends StmWithBlock {
+export class Until extends Loop {
     constructor(parent, tree, startLine) {
 	super(parent, tree, startLine)
 
 	this.state = tree.get(this, startLine, "nd_state")
 	this.cond = tree.get(this, startLine, "nd_cond")
 	this.body = tree.get(this, startLine, "nd_body")
+
+	if (this.asExpr()) {
+	    this.returnize(tree)
+	}
     }
 
     convert(output) {
+
+	if (this.asExpr()) {
+	    this.functionize1(output)
+	}
+	
 	this.add(output, "while (!(")
 	this.add(output, this.cond)
 	this.add(output, ")) {")
@@ -329,6 +385,10 @@ export class Until extends StmWithBlock {
 	this.add(output, this.body)
 	output.addLine()
 	this.add(output, "}")
+
+	if (this.asExpr()) {
+	    this.functionize2(output)
+	}
     }
 }
 
