@@ -4,6 +4,8 @@ import {symbol, Literal} from './literal'
 import {Class, Module, Program} from './classes'
 import {Return} from './statements'
 import {OpCall} from './operators'
+import {String} from './string'
+import {Const} from './variables'
 
 export class FuncCall extends Artifact {
     constructor(parent, tree, startLine) {
@@ -31,6 +33,10 @@ export class FuncCall extends Artifact {
 	if (this.mid == undefined) {
 	    return
 	}
+
+	if (this.mid == ':raise') {
+	    return this.convertRaise(output)
+	}
 	
 	this.add(output, symbol(this.mid))
 
@@ -52,6 +58,28 @@ export class FuncCall extends Artifact {
 	    //
 	    this.add(output, ")")
 	}
+    }
+
+    convertRaise(output) {
+	this.add(output, "throw ")
+
+	const args = this.args.array
+
+	if (args[0] instanceof String) {
+	    this.add(output, args[0])
+	} else if (args[0] instanceof Const) {
+	    this.add(output, "new ")
+	    this.add(output, args[0])
+	    this.add(output, "(")
+	    for (let i = 1; i < args.length; ++i) {
+		if (i > 1) {
+		    this.add(output, ", ")
+		}
+		this.add(output, args[i])
+	    }
+	    this.add(output, ")")
+	}
+
     }
 }
 
@@ -98,7 +126,17 @@ export class VarCall extends Artifact {
 	    this.add(output, "()")
 	} else {
 	    // Put it as a single symbol and pray
-	    this.add(output, symbol(this.mid))
+	    //
+	    
+	    // but, :raise is different
+	    //
+	    if (this.mid == ':raise') {
+		this.add(output, "throw;")
+	    } else {
+		// Common case
+		//
+		this.add(output, symbol(this.mid))
+	    }
 	}
     }
 }
