@@ -14,6 +14,14 @@ export class Artifact {
 	throw "convert() not implemented for " + this.constructor.name
     }
 
+    alignWith(output, artifact, deltaArtifact) {
+	output.delta += deltaArtifact.location.startCol - artifact.location.startCol 
+    }
+
+    unalign(output, artifact, deltaArtifact) {
+	output.delta -= deltaArtifact.location.startCol - artifact.location.startCol 
+    }
+    
     add(output, str) {
 	output.add(this.location.startCol, str)
     }

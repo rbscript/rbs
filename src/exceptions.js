@@ -6,34 +6,34 @@ export class Ensure extends Artifact {
     constructor(parent, tree, startLine) {
 	
 	super(parent, startLine)
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
-	line = tree.nextLine(line.indent)
-	this.head = resolveNode(this, tree, line)
 
-	line = tree.nextLine(startLine.indent, "attr", "nd_ensr")
-	line = tree.nextLine(line.indent)
-	this.ensr = resolveNode(this, tree, line)
+	this.head = tree.get(this, startLine, "nd_head")
+	this.ensr = tree.get(this, startLine, "nd_ensr")
     }
 }
 
 export class Rescue extends Artifact {
     constructor(parent, tree, startLine) {
-	
 	super(parent, startLine)
+
+	this.head = tree.get(this, startLine, "nd_head")
+	this.resq = tree.get(this, startLine, "nd_resq")
+	this.els = tree.get(this, startLine, "nd_else")
+    }
+
+    convert(output) {
+
+	this.alignWith(output, this.head, this.resq)
+	this.add(output, "try {")
+	this.unalign(output, this.head, this.resq)
 	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
-	line = tree.nextLine(line.indent)
-	this.head = resolveNode(this, tree, line)
+	this.addNewLine(output, this.head)
+	
+	this.addNewLine(output, this.resq)
 
-	line = tree.nextLine(startLine.indent, "attr", "nd_resq")
-	line = tree.nextLine(line.indent)
-	this.resq = resolveNode(this, tree, line)
-
-	line = tree.nextLine(startLine.indent, "attr", "nd_else")
-	line = tree.nextLine(line.indent)
-	this.els = resolveNode(this, tree, line)
-
+	if (this.els != undefined) {
+	    this.add(output, this.els)
+	}
     }
 }
 
@@ -41,18 +41,21 @@ export class RescueBody extends Artifact {
     constructor(parent, tree, startLine) {
 	
 	super(parent, startLine)
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_args")
-	line = tree.nextLine(line.indent)
-	this.args = resolveNode(this, tree, line)
 
-	line = tree.nextLine(startLine.indent, "attr", "nd_body")
-	line = tree.nextLine(line.indent)
-	this.body = resolveNode(this, tree, line)
+	this.args = tree.get(this, startLine, "nd_args")
+	this.body = tree.get(this, startLine, "nd_body")
+	this.head = tree.get(this, startLine, "nd_head")
+    }
 
-	line = tree.nextLine(startLine.indent, "attr", "nd_head")
-	line = tree.nextLine(line.indent)
-	this.head = resolveNode(this, tree, line)
+    convert(output) {
+	this.add(output, "} catch ")
+	if (this.args != undefined) {
+
+	}
+	this.add(output, "{")
+
+	this.addNewLine(output, this.body)
+	this.addNewLine(output, "}")
     }
 }
 

@@ -68,3 +68,48 @@ test("raise an exception", () => {
     expect(out).toEqual(out2)
 })
 
+test("simple begin/rescue I", () => {
+    const src = createSource(
+	"begin",
+	"  print 'hello'",
+	"rescue",
+	"  print 'good bye'",
+	"end"
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"try {",
+	'  print("hello")',
+	"} catch {",
+	'  print("good bye")',
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("simple begin/rescue II", () => {
+    const src = createSource(
+	"begin",
+	"  print 'hello'",
+	"  print 'mello'",
+	"rescue",
+	"  print 'good bye'",
+	"  print 'au revoir'",
+	"end"
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"try {",
+	'  print("hello")',
+	'  print("mello")',
+	"} catch {",
+	'  print("good bye")',
+	'  print("au revoir")',
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})

@@ -5,6 +5,7 @@ export class Output {
 	this.text = ""
 	this.line = 0
 	this.col = 0
+	this.delta = 0 // see Artifact.alignWith()
     }
 
     addLine() {
@@ -19,7 +20,7 @@ export class Output {
 	}
 	this.add(col, str)
     }
-    
+
     add(col, str) {
 	if (str == undefined) {
 	    console.warn("Trying to add undefined string")
@@ -33,7 +34,7 @@ export class Output {
 	    throw "Trying to add " + str.constructor.name
 	}
 	if (this.col == 0) {
-	    for (let i = 0; i < col; ++i) {
+	    for (let i = 0; i < col + this.delta; ++i) {
 		this.text += " "
 	    }
 	}
