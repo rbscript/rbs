@@ -10,6 +10,28 @@ export class Ensure extends Artifact {
 	this.head = tree.get(this, startLine, "nd_head")
 	this.ensr = tree.get(this, startLine, "nd_ensr")
     }
+
+    convert(output) {
+
+	// Note: Aligns are ugly here because
+	//         columns are incorrectly specified except for head and ensr blocks
+	
+	this.alignWith(output, this.head, this.parent)
+	this.add(output, "try {")
+	this.unalign(output, this.head, this.parent)
+	
+	this.addNewLine(output, this.head)
+
+	this.alignWith(output, this.head, this.parent)
+	this.addNewLine(output, "} finally {")
+	this.unalign(output, this.head, this.parent)
+	
+	this.addNewLine(output, this.ensr)
+
+	this.alignWith(output, this.head, this.parent)
+	this.addNewLine(output, "}")
+	this.unalign(output, this.head, this.parent)
+    }
 }
 
 export class Rescue extends Artifact {

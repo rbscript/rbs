@@ -113,3 +113,50 @@ test("simple begin/rescue II", () => {
     
     expect(out).toEqual(out2)
 })
+
+test("simple begin/ensure I", () => {
+    const src = createSource(
+	"begin",
+	"  print 'hello'",
+	"ensure",
+	"  print 'good bye'",
+	"end"
+    )
+    const out = parseSource(src)
+    console.log(out)
+    
+    const out2 = createSource(
+	"try {",
+	'  print("hello")',
+	"} finally {",
+	'  print("good bye")',
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("simple begin/ensure II", () => {
+    const src = createSource(
+	"begin",
+	"  print 'hello'",
+	"  print 'mello'",
+	"ensure",
+	"  print 'good bye'",
+	"  print 'au revoir'",
+	"end"
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"try {",
+	'  print("hello")',
+	'  print("mello")',
+	"} finally {",
+	'  print("good bye")',
+	'  print("au revoir")',
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
