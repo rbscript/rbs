@@ -123,7 +123,6 @@ test("simple begin/ensure I", () => {
 	"end"
     )
     const out = parseSource(src)
-    console.log(out)
     
     const out2 = createSource(
 	"try {",
@@ -156,6 +155,81 @@ test("simple begin/ensure II", () => {
 	'  print("good bye")',
 	'  print("au revoir")',
 	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("begin/rescue with let/const I", () => {
+    const src = createSource(
+	"ad = 'Savas'",
+	"begin",
+	'  print "hello #{ad}"',
+	"rescue",
+	"  print 'good bye'",
+	"end"
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	'const ad = "Savas"',
+	"try {",
+	'  print("hello " + (ad))',
+	"} catch {",
+	'  print("good bye")',
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("begin/rescue with let/const II", () => {
+    const src = createSource(
+	"ad = 'Savas'",
+	"begin",
+	"  ad = 'Bill Gates'",
+	'  print "hello #{ad}"',
+	"rescue",
+	"  print 'good bye'",
+	"end"
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	'let ad = "Savas"',
+	"try {",
+	'  ad = "Bill Gates"',
+	'  print("hello " + (ad))',
+	"} catch {",
+	'  print("good bye")',
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("begin/rescue as expr I", () => {
+    const src = createSource(
+	"ad = 'Savas'",
+	"ad = begin",
+	"       'Bill Gates'",
+	"     rescue",
+	"       'Paul Allen'",
+	"     end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	'let ad = "Savas"',
+	"ad = (() => {",
+	"     {",
+	"     try {",
+	'       return "Bill Gates"',
+	"     } catch {",
+	'       return "Paul Allen"',
+	"     }",
+	"     }",
+	"     })()"
     )
     
     expect(out).toEqual(out2)

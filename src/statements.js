@@ -4,7 +4,7 @@ import {List} from './lists'
 import {symbol} from './literal'
 import {Scope, Block} from './blocks'
 
-class StmWithBlock extends Artifact {
+export class StmWithBlock extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
     }
