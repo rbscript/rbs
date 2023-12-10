@@ -348,3 +348,99 @@ test("multi rescue III", () => {
     
     expect(out).toEqual(out2)
 })
+
+test("begin/rescue/else", () => {
+    const src = createSource(
+	"begin",
+	"  print 'hello'",
+	"rescue",
+	"  print 'good bye'",
+	"else",
+	"  print 'we dont get caught'",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"let els1 = false",
+	"try {",
+	'  print("hello")',
+	"  els1 = true",
+	"} catch {",
+	'  print("good bye")',
+	"}",
+	"if (els1) {",
+	'print("we dont get caught")',
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("def/rescue/else", () => {
+    const src = createSource(
+	"def fn",
+	"  print 'hello'",
+	"rescue",
+	"  print 'good bye'",
+	"else",
+	"  print 'we dont get caught'",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function fn() {",
+	"let els1 = false",
+	"try {",
+	'  print("hello")',
+	"  els1 = true",
+	"} catch {",
+	'  print("good bye")',
+	"}",
+	"if (els1) {",
+	'print("we dont get caught")',
+	"}",
+	"}"
+	
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("def/rescue/ensure/else", () => {
+    const src = createSource(
+	"def fn",
+	"  print 'hello'",
+	"rescue",
+	"  print 'good bye'",
+	"else",
+	"  print 'we dont get caught'",
+	"ensure",
+	"  print 'satisfaction guaranteed'",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function fn() {",
+	"try {",
+	"let els1 = false",
+	"try {",
+	'  print("hello")',
+	"  els1 = true",
+	"} catch {",
+	'  print("good bye")',
+	"}",
+	"if (els1) {",
+	'print("we dont get caught")',
+	"}",
+	"} finally {",
+	'  print("satisfaction guaranteed")',
+	"}",
+	"}"
+	
+    )
+    
+    expect(out).toEqual(out2)
+})

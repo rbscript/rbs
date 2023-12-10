@@ -82,12 +82,28 @@ export class Rescue extends StmWithBlock {
     }
     
     convert(output) {
+
 	this.alignWith(output, this.head, this.resq)
-	this.add(output, "try {")
+	
+	let elsvar
+	if (this.els != undefined) {
+	    elsvar = output.genVar("els")
+	    this.addNewLine(output, "let ")
+	    this.add(output, elsvar)
+	    this.add(output, " = false")
+	}
+	
+	
+	this.addNewLine(output, "try {")
 	this.unalign(output, this.head, this.resq)
 	
 	this.addNewLine(output, this.head)
 
+	if (this.els != undefined) {
+	    this.addNewLine(output, elsvar)
+	    this.add(output, " = true")
+	}
+	
 	// Only rescue without a parameter
 	//
 	if (this.resq.args == undefined) {
@@ -99,7 +115,6 @@ export class Rescue extends StmWithBlock {
 	} else {
 	    // Rescue with typed arguments etc
 	    //
-	    // TODO get variable name as => e
 
 	    // catch clause
 	    this.alignWith(output, this.head, this.resq)
@@ -137,15 +152,23 @@ export class Rescue extends StmWithBlock {
 	    }
 
 	    this.addNewLine(output, "}")
+
 	}
-	
+
 	this.alignWith(output, this.head, this.resq)
 	this.addNewLine(output, "}")
-	this.unalign(output, this.head, this.resq)
 	
 	if (this.els != undefined) {
-	    this.add(output, this.els)
+	    this.addNewLine(output, "if (")
+	    this.add(output, elsvar)
+	    this.add(output, ") {")
+	    
+	    this.addNewLine(output, this.els)
+	    
+	    this.addNewLine(output, "}")
 	}
+
+	this.unalign(output, this.head, this.resq)
     }
 }
 
