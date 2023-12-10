@@ -4,6 +4,7 @@ import {Literal, symbol} from './literal'
 import {Return} from './statements'
 import {Call} from './operators'
 import {Block, Scope} from './blocks'
+import {ErrInfo} from './exceptions'
 
 class Assignment extends Artifact {
     constructor(parent, tree, startLine) {
@@ -51,8 +52,19 @@ export class LocalAssignment extends Assignment {
     }
 
     convertLeft(output) {
+
+	// For rescue ArgumentError => ae, we are so far indented
+	//                                 Let's fix it here
+	if (this.value instanceof ErrInfo) {
+	    this.alignWith(output, this, this.parent.parent) // block -> rescue
+	}
+
 	this.add(output, this.determine() + symbol(this.vid))
 	this.add(output, " ")
+
+	if (this.value instanceof ErrInfo) {
+	    this.unalign(output, this, this.parent.parent)
+	}
     }
 
     exploreLocalVar() { // const or let or nothing

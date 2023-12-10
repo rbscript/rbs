@@ -77,7 +77,7 @@ test("simple begin/rescue I", () => {
 	"end"
     )
     const out = parseSource(src)
-
+    
     const out2 = createSource(
 	"try {",
 	'  print("hello")',
@@ -230,6 +230,120 @@ test("begin/rescue as expr I", () => {
 	"     }",
 	"     }",
 	"     })()"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("multi rescue I", () => {
+    const src = createSource(
+	"begin",
+	"  print 'hello'",
+	"rescue ArgumentError",
+	"  print 'bad argument'",
+	"rescue",
+	"  print 'good bye'",
+	"end"
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"try {",
+	'  print("hello")',
+	"} catch (e1) {",
+	"  if (e1 instanceof ArgumentError) {",
+	'  print("bad argument")',
+	"  } else {",
+	'  print("good bye")',
+	"  }",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("multi rescue II", () => {
+    const src = createSource(
+	"begin",
+	"  print 'hello'",
+	"rescue ArgumentError",
+	"  print 'bad argument'",
+	"rescue RuntimeError",
+	"  print 'do not run'",
+	"rescue",
+	"  print 'good bye'",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"try {",
+	'  print("hello")',
+	"} catch (e1) {",
+	"  if (e1 instanceof ArgumentError) {",
+	'  print("bad argument")',
+	"  } else if (e1 instanceof RuntimeError) {",
+	'  print("do not run")',
+	"  } else {",
+	'  print("good bye")',
+	"  }",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("multi rescue I", () => {
+    const src = createSource(
+	"begin",
+	"  print 'hello'",
+	"rescue ArgumentError => ae",
+	"  print 'bad argument'",
+	"rescue",
+	"  print 'good bye'",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"try {",
+	'  print("hello")',
+	"} catch (e1) {",
+	"  if (e1 instanceof ArgumentError) {",
+	"const ae = e1",
+	'  print("bad argument")',
+	"  } else {",
+	'  print("good bye")',
+	"  }",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("multi rescue III", () => {
+    const src = createSource(
+	"begin",
+	"  print 'hello'",
+	"rescue ArgumentError => ae",
+	"  print 'bad argument'",
+	"rescue",
+	"  print 'good bye'",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"try {",
+	'  print("hello")',
+	"} catch (e1) {",
+	"  if (e1 instanceof ArgumentError) {",
+	"const ae = e1",
+	'  print("bad argument")',
+	"  } else {",
+	'  print("good bye")',
+	"  }",
+	"}"
     )
     
     expect(out).toEqual(out2)

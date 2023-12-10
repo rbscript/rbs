@@ -57,6 +57,8 @@ export class Rescue extends StmWithBlock {
 	this.head = tree.get(this, startLine, "nd_head")
 	this.resq = tree.get(this, startLine, "nd_resq")
 	this.els = tree.get(this, startLine, "nd_else")
+
+	this.exvar = undefined
     }
 
     findLocalVar(la, search) { // la is a LocalAssignment
@@ -85,9 +87,62 @@ export class Rescue extends StmWithBlock {
 	this.unalign(output, this.head, this.resq)
 	
 	this.addNewLine(output, this.head)
-	
-	this.addNewLine(output, this.resq)
 
+	// Only rescue without a parameter
+	//
+	if (this.resq.args == undefined) {
+	    this.alignWith(output, this.head, this.resq)
+	    this.addNewLine(output, "} catch {")
+	    this.unalign(output, this.head, this.resq)
+
+	    this.addNewLine(output, this.resq.body)
+	} else {
+	    // Rescue with typed arguments etc
+	    //
+	    // TODO get variable name as => e
+
+	    // catch clause
+	    this.alignWith(output, this.head, this.resq)
+	    this.addNewLine(output, "} catch (")
+	    this.exvar = output.genVar("e")
+	    this.add(output, this.exvar)
+	    this.add(output, ") {")
+	    this.unalign(output, this.head, this.resq)
+
+	    // Now the bodies
+	    //
+	    let rescue = this.resq
+	    let first = true
+	    while (rescue != undefined) {
+		if (rescue.args != undefined) {
+		    if (first) {
+			this.addNewLine(output, "if (")
+			first = false
+		    } else {
+			this.addNewLine(output, "} else if (")
+		    }
+
+		    const tayp = rescue.args.array[0]
+		    this.add(output, this.exvar)
+		    this.add(output, " instanceof ")
+		    this.add(output, tayp)
+		    this.add(output, ") {")
+		} else {
+		    this.addNewLine(output, "} else {")
+		}
+
+		this.addNewLine(output, rescue.body)
+	    
+		rescue = rescue.head
+	    }
+
+	    this.addNewLine(output, "}")
+	}
+	
+	this.alignWith(output, this.head, this.resq)
+	this.addNewLine(output, "}")
+	this.unalign(output, this.head, this.resq)
+	
 	if (this.els != undefined) {
 	    this.add(output, this.els)
 	}
@@ -119,17 +174,6 @@ export class RescueBody extends StmWithBlock {
 	}
 	return ret
     }
-
-    convert(output) {
-	this.add(output, "} catch ")
-	if (this.args != undefined) {
-
-	}
-	this.add(output, "{")
-
-	this.addNewLine(output, this.body)
-	this.addNewLine(output, "}")
-    }
 }
 
 export class Retry extends Artifact {
@@ -141,7 +185,19 @@ export class Retry extends Artifact {
 
 export class ErrInfo extends Artifact {
     constructor(parent, tree, startLine) {
-	
 	super(parent, startLine)
+    }
+
+    convert(output) {
+	let parent = this.parent
+	while (parent != undefined) {
+	    if (parent instanceof Rescue) {
+		this.add(output, parent.exvar)
+		return
+	    }
+	    parent = parent.parent
+	}
+
+	throw "Unexpected"
     }
 }

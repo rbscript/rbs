@@ -6,6 +6,7 @@ export class Output {
 	this.line = 0
 	this.col = 0
 	this.delta = 0 // see Artifact.alignWith()
+	this.varMon = 0; // Monotonously increasing variable  id
     }
 
     addLine() {
@@ -44,5 +45,14 @@ export class Output {
 
     toString() {
 	return this.text
+    }
+
+    genVar(prefix) {
+	this.varMon++
+	if (prefix != undefined) {
+	    return prefix + this.varMon
+	} else {
+	    return "var" + this.varMon
+	}
     }
 }
