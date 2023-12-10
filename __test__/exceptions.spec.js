@@ -235,6 +235,26 @@ test("begin/rescue as expr I", () => {
     expect(out).toEqual(out2)
 })
 
+test("begin/rescue as expr II", () => {
+    const src = createSource(
+	"ad = 'Bill Gates' rescue 'Paul Allen'"
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"const ad = (() => {",
+	"                  try {",
+	'     return "Bill Gates"',
+	"                  } catch {",
+	'                         return "Paul Allen"',
+	"                  }",
+	"     })()"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+
 test("multi rescue I", () => {
     const src = createSource(
 	"begin",

@@ -1,4 +1,3 @@
-import {Body} from './blocks'
 import {resolveNode} from './node'
 import {Artifact} from './artifact'
 import {StmWithBlock} from './statements'
@@ -59,8 +58,22 @@ export class Rescue extends StmWithBlock {
 	this.els = tree.get(this, startLine, "nd_else")
 
 	this.exvar = undefined
+
+	if (this.asExpr()) {
+	    this.returnize(tree)
+	}
     }
 
+    asExpr() {
+	if (!super.asExpr()) {
+	    return false
+	}
+	if (this.parent instanceof Ensure) {
+	    return false
+	}
+	return true
+    }
+    
     findLocalVar(la, search) { // la is a LocalAssignment
 	let ret = this.head.findLocalVar(la, search)
 	if (ret == 0) {
@@ -83,6 +96,10 @@ export class Rescue extends StmWithBlock {
     
     convert(output) {
 
+	if (this.asExpr()) {
+	    this.functionize1(output)
+	}
+	
 	this.alignWith(output, this.head, this.resq)
 	
 	let elsvar
@@ -115,6 +132,7 @@ export class Rescue extends StmWithBlock {
 	} else {
 	    // Rescue with typed arguments etc
 	    //
+
 
 	    // catch clause
 	    this.alignWith(output, this.head, this.resq)
@@ -169,6 +187,10 @@ export class Rescue extends StmWithBlock {
 	}
 
 	this.unalign(output, this.head, this.resq)
+
+	if (this.asExpr()) {
+	    this.functionize2(output)
+	}
     }
 }
 

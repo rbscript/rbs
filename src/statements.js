@@ -30,7 +30,9 @@ export class StmWithBlock extends Artifact {
 	if (this.parent instanceof Block) {
 	    return false
 	}
-
+	if (this.parent instanceof Begin) {
+	    return false
+	}
 	return true
     }
 
