@@ -15,19 +15,36 @@ export class Scope extends Artifact {
 	// Analyze parameters and local variables
 	//
 	const symbols = this.tbl.split(',')
+
+	this.vars = []
+	this.params = []
+
+	let index = 0
 	if (this.args != undefined) {
-	    this.params = []
-	    for (let i = 0; i < this.args.preArgsNum; ++i) {
-		this.params.push(symbols[i])
+	    
+	    for (let i = 0; i < this.args.preArgsNum; ++i, ++index) {
+		this.params.push(symbols[index])
 	    }
-	    this.vars = []
-	    for (let i = this.args.preArgsNum; i < symbols.length; ++i) {
+
+	    if (this.args.optArgs != undefined) {
+		let pa = this.args.optArgs
+		while (pa != undefined) {
+		    this.params.push(symbols[index])
+		    index++
+		    pa = pa.next
+		}
+	    }
+	    
+	    // Rest are local variables
+	    for (let i = index; i < symbols.length; ++i, ++index) {
 		this.vars.push(symbols[i])
 	    }
 	} else {
+	    // If no args is explicitly specified, 
+	    // then all symbols are vars. Example: do |;a|
 	    this.vars = symbols
 	}
-	    
+
     }
 
     convert(output) {
@@ -48,13 +65,32 @@ export class Scope extends Artifact {
 	}
 
 	const args = this.tbl.split(',')
-	const count = this.args.preArgsNum
+	let count = this.args.preArgsNum
 	for (let i = 0; i < count; ++i) {
 	    if (i > 0) {
 		this.add(output, ", ")
 	    }
 	    this.add(output, symbol(args[i]))
 	}
+
+	if (this.args.optArgs != undefined) {
+	    if (count > 0) {
+		this.add(output, ", ")
+	    }
+	    
+	    let oa = this.args.optArgs
+	    while (oa != undefined) {
+		this.add(output, symbol(oa.body.vid))
+		this.add(output, " = ")
+		this.add(output, oa.body.value)
+
+		oa = oa.next
+		if (oa != undefined) {
+		    this.add(output, ", ")
+		}
+	    }
+	}
+	
     }
 
     findLocalVar(la, search) { // la == LocalAssignment
@@ -62,6 +98,10 @@ export class Scope extends Artifact {
 	    return 0
 	}
 	return this.body.findLocalVar(la, search)
+    }
+
+    hasParam(symbol) {
+	return this.params.includes(symbol)
     }
 
     hasVar(symbol) {
@@ -82,6 +122,10 @@ export class Block extends Artifact {
 	    line = tree.nextLine(line.indent)
 
 	    const stm = resolveNode(this, tree, line)
+	    if (stm == undefined) {
+		break
+	    }
+
 	    stm.parent = this
 	    this.statements.push(stm)
 	}

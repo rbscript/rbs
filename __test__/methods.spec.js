@@ -433,3 +433,72 @@ test.skip("send proc as an block argument", () => {
 
     //expect(out).equals("")
 })
+
+
+test("def with default arguments I", () => {
+    const src = createSource(
+	"def anti_christ a = 1",
+	"  666",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function antiChrist(a = 1) {",
+	"  return 666",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("def with default arguments II", () => {
+    const src = createSource(
+	"def anti_christ a = 1, b = a / 3",
+	"  666",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function antiChrist(a = 1, b = a / 3) {",
+	"  return 666",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("def with default arguments III", () => {
+    const src = createSource(
+	"def anti_christ a, b = a / 3",
+	"  666",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function antiChrist(a, b = a / 3) {",
+	"  return 666",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("def with default arguments IV", () => {
+    const src = createSource(
+	"def anti_christ a = 1",
+	"  a = 666",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function antiChrist(a = 1) {",
+	"  a = 666",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})

@@ -5,6 +5,7 @@ import {Return} from './statements'
 import {Call} from './operators'
 import {Block, Scope} from './blocks'
 import {ErrInfo} from './exceptions'
+import {Defn} from './methods'
 
 class Assignment extends Artifact {
     constructor(parent, tree, startLine) {
@@ -81,9 +82,14 @@ export class LocalAssignment extends Assignment {
 		    if (block.hasVar(this.vid)) {
 			break
 		    }
+		} else if (block instanceof Defn) {
+		    if (block.defn.hasParam(this.vid)) {
+			return -1
+		    }
 		}
 		block = block.parent
 	    }
+	
 	    if (result == undefined) {
 		return 0
 	    } else {
@@ -243,13 +249,16 @@ export class DynamicVariable extends Artifact {
 export class GlobalVariable extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_entry")
-	this.name = line.value
+o
+	this.entry = tree.get(this, startLine, "nd_entry")
     }
 
     returnize(tree) {
 	return Return.ize(tree, this)
+    }
+
+    convert(output) {
+	this.add(output, symbol(this.entry))
     }
 }
 
