@@ -18,6 +18,7 @@ export class Scope extends Artifact {
 
 	this.vars = []
 	this.params = []
+	this.kwParams = {}
 
 	let index = 0
 	if (this.args != undefined) {
@@ -34,6 +35,17 @@ export class Scope extends Artifact {
 		    pa = pa.next
 		}
 	    }
+
+	    if (this.args.kwArgs != undefined) {
+		let ka = this.args.kwArgs
+		while (ka != undefined) {
+		    this.params.push(symbols[index])
+		    index++
+
+		    this.kwParams[symbols[index]] = ka.body.value
+		    ka = ka.next
+		}
+	    }
 	    
 	    // Rest are local variables
 	    for (let i = index; i < symbols.length; ++i, ++index) {
@@ -44,7 +56,6 @@ export class Scope extends Artifact {
 	    // then all symbols are vars. Example: do |;a|
 	    this.vars = symbols
 	}
-
     }
 
     convert(output) {
@@ -90,7 +101,34 @@ export class Scope extends Artifact {
 		}
 	    }
 	}
-	
+
+	if (this.args.kwArgs != undefined) {
+	    if (count > 0) {
+		this.add(output, ", ")
+	    }
+	    count++
+
+	    this.add(output, "{")
+	    let anyValue = false
+	    let ka = this.args.kwArgs
+	    while (ka != undefined) {
+		this.add(output, symbol(ka.body.vid))
+		if (typeof ka.body.value != "string" || 
+		    !ka.body.value.startsWith("NODE_SPECIAL_REQUIRED_KEYWORD")) {
+		    this.add(output, " = ")
+		    this.add(output, ka.body.value)
+		    anyValue = true
+		}
+		ka = ka.next
+		if (ka != undefined) {
+		    this.add(output, ", ")
+		}
+	    }
+	    this.add(output, "}")
+	    if (!anyValue) {
+		this.add(output, " = {}")
+	    }
+	}
     }
 
     findLocalVar(la, search) { // la == LocalAssignment
@@ -184,6 +222,9 @@ export class Block extends Artifact {
 		    return -1
 		}
 	    } else if (block instanceof Scope) {
+		if (block.hasParam(la.vid)) {
+		    return -1
+		}
 		if (block.hasVar(la.vid)) {
 		    break
 		}

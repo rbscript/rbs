@@ -502,3 +502,96 @@ test("def with default arguments IV", () => {
     
     expect(out).toEqual(out2)
 })
+
+test("def with keyword arguments I", () => {
+    const src = createSource(
+	"def anti_christ num:",
+	"  num * 666",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function antiChrist({num} = {}) {",
+	"  return num * 666",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("def with keyword arguments II", () => {
+    const src = createSource(
+	"def anti_christ num: 23",
+	"  num * 666",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function antiChrist({num = 23}) {",
+	"  return num * 666",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("def with keyword arguments III", () => {
+    const src = createSource(
+	"def anti_christ num: 23",
+	"  num = 666",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function antiChrist({num = 23}) {",
+	"  num = 666",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("def with keyword and optional arguments I", () => {
+    const src = createSource(
+	"def anti_christ str, index = str + 46, num: 23",
+	"  num = 666",
+	"  stri = 'kelle'",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function antiChrist(str, index = str + 46, {num = 23}) {",
+	"  num = 666",
+	'  const stri = "kelle"',
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("def with keyword and optional arguments II", () => {
+    const src = createSource(
+	"def anti_christ str, index = str + 46, num: 23, count:",
+	"  num = 666",
+	"  index = 3",
+	"  stri = 'kelle'",
+	"  stri = 'namik'",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function antiChrist(str, index = str + 46, {num = 23, count}) {",
+	"  num = 666",
+	"  index = 3",
+	'  let stri = "kelle"',
+	'  stri = "namik"',
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})

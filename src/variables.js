@@ -6,6 +6,7 @@ import {Call} from './operators'
 import {Block, Scope} from './blocks'
 import {ErrInfo} from './exceptions'
 import {Defn} from './methods'
+import {List} from './lists'
 
 class Assignment extends Artifact {
     constructor(parent, tree, startLine) {
@@ -71,34 +72,37 @@ export class LocalAssignment extends Assignment {
     exploreLocalVar() { // const or let or nothing
 
 	let result
-	
-	if (!(this.parent instanceof Block)) { // Sometimes there is single stm under If etc.
-	    let block = this.parent.parent
-	    while (block != undefined) {
-		if (block instanceof Block) {
-		    result = block.findLocalVar(this, false)
-		} else if (block instanceof Scope) {
-		    // We are bounded by the scope which the variable is defined
-		    if (block.hasVar(this.vid)) {
-			break
-		    }
-		} else if (block instanceof Defn) {
-		    if (block.defn.hasParam(this.vid)) {
-			return -1
-		    }
-		}
-		block = block.parent
-	    }
-	
-	    if (result == undefined) {
-		return 0
-	    } else {
-		return result
-	    }
-	} else {
-	    // Common case when the parent is a block
-	    //
+
+	if (this.parent instanceof Block) {
 	    return this.parent.findLocalVar(this, true)
+	}
+
+	if (this.parent instanceof List) { // Keyword argument
+	    return -1
+	}
+
+	// Sometimes there is single stm under If etc.
+	let block = this.parent.parent
+	while (block != undefined) {
+	    if (block instanceof Block) {
+		result = block.findLocalVar(this, false)
+	    } else if (block instanceof Scope) {
+		// We are bounded by the scope which the variable is defined
+		if (block.hasVar(this.vid)) {
+		    break
+		}
+	    } else if (block instanceof Defn) {
+		if (block.defn.hasParam(this.vid)) {
+		    return -1
+		}
+	    }
+	    block = block.parent
+	}
+	
+	if (result == undefined) {
+	    return 0
+	} else {
+	    return result
 	}
     }
 
