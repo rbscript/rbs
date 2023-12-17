@@ -595,3 +595,42 @@ test("def with keyword and optional arguments II", () => {
     
     expect(out).toEqual(out2)
 })
+
+test("call with keyword arguments I", () => {
+    const src = createSource(
+	"anti_christ a = 3"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"antiChrist({a: 3})"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("call with keyword arguments II", () => {
+    const src = createSource(
+	"anti_christ(a = 3, b = 666)"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"antiChrist({a: 3, b: 666})"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("call with keyword arguments III", () => {
+    const src = createSource(
+	"anti_christ(666, a = 3, b = 666)"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"antiChrist(666, {a: 3, b: 666})"
+    )
+    
+    expect(out).toEqual(out2)
+})

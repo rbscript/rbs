@@ -5,7 +5,7 @@ import {Class, Module, Program} from './classes'
 import {Return} from './statements'
 import {OpCall} from './operators'
 import {String} from './string'
-import {Const} from './variables'
+import {Const, LocalAssignment} from './variables'
 
 export class FuncCall extends Artifact {
     constructor(parent, tree, startLine) {
@@ -41,13 +41,37 @@ export class FuncCall extends Artifact {
 	this.add(output, symbol(this.mid))
 
 	this.add(output, "(")
+
 	if (this.args != undefined && this.args.array.length > 0) {
-	    this.add(output, this.args.array[0])
-	    for (let i = 1; i < this.args.array.length; ++i) {
-		this.add(output, ", ")
-		this.add(output, this.args.array[i])
+
+	    let kwStarted = false
+	    for (let i = 0; i < this.args.array.length; ++i) {
+		if (i > 0) {
+		    this.add(output, ", ")
+		}
+		
+		if (this.args.array[i] instanceof LocalAssignment) {
+		    if (!kwStarted) {
+			this.add(output, "{")
+			kwStarted = true
+		    }
+
+		    const la = this.args.array[i]
+		    this.add(output, symbol(la.vid))
+		    this.add(output, ": ")
+		    this.add(output, la.value)
+		    
+		} else {
+		    // Normal case
+		    //
+		    this.add(output, this.args.array[i])
+		}
 	    }
 
+	    if (kwStarted) {
+		this.add(output, "}")
+	    }
+	    
 	    if (withDo) {
 		this.add(output, ", ")
 	    }
