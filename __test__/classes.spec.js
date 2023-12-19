@@ -308,17 +308,56 @@ test("class with getter, setter and auto return", () => {
     expect(out).toEqual(out2)
 })             
 
-test.skip("class method", () => {
+test("class method", () => {
     const src = createSource(
 	"class Animal",
+	"  @@eye_color",
 	"  def self.deneme a, b",
 	"    @@eye_color = 'blue'",
 	"  end",
 	"end")
     const out = parseSource(src)
+    
+    const out2 = createSource(
+	"class Animal {",
+	"  static #eyeColor",
+	"  static deneme(a, b) {",
+	'    Animal.#eyeColor = "blue"',
+	"  }",
+	"}"
+    )
 
-    //expect(out).toEqual(out2)
+    expect(out).toEqual(out2)
 })             
+
+test("class properties", () => {
+    const src = createSource(
+	"class Animal",
+	"  @@eye_color",
+	"  def self.eye_color",
+	"    @@eye_color",
+	"  end",
+	"  def self.eye_color=value",
+	"    @@eye_color = value",
+	"  end",
+	"end")
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"class Animal {",
+	"  static #eyeColor",
+	"  static get eyeColor() {",
+	'    return Animal.#eyeColor',
+	"  }",
+	"  static set eyeColor(value) {",
+	'    Animal.#eyeColor = value',
+	"  }",
+	"}"
+    )
+
+    expect(out).toEqual(out2)
+})             
+
 
 test.skip("singleton class method", () => {
     const src = createSource(

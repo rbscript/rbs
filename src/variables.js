@@ -148,16 +148,22 @@ export class MemberAssignment extends Artifact {
     }
 }
 
-export class ClassVarAssignment extends Artifact {
+export class ClassVarAssignment extends Assignment {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_vid")
-	this.name = line.value
+	super(parent, tree, startLine)
 
-	line = tree.nextLine(startLine.indent, "attr", "nd_value")
-	line = tree.nextLine(line.indent)
-	this.value = resolveNode(this, tree, line)
+	const owner = this.findOwner()
+	owner.addClassProperty(this, this.vid)
+    }
+
+    convertLeft(output) {
+	const owner = this.findOwner()
+	this.add(output, symbol(owner.name))
+	this.add(output, ".")
+
+	const name = symbol(owner.getClassProperty(this.vid.slice(3)).jsName)
+	this.add(output, name)
+	this.add(output, " ")
     }
 }
 
@@ -293,13 +299,26 @@ export class MemberVariable extends Artifact {
 export class ClassVariable extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_vid")
-	this.name = line.value
+
+	this.vid = tree.get(this, startLine, "nd_vid")
+
+	const owner = this.findOwner()
+	owner.addClassProperty(this, this.vid)
     }
 
     returnize(tree) {
 	return Return.ize(tree, this)
+    }
+
+    convert(output) {
+	const owner = this.findOwner()
+	if (this.inClass()) {
+	    this.add(output, "static " +
+		     symbol(owner.getClassProperty(this.vid.slice(3)).jsName))
+	} else {
+	    this.add(output, symbol(owner.name) + "." +
+		     symbol(owner.getClassProperty(this.vid.slice(3)).jsName))
+	}
     }
 
 }

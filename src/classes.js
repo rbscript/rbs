@@ -65,7 +65,7 @@ class Owner extends Artifact {
     
     addClassProperty(artifact, name) {
 	name = name.slice(3) // eliminate :@@
-	if (this.getClassProp(name) != undefined) {
+	if (this.getClassProperty(name) != undefined) {
 	    return
 	}
 

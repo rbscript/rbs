@@ -254,17 +254,64 @@ export class Defn extends Artifact {
 export class ClassMethod extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
+
+	this.recv = tree.get(this, startLine, "nd_recv")
+	this.mid = tree.get(this, startLine, "nd_mid")
+	this.defn = tree.get(this, startLine, "nd_defn")
+
+	if (this.defn.body != undefined) { // Possible when method body is empty
+	    this.defn.body = this.defn.body.returnize(tree)
+	}
+
+	// Inform the class that it has a new method
+	const owner = this.findOwner()
+	owner.addClassMethod(this, this.mid)
+    }
+
+    convert(output) {
+	const owner = this.findOwner()
+	if (owner instanceof Program) {
+	    throw "unexpected"
+	} else if (owner instanceof Module) {
+	    this.add(output, owner.name)
+	    this.add(output, ".")
+
+	} else {// class
+	    this.add(output, "static ")
+
+	    if (this.mid.endsWith("=")) {
+		this.add(output, "set ")
+	    } else if (owner.getClassProperty(this.mid.slice(1)) != undefined) {
+		if (this.defn.args.preArgsNum == 0) {
+		    this.add(output, "get ")
+		}
+	    }
+	}
 	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_recv")
-	line = tree.nextLine(line.indent)
-	this.recv = resolveNode(this, tree, line)
+	let name = symbol(owner.getMethod(this.mid.slice(1)).jsName)
+	if (name.endsWith("=")) { // for setters
+	    name = name.slice(0, -1)
+	}
 
-	line = tree.nextLine(startLine.indent, "attr", "nd_mid")
-	this.name = line.value
+	this.add(output, name)
 
-	line = tree.nextLine(startLine.indent, "attr", "nd_defn")
-	line = tree.nextLine(line.indent)
-	this.args = resolveNode(this, tree, line)
+	// From now on, we'll use defn's internal parts
+	// (defn is Scope, by the way)
+	//
+	this.add(output, "(")
+	this.defn.convertArgs(output) // See Scope.convertArgs()
+	this.add(output, ") {")
+
+	if (this.defn.body != undefined) { // Possible when method body is empty
+	    output.addLine()
+	    this.add(output, this.defn.body)
+	}
+	
+	this.addNewLine(output, "}")
+    }
+
+    inClass() {
+	return false
     }
 }
 
