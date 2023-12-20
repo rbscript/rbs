@@ -358,6 +358,42 @@ test("class properties", () => {
     expect(out).toEqual(out2)
 })             
 
+test.skip("class constant I", () => {
+    const src = createSource(
+	"class Animal",
+	"  Cat",
+	"end")
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"class Animal {",
+	"  Cat",
+	"}"
+    )
+
+    expect(out).toEqual(out2)
+})             
+
+test("class constant II", () => {
+    const src = createSource(
+	"class Animal",
+	"  Cat = 'cat'",
+	"end")
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"class Animal {",
+	'  static #Cat = "cat"',
+	"  static get Cat() {",
+	'  return Animal.#Cat',
+	"  }",
+	"}"
+    )
+
+    expect(out).toEqual(out2)
+})             
+
+
 
 test.skip("singleton class method", () => {
     const src = createSource(

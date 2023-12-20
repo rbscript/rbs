@@ -10,12 +10,15 @@ test.skip("variable definition", () => {
     //expect(out).toEqual(out2)
 })
 
-test.skip("constant definition", () => {
+test("constant definition", () => {
     const src = createSource("PI = 3.14")
 
     const out = parseSource(src)
 
-    //expect(out).toEqual(out2)
+    const out2 = createSource(
+	"const PI = 3.14",
+    )
+    expect(out).toEqual(out2)
 })
 
 test.skip("global variable definition", () => {

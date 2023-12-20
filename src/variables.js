@@ -187,14 +187,45 @@ export class ConstDecl extends Artifact {
 	super(parent, startLine)
 
 	this.vid = tree.get(this, startLine, "nd_vid")
-	this.els = tree.get(this, startLine, "nd_else") // TODO What the fuck??
+	this.els = tree.get(this, startLine, "nd_else") // I hope this is unused
 	this.value = tree.get(this, startLine, "nd_value")
+
+	if (this.inClass()) {
+	    const owner = this.findOwner()
+	    owner.addClassProperty(this, "@@" + this.vid) // BAD: class prop eliminates first 3 chars
+	}
     }
 
     convert(output) {
-	this.add(output, this.vid)
-	this.add(output, " = ")
-	this.add(output, this.value)
+	if (this.inClass()) {
+	    const owner = this.findOwner()
+	    const name = symbol(owner.getClassProperty(this.vid.slice(1)).jsName)
+
+	    this.add(output, "static ")
+	    this.add(output, name)
+	    this.add(output, " = ")
+	    this.add(output, this.value)
+
+	    // If not public
+	    if (name[0] == '#' || name[0] == '_') {
+		// Now let's add a get accessor to make it readony
+		this.addNewLine(output, "static get ")
+		this.add(output, name.slice(1))
+		this.add(output, "() {")
+		this.addNewLine(output, "return ")
+		this.add(output, symbol(owner.name))
+		this.add(output, ".")
+		this.add(output, name)
+		this.addNewLine(output, "}")
+	    }
+	    
+	    
+	} else {
+	    this.add(output, "const ")
+	    this.add(output, symbol(this.vid))
+	    this.add(output, " = ")
+	    this.add(output, this.value)
+	}
     }
 }
 
