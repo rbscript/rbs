@@ -81,7 +81,12 @@ export class Scope extends Artifact {
 	    if (i > 0) {
 		this.add(output, ", ")
 	    }
-	    this.add(output, symbol(args[i]))
+
+	    if (args[i] != ":_") {
+		this.add(output, symbol(args[i]))
+	    } else {
+		this.add(output, output.genVar("_"))
+	    }
 	}
 
 	if (this.args.optArgs != undefined) {

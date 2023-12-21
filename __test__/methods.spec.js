@@ -634,3 +634,31 @@ test("call with keyword arguments III", () => {
     
     expect(out).toEqual(out2)
 })
+
+test("call with unused argument", () => {
+    const src = createSource(
+	"welcome_home(_)"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"welcomeHome(undefined)"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("def with unused argument", () => {
+    const src = createSource(
+	"def welcome_home(_, _)",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function welcomeHome(_1, _2) {",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
