@@ -134,6 +134,16 @@ export class Scope extends Artifact {
 		this.add(output, " = {}")
 	    }
 	}
+
+	if (this.args.kwRestArg != undefined &&
+	    this.args.kwRestArg.vid != "(null)") {
+	    if (count > 0) {
+		this.add(output, ", ")
+	    }
+
+	    this.add(output, "...")
+	    this.add(output, this.args.kwRestArg)
+	}
     }
 
     findLocalVar(la, search) { // la == LocalAssignment

@@ -596,6 +596,37 @@ test("def with keyword and optional arguments II", () => {
     expect(out).toEqual(out2)
 })
 
+test("def with rest arguments I", () => {
+    const src = createSource(
+	"def anti_christ **rest",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function antiChrist(...rest) {",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("def with rest arguments II", () => {
+    const src = createSource(
+	"def anti_christ a, **rest",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function antiChrist(a, ...rest) {",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+
 test("call with keyword arguments I", () => {
     const src = createSource(
 	"anti_christ a = 3"

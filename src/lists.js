@@ -63,7 +63,7 @@ export class Args extends Artifact {
 
 	this.optArgs = tree.get(this, startLine, "nd_ainfo->opt_args")
 	this.kwArgs = tree.get(this, startLine, "nd_ainfo->kw_args")
-	this.kwRestArgs = tree.get(this, startLine, "nd_ainfo->kw_rest_arg")
+	this.kwRestArg = tree.get(this, startLine, "nd_ainfo->kw_rest_arg")
     }
 }
 
