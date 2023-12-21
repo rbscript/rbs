@@ -21,12 +21,15 @@ test("constant definition", () => {
     expect(out).toEqual(out2)
 })
 
-test.skip("global variable definition", () => {
+test("global variable definition", () => {
     const src = createSource("$g = 666")
 
     const out = parseSource(src)
 
-    //expect(out).toEqual(out2)
+    const out2 = createSource(
+	"globalThis.g = 666",
+    )
+    expect(out).toEqual(out2)
 })
 
 test("variable def and change", () => {
@@ -118,17 +121,24 @@ test.skip("variable def and use", () => {
     //expect(out).toEqual(out2)
 })
 
-test.skip("multi variable def and use", () => {
+test("multi variable def and use", () => {
     const src = createSource(
 	"a = 666",
 	"$g = 333",
-	"@m = 775",
-	"@@c = 4",
-	"a = a + $g + @m / @@c")
+	"m = 775",
+	"c = 4",
+	"a = a + $g + m / c")
 
     const out = parseSource(src)
 
-    //expect(out).toEqual(out2)
+    const out2 = createSource(
+	"let a = 666",
+	"globalThis.g = 333",
+	"const m = 775",
+	"const c = 4",
+	"a = (a + globalThis.g) + m / c"
+    )
+    expect(out).toEqual(out2)
 })
 
 test.skip("multi assignment", () => {

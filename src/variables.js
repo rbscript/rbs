@@ -232,13 +232,16 @@ export class ConstDecl extends Artifact {
 export class GlobalAssignment extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_entry")
-	this.name = line.value
 
-	line = tree.nextLine(startLine.indent, "attr", "nd_value")
-	line = tree.nextLine(line.indent)
-	this.value = resolveNode(this, tree, line)
+	this.entry = tree.get(this, startLine, "nd_entry")
+	this.value = tree.get(this, startLine, "nd_value")
+    }
+
+    convert(output) {
+	this.add(output, "globalThis.")
+	this.add(output, symbol(this.entry.slice(2))) // :$g
+	this.add(output, " = ")
+	this.add(output, this.value)
     }
 }
 
@@ -290,7 +293,7 @@ export class DynamicVariable extends Artifact {
 export class GlobalVariable extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
-o
+
 	this.entry = tree.get(this, startLine, "nd_entry")
     }
 
@@ -299,7 +302,8 @@ o
     }
 
     convert(output) {
-	this.add(output, symbol(this.entry))
+	this.add(output, "globalThis.")
+	this.add(output, symbol(this.entry.slice(2))) // :$g
     }
 }
 
