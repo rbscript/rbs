@@ -334,5 +334,9 @@ export class ZSuper extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, startLine)
     }
+
+    convert(output) {
+	this.add(output, "super")
+    }
 }
 

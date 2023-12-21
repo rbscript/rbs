@@ -539,30 +539,28 @@ test("constructor with super", () => {
     expect(out).toEqual(out2)
 })             
 
-test.skip("method with super", () => {
+test("method with super", () => {
     const src = createSource(
-	"class Animal",
+	"class Animal < Creature",
 	"  def initialize(a, b)",
+	"    super(a, b)",
 	"    @eye_color = 'blue'",
 	"    super.do_something",
 	"  end",
 	"end")
     const out = parseSource(src)
 
-    //expect(out).toEqual(out2)
-})             
+    const out2 = createSource(
+	"class Animal extends Creature {",
+	"  constructor(a, b) {",
+	"    super(a, b)",
+	'    this.#eyeColor = "blue"',
+	"    return super.doSomething()",
+	"  }",
+	"}"
+    )
 
-test.skip("method with super", () => {
-    const src = createSource(
-	"class Animal",
-	"  def initialize(a, b)",
-	"    @eye_color = 'blue'",
-	"    super.do_something",
-	"  end",
-	"end")
-    const out = parseSource(src)
-
-    //expect(out).toEqual(out2)
+    expect(out).toEqual(out2)
 })             
 
 test.skip("using", () => {
