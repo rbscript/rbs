@@ -6,7 +6,7 @@ import {LocalAssignment} from './variables'
 
 export class Scope extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.tbl = tree.get(this, startLine, "nd_tbl")
 	this.args = tree.get(this, startLine, "nd_args")
@@ -164,7 +164,7 @@ export class Scope extends Artifact {
 
 export class Block extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.statements = []
 	while (true) {
@@ -264,7 +264,7 @@ export class Block extends Artifact {
 
 export class Body extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	this.children = []
 	
@@ -284,7 +284,7 @@ export class Body extends Artifact {
 
 export class Yield extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
 	line = tree.nextLine(line.indent)
 	this.head = resolveNode(this, tree, line)
@@ -294,7 +294,7 @@ export class Yield extends Artifact {
 export class BlockPass extends Artifact {
     constructor(parent, tree, startLine) {
 	
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	const indent = startLine.indent 
 	

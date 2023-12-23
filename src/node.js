@@ -4,7 +4,7 @@ import {String, DynamicString, EvalString, XString, DXString,
 	Match, Match2, Match3, NthRef, DynamicRegExp, BackRef} from './string'
 import {OpCall, OpAnd, OpOr, AssignAnd, AssignOr, OpAssignAnd, OpAssignOr,
 	OpAssign1, OpAssign2, Defined, Call} from './operators'
-import {FuncCall, VarCall, Defn, ClassMethod, Lambda, Undefine, QCall,
+import {FuncCall, VarCall, Defn, ClassMethod, Lambda, Undefine, 
 	OptionalArgument, KeywordArgument, ArgsPush, ArgsCat, PostArg} from './methods'
 import {List, Args, Range, Splat, ZList, Values} from './lists'
 import {Hash, HashPattern} from './hashes'
@@ -51,7 +51,7 @@ export function resolveNode(parent, tree, line) {
     case "NODE_EVSTR":
 	return new EvalString(parent, tree, line)
     case "NODE_CALL":
-	return new Call(parent, tree, line)
+	return new Call(parent, tree, line, false)
     case "NODE_OPCALL":
 	return new OpCall(parent, tree, line)
     case "NODE_AND":
@@ -77,7 +77,7 @@ export function resolveNode(parent, tree, line) {
     case "NODE_VCALL":
 	return new VarCall(parent, tree, line)
     case "NODE_QCALL":
-	return new QCall(parent, tree, line)
+	return new Call(parent, tree, line, true)
     case "NODE_LIST":
 	return new List(parent, tree, line)
     case "NODE_SPLAT":

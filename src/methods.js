@@ -9,7 +9,7 @@ import {Const, LocalAssignment} from './variables'
 
 export class FuncCall extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.mid = tree.get(this, startLine, "nd_mid")
 	this.args = tree.get(this, startLine, "nd_args")
@@ -109,7 +109,7 @@ export class FuncCall extends Artifact {
 
 export class VarCall extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	this.mid = tree.get(this, startLine, "nd_mid")
 
@@ -156,7 +156,7 @@ export class VarCall extends Artifact {
 	    //
 	    if (this.mid == ':raise' || this.mid == ':fail') {
 		this.add(output, "throw;")
-	    } else if (this.mid == ":_") { // Unused argument
+	    } else if (this.mid == ":_") {
 		this.add(output, "undefined")
 	    } else {
 		// Common case
@@ -167,26 +167,9 @@ export class VarCall extends Artifact {
     }
 }
 
-export class QCall extends Artifact {
-    constructor(parent, tree, startLine) {
-	super(parent, startLine)
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_mid")
-	this.name = line.value
-
-	line = tree.nextLine(startLine.indent, "attr", "nd_recv")
-	line = tree.nextLine(line.indent)
-	this.recv = resolveNode(this, tree, line)
-
-	line = tree.nextLine(startLine.indent, "attr", "nd_args")
-	line = tree.nextLine(line.indent)
-	this.args = resolveNode(this, tree, line)
-    }
-}
-
 export class Defn extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	this.mid = tree.get(this, startLine, "nd_mid")
 	this.defn = tree.get(this, startLine, "nd_defn")
@@ -255,7 +238,7 @@ export class Defn extends Artifact {
 
 export class ClassMethod extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.recv = tree.get(this, startLine, "nd_recv")
 	this.mid = tree.get(this, startLine, "nd_mid")
@@ -319,7 +302,7 @@ export class ClassMethod extends Artifact {
 
 export class Lambda extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_body")
 	line = tree.nextLine(line.indent)
@@ -329,7 +312,7 @@ export class Lambda extends Artifact {
 
 export class OptionalArgument extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_body")
 	line = tree.nextLine(line.indent)
@@ -343,7 +326,7 @@ export class OptionalArgument extends Artifact {
 
 export class KeywordArgument extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_body")
 	line = tree.nextLine(line.indent)
@@ -357,7 +340,7 @@ export class KeywordArgument extends Artifact {
 
 export class Undefine extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_undef")
 	line = tree.nextLine(line.indent)
@@ -367,7 +350,7 @@ export class Undefine extends Artifact {
 
 export class ArgsPush extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.head = tree.get(this, startLine, "nd_head")
 	this.body = tree.get(this, startLine, "nd_body")
@@ -376,7 +359,7 @@ export class ArgsPush extends Artifact {
 
 export class ArgsCat extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.head = tree.get(this, startLine, "nd_head")
 	this.body = tree.get(this, startLine, "nd_body")
@@ -385,7 +368,7 @@ export class ArgsCat extends Artifact {
 
 export class PostArg extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.head = tree.get(this, startLine, "nd_1st")
 	this.body = tree.get(this, startLine, "nd_2nd")

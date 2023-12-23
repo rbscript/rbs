@@ -62,7 +62,7 @@ export function symbol(str) {
 
 export class Literal extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	this.lit = tree.get(this, startLine, "nd_lit")
     }
 
@@ -81,7 +81,7 @@ export class Literal extends Artifact {
 
 export class DynamicSymbol extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.lit = tree.get(this, startLine, "nd_lit")
 	this.head = tree.get(this, startLine, "nd_next->nd_head")

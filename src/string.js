@@ -5,7 +5,7 @@ import {Return} from './statements'
 
 export class String extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	this.lit = tree.get(this, startLine, "nd_lit")
     }
 
@@ -20,7 +20,7 @@ export class String extends Artifact {
 
 export class XString extends Artifact { // backtick string
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	const line = tree.nextLine(startLine.indent, "attr", "nd_lit")
 	this.value = line.value
     }
@@ -30,7 +30,7 @@ export class XString extends Artifact { // backtick string
 
 export class DXString extends Artifact { // backtick string with interpolation
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.lit = tree.get(this, startLine, "nd_lit")
 	this.head = tree.get(this, startLine, "nd_next->nd_head")
@@ -41,7 +41,7 @@ export class DXString extends Artifact { // backtick string with interpolation
 
 export class DynamicString extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	//let line = tree.nextLine(startLine.indent, "attr", "nd_lit")
 	//this.lit = line.value
@@ -83,7 +83,7 @@ export class DynamicString extends Artifact {
 
 export class EvalString extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.body = tree.get(this, startLine, "nd_body")
     }
@@ -105,7 +105,7 @@ export class EvalString extends Artifact {
 
 export class Match extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_lit")
 	line = tree.nextLine(line.indent)
@@ -119,7 +119,7 @@ export class Match extends Artifact {
 
 export class Match2 extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_recv")
 	line = tree.nextLine(line.indent)
@@ -139,7 +139,7 @@ export class Match2 extends Artifact {
 
 export class Match3 extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_recv")
 	line = tree.nextLine(line.indent)
@@ -153,7 +153,7 @@ export class Match3 extends Artifact {
 
 export class NthRef extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_nth")
 	this.nth = line.value
@@ -162,7 +162,7 @@ export class NthRef extends Artifact {
 
 export class DynamicRegExp extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_lit")
 	this.value = line.value
@@ -179,7 +179,7 @@ export class DynamicRegExp extends Artifact {
 
 export class BackRef extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.nth = tree.get(this, startLine, "nd_nth")
     }

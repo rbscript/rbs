@@ -224,13 +224,13 @@ export class RescueBody extends StmWithBlock {
 export class Retry extends Artifact {
     constructor(parent, tree, startLine) {
 	
-	super(parent, startLine)
+	super(parent, tree, startLine)
     }
 }
 
 export class ErrInfo extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
     }
 
     convert(output) {

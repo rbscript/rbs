@@ -3,7 +3,7 @@ import {Artifact} from './artifact'
 
 export class List extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	const alen = parseInt(tree.get(this, startLine, "nd_alen"))
 
@@ -50,7 +50,7 @@ export class List extends Artifact {
 
 export class Args extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.preArgsNum = tree.get(this, startLine, "nd_ainfo->pre_args_num")
 	this.preInit = tree.get(this, startLine, "nd_ainfo->pre_init")
@@ -69,7 +69,7 @@ export class Args extends Artifact {
 
 export class Range extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.type = startLine.type
 	
@@ -85,7 +85,7 @@ export class Range extends Artifact {
 
 export class Splat extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.type = startLine.type
 	
@@ -98,14 +98,14 @@ export class Splat extends Artifact {
 // []
 export class ZList extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
     }
 }
 
 // return 1, 2, 3
 export class Values extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_alen")
 	const alen = parseInt(line.value)

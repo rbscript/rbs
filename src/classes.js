@@ -6,7 +6,7 @@ import {symbol} from './literal'
 // It is called Owner because of findOwner() method
 class Owner extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	this.classes = {}
 	this.modules = {}
 	this.props = {}
@@ -248,13 +248,13 @@ export class Program extends Owner {
 
 export class Self extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
     }
 }
 
 export class Singleton extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_recv")
 	line = tree.nextLine(line.indent)
@@ -283,7 +283,7 @@ export class Module extends Owner {
 
 export class Colon2 extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.mid = tree.get(this, startLine, "nd_mid")
 	this.head = tree.get(this, startLine, "nd_head")
@@ -301,7 +301,7 @@ export class Colon2 extends Artifact {
 // ::Z
 export class Colon3 extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	let line = tree.nextLine(startLine.indent, "attr", "nd_mid")
 	this.mid = line.value
@@ -310,7 +310,7 @@ export class Colon3 extends Artifact {
 
 export class Super extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.args = tree.get(this, startLine, "nd_args")
     }
@@ -332,7 +332,7 @@ export class Super extends Artifact {
 
 export class ZSuper extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
     }
 
     convert(output) {

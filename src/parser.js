@@ -19,7 +19,7 @@ export function parse(source, dump) {
 	log(stdout)
     }
 
-    const tree = new Tree(stdout)
+    const tree = new Tree(stdout, source)
     return new Program(tree)
 }
 
@@ -35,8 +35,9 @@ function log(str) { // Can print longer messages
 }
 
 export class Tree {
-    constructor(source) {
+    constructor(source, content) {
 	this.source = source
+	this.content = content
 	this.index = 0
 	this.indent = 0
 	this.lineno = 0
@@ -170,6 +171,8 @@ export class Tree {
 	}
 	return ret
     }
+
+    
 }
 
 export class Line {

@@ -10,7 +10,7 @@ import {List} from './lists'
 
 class Assignment extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	this.vid = tree.get(this, startLine, "nd_vid")
 	this.value = tree.get(this, startLine, "nd_value")
@@ -125,7 +125,7 @@ export class LocalAssignment extends Assignment {
 
 export class MemberAssignment extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.vid = tree.get(this, startLine, "nd_vid")
 	this.value = tree.get(this, startLine, "nd_value")
@@ -184,7 +184,7 @@ export class DynamicAssignmentCurrent extends LocalAssignment {
 
 export class ConstDecl extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.vid = tree.get(this, startLine, "nd_vid")
 	this.els = tree.get(this, startLine, "nd_else") // I hope this is unused
@@ -231,7 +231,7 @@ export class ConstDecl extends Artifact {
 
 export class GlobalAssignment extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.entry = tree.get(this, startLine, "nd_entry")
 	this.value = tree.get(this, startLine, "nd_value")
@@ -247,7 +247,7 @@ export class GlobalAssignment extends Artifact {
 
 export class MultiAssignment extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.value = tree.get(this, startLine, "nd_value")
 	this.head = tree.get(this, startLine, "nd_head")
@@ -259,7 +259,7 @@ export class MultiAssignment extends Artifact {
 
 export class LocalVariable extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.vid = tree.get(this, startLine, "nd_vid")
     }
@@ -275,7 +275,7 @@ export class LocalVariable extends Artifact {
 
 export class DynamicVariable extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.vid = tree.get(this, startLine, "nd_vid")
     }
@@ -292,7 +292,7 @@ export class DynamicVariable extends Artifact {
 
 export class GlobalVariable extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.entry = tree.get(this, startLine, "nd_entry")
     }
@@ -309,7 +309,7 @@ export class GlobalVariable extends Artifact {
 
 export class MemberVariable extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.vid = tree.get(this, startLine, "nd_vid")
 
@@ -333,7 +333,7 @@ export class MemberVariable extends Artifact {
 
 export class ClassVariable extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.vid = tree.get(this, startLine, "nd_vid")
 
@@ -360,7 +360,7 @@ export class ClassVariable extends Artifact {
 
 export class Const extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.vid = tree.get(this, startLine, "nd_vid")
     }
@@ -376,7 +376,7 @@ export class Const extends Artifact {
 
 export class Nil extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
     }
 
     convert(output) {
@@ -391,7 +391,7 @@ export class Nil extends Artifact {
 
 export class True extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
     }
 
     convert(output) {
@@ -406,7 +406,7 @@ export class True extends Artifact {
 
 export class False extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
     }
 
     convert(output) {
@@ -420,7 +420,7 @@ export class False extends Artifact {
 
 export class Alias extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	this.first = tree.get(this, startLine, "nd_1st")
 	this.second = tree.get(this, startLine, "nd_2nd")
@@ -429,7 +429,7 @@ export class Alias extends Artifact {
 
 export class AttributeAssignment extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_recv")
 	line = tree.nextLine(line.indent)

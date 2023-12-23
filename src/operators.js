@@ -4,12 +4,13 @@ import {Return} from './statements'
 import {symbol} from './literal'
 
 export class Call extends Artifact {
-    constructor(parent, tree, startLine) {
-	super(parent, startLine)
+    constructor(parent, tree, startLine, q) {
+	super(parent, tree, startLine)
 
 	this.mid = tree.get(this, startLine, "nd_mid")
 	this.recv = tree.get(this, startLine, "nd_recv")
 	this.args = tree.get(this, startLine, "nd_args")
+	this.q = q
     }
 
     convert(output, withDo) {
@@ -19,10 +20,30 @@ export class Call extends Artifact {
 	    this.add(output, this.recv)
 	} else {
 	    this.add(output, this.recv)
+	    if (this.q) {
+		this.add(output, "?")
+	    }
 	    this.add(output, ".")
 	    this.add(output, symbol(this.mid.slice(1))) // ops are like :+
 	}
 
+	// Check if we need to put paranthesis
+	//
+	if (this.args == undefined) {
+
+	    // The problem here is,
+	    // having no difference between a.b.c and a.b().c via the parsetree
+	    // so we have to return to original source to distinguish among them
+
+	    const content = this.getContent()
+	    if (!content.endsWith(")")) {
+
+		// We don't need paranthesis here
+		//
+		return
+	    }
+	}
+	
 	this.add(output, "(")
 	if (this.args != undefined && this.args.array.length > 0) {
 	    this.add(output, this.args.array[0])
@@ -50,7 +71,7 @@ export class Call extends Artifact {
 
 export class OpCall extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.mid = tree.get(this, startLine, "nd_mid")
 	this.recv = tree.get(this, startLine, "nd_recv")
@@ -89,7 +110,7 @@ export class OpCall extends Artifact {
 
 export class OpAnd extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_1st")
 	line = tree.nextLine(line.indent)
@@ -114,7 +135,7 @@ export class OpAnd extends Artifact {
 
 export class OpOr extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_1st")
 	line = tree.nextLine(line.indent)
@@ -139,7 +160,7 @@ export class OpOr extends Artifact {
 
 export class AssignAnd extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
 	line = tree.nextLine(line.indent)
@@ -153,7 +174,7 @@ export class AssignAnd extends Artifact {
 
 export class OpAssignAnd extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
 	line = tree.nextLine(line.indent)
@@ -168,7 +189,7 @@ export class OpAssignAnd extends Artifact {
 
 export class AssignOr extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
 	line = tree.nextLine(line.indent)
@@ -183,7 +204,7 @@ export class AssignOr extends Artifact {
 
 export class OpAssignOr extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	
 	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
 	line = tree.nextLine(line.indent)
@@ -197,7 +218,7 @@ export class OpAssignOr extends Artifact {
 
 export class OpAssign1 extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.recv = tree.get(this, startLine, "nd_recv")
 	this.mid = tree.get(this, startLine, "nd_mid")
@@ -208,7 +229,7 @@ export class OpAssign1 extends Artifact {
 
 export class OpAssign2 extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.recv = tree.get(this, startLine, "nd_recv")
 	this.vid = tree.get(this, startLine, "nd_next->nd_vid")
@@ -220,7 +241,7 @@ export class OpAssign2 extends Artifact {
 
 export class Defined extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.head = tree.get(this, startLine, "nd_head")
     }

@@ -6,7 +6,7 @@ import {Scope, Block} from './blocks'
 
 export class StmWithBlock extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
     }
 
     findLocalVar(la, search) { // la is a LocalAssignment
@@ -198,7 +198,7 @@ export class Unless extends StmWithBlock {
 
 export class Return extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 	if (startLine != undefined) { // see Returnize() below 
 	    this.stts = tree.get(this, startLine, "nd_stts")
 	}
@@ -226,7 +226,7 @@ export class Return extends Artifact {
 
 export class Break extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.stts = tree.get(this, startLine, "nd_stts")
     }
@@ -250,7 +250,7 @@ export class Break extends Artifact {
 
 export class Next extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
 
 	this.stts = tree.get(this, startLine, "nd_stts")
     }
@@ -265,7 +265,7 @@ export class Next extends Artifact {
 
 export class Redo extends Artifact {
     constructor(parent, tree, startLine) {
-	super(parent, startLine)
+	super(parent, tree, startLine)
     }
 }
 

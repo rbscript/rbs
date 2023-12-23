@@ -693,3 +693,83 @@ test("def with unused argument", () => {
     
     expect(out).toEqual(out2)
 })
+
+test("call if not nil", () => {
+    const src = createSource(
+	"obj&.kelle",
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"obj?.kelle"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("call if not nil II", () => {
+    const src = createSource(
+	"obj&.kelle&.do_it p1, p2",
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"obj?.kelle?.doIt(p1, p2)"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("call if not nil II", () => {
+    const src = createSource(
+	"obj&.kelle&.do_it p1, p2",
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"obj?.kelle?.doIt(p1, p2)"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("call if not nil III", () => {
+    const src = createSource(
+	"obj&.kelle()&.do_it p1, p2",
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"obj?.kelle()?.doIt(p1, p2)"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+
+test("nested calls I", () => {
+    const src = createSource(
+	"obj.kelle.namik.do_it p1, p2",
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"obj.kelle.namik.doIt(p1, p2)"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("nested calls II", () => {
+    const src = createSource(
+	"obj.kelle().namik.do_it p1, p2",
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"obj.kelle().namik.doIt(p1, p2)"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
