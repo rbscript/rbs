@@ -167,8 +167,9 @@ export function resolveNode(parent, tree, line) {
     case "NODE_HSHPTN":
 	return new HashPattern(parent, tree, line)
     case "NODE_DOT2":
+	return new Range(parent, tree, line, false)
     case "NODE_DOT3":
-	return new Range(parent, tree, line)
+	return new Range(parent, tree, line, true)
     case "NODE_MATCH":
 	return new Match(parent, tree, line)
     case "NODE_MATCH2":

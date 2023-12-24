@@ -2,6 +2,7 @@ import {resolveNode} from './node'
 import {Artifact} from './artifact'
 import {Return} from './statements'
 import {symbol} from './literal'
+import {Range} from './lists'
 
 export class Call extends Artifact {
     constructor(parent, tree, startLine, q) {
@@ -18,6 +19,8 @@ export class Call extends Artifact {
 	if (this.mid == ":new") {
 	    this.add(output, "new ")
 	    this.add(output, this.recv)
+	} else if (this.mid == ":[]") {
+	    return this.convertArray(output)
 	} else {
 	    this.add(output, this.recv)
 	    if (this.q) {
@@ -45,22 +48,41 @@ export class Call extends Artifact {
 	}
 	
 	this.add(output, "(")
+	this.convertArgs(output, withDo)
+	if (!withDo) {
+	    // Common case
+	    //
+	    this.add(output, ")")
+	}
+    }
+
+    convertArgs(output, withDo) {
 	if (this.args != undefined && this.args.array.length > 0) {
 	    this.add(output, this.args.array[0])
 	    for (let i = 1; i < this.args.array.length; ++i) {
 		this.add(output, ", ")
 		this.add(output, this.args.array[i])
 	    }
-
+	    
 	    if (withDo) {
 		this.add(output, ", ")
 	    }
 	}
+    }
 
-	if (!withDo) {
+    convertArray(output) {
+	this.add(output, this.recv)
+
+	if (this.args.array[0] instanceof Range) {
+	    this.add(output, ".slice(")
+	    this.args.array[0].convertBare(output)
+	    this.add(output, ")")
+	} else {
 	    // Common case
 	    //
-	    this.add(output, ")")
+	    this.add(output, "[")
+	    this.convertArgs(output, false)
+	    this.add(output, "]")
 	}
     }
 

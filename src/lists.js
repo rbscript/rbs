@@ -68,18 +68,31 @@ export class Args extends Artifact {
 }
 
 export class Range extends Artifact {
-    constructor(parent, tree, startLine) {
+    constructor(parent, tree, startLine, exclude) {
 	super(parent, tree, startLine)
 
-	this.type = startLine.type
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_beg")
-	line = tree.nextLine(line.indent)
-	this.beg = resolveNode(this, tree, line)
+	this.beg = tree.get(this, startLine, "nd_beg")
+	this.end = tree.get(this, startLine, "nd_end")
+	this.exclude = exclude
+    }
 
-	line = tree.nextLine(startLine.indent, "attr", "nd_end")
-	line = tree.nextLine(line.indent)
-	this.end = resolveNode(this, tree, line)
+    convert(output) {
+	this.add(output, "[")
+	this.convertBare(output)
+	this.add(output, "]")
+    }
+    
+    convertBare(output) {
+	this.add(output, this.beg)
+	this.add(output, ", ")
+	
+	if (this.exclude || this.end == undefined || this.end.constructor.name == "Nil") {
+	    this.add(output, this.end)
+	} else {
+	    this.add(output, "(")
+	    this.add(output, this.end)
+	    this.add(output, ") + 1")
+	}
     }
 }
 

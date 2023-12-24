@@ -316,6 +316,16 @@ test("Array", () => {
     expect(out).toEqual("const a = [3, 5, 8]")
 })
 
+test("array index I", () => {
+    const src = createSource("a[1]")
+
+    const out = parseSource(src)
+
+    expect(out).toEqual("a[1]")
+})
+
+
+
 test("Hash I", () => {
     const src = createSource(
 	'h = { "a" => 1, "b" => 2 }')
@@ -455,4 +465,69 @@ test.skip("Regex Multi III", () => {
     const out = parseSource(src)
 
     //expect(out).equals("")
+})
+
+test("simple range I", () => {
+    const src = createSource("0..10")
+
+    const out = parseSource(src)
+
+    expect(out).toEqual("[0, (10) + 1]")
+})
+
+test("simple range II", () => {
+    const src = createSource("0...10")
+
+    const out = parseSource(src)
+
+    expect(out).toEqual("[0, 10]")
+})
+
+
+test("simple range III", () => {
+    const src = createSource("..33")
+
+    const out = parseSource(src)
+
+    expect(out).toEqual("[undefined, (33) + 1]")
+})
+
+test("simple range IV", () => {
+    const src = createSource("1..")
+
+    const out = parseSource(src)
+
+    expect(out).toEqual("[1, undefined]")
+})
+
+test("simple range V", () => {
+    const src = createSource("(666...)")
+
+    const out = parseSource(src)
+
+    expect(out).toEqual(" [666, undefined]")
+})
+
+test("array range I", () => {
+    const src = createSource("a[1..8]")
+
+    const out = parseSource(src)
+
+    expect(out).toEqual("a.slice(1, (8) + 1)")
+})
+
+test("array range II", () => {
+    const src = createSource("a[...8]")
+
+    const out = parseSource(src)
+
+    expect(out).toEqual("a.slice(undefined, 8)")
+})
+
+test("array range III", () => {
+    const src = createSource("a[11..]")
+
+    const out = parseSource(src)
+
+    expect(out).toEqual("a.slice(11, undefined)")
 })
