@@ -531,3 +531,17 @@ test("array range III", () => {
 
     expect(out).toEqual("a.slice(11, undefined)")
 })
+
+test.only("comparison operator", () => {
+    const src = createSource("a <=> b")
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"((cmp1, cmp2) => {",
+	"if (cmp1 == cmp2) return 0",
+	"if (cmp1 > cmp2) return -1 else return 1",
+	"})(a, b)"
+    )
+    
+    expect(out).toEqual(out2)
+})

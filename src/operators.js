@@ -106,6 +106,8 @@ export class OpCall extends Artifact {
 	    this.add(output, "(")
 	    this.add(output, this.recv)
 	    this.add(output, ")")
+	} else if (this.mid == ":<=>") {
+	    return this.convertComparisonOp(output)
 	} else {
 	    this.add(output, this.recv)
 	}
@@ -125,6 +127,47 @@ export class OpCall extends Artifact {
 	}
     }
 
+    // <=>
+    convertComparisonOp(output) {
+	const cmp0 = output.genVar("cmp")
+	const cmp1 = output.genVar("cmp")
+
+	this.add(output, "((")
+	this.add(output, cmp0)
+	this.add(output, ", ")
+	this.add(output, cmp1)
+	this.add(output, ") => {")
+
+	this.addNewLine(output, "if (");
+	this.add(output, cmp0)
+	this.add(output, " == ")
+	this.add(output, cmp1)
+	this.add(output, ") return 0")
+
+	this.addNewLine(output, "if (");
+	this.add(output, cmp0)
+	this.add(output, " > ")
+	this.add(output, cmp1)
+	this.add(output, ") return -1 else return 1")
+
+	this.addNewLine(output, "})(")
+	this.add(output, this.recv)
+	this.add(output, ", ")
+	this.add(output, this.args.array[0])
+
+	if (this.args.array.length > 1) {
+	    for (let i = 1; i < this.args.array.length; ++i) {
+		this.add(output, " ")
+		this.add(output, this.mid.slice(1))
+		this.add(output, " ")
+		this.add(output, this.args.array[i])
+	    }
+	}
+	
+	this.add(output, ")")
+
+    }
+    
     returnize(tree) {
 	return Return.ize(tree, this)
     }
