@@ -246,6 +246,37 @@ test("case with expressions", () => {
 	"  const a = 333",
 	"}"
     )
+test("case with expressions", () => {
+    const src = createSource(
+	"case score",
+	'when 0..4, 5...10 then return "Complicated"',
+	'when 10..40 then return "Fail"',
+	'when 41..60 then return "Pass"',
+	'when 61..70 then return "Pass with Merit"',
+	'when 71..100 then return "Pass with Distinction"',
+	'when -1 then return "Oh my god"',
+	'else return "Invalid Score"',
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"if (((score) >= (0) && (score) <= (4)) || ((score) >= (5) && (score) < (10))) {",
+	'                       return "Complicated"',
+	"} else if ((score) >= (10) && (score) <= (40)) {",
+	'                 return "Fail"',
+	"} else if ((score) >= (41) && (score) <= (60)) {",
+	'                 return "Pass"',
+	"} else if ((score) >= (61) && (score) <= (70)) {",
+	'                 return "Pass with Merit"',
+	"} else if ((score) >= (71) && (score) <= (100)) {",
+	'                  return "Pass with Distinction"',
+	"} else if ((score) == (-1)) {",
+	'             return "Oh my god"',
+	"} else {",
+	'     return "Invalid Score"',
+	"}"
+    )
     expect(out).toEqual(out2)
 })             
 

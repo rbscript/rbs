@@ -1,6 +1,6 @@
 import {resolveNode} from './node'
 import {Artifact} from './artifact'
-import {List} from './lists'
+import {List, Range} from './lists'
 import {symbol} from './literal'
 import {Scope, Block} from './blocks'
 
@@ -398,6 +398,7 @@ export class Case extends StmWithBlock {
     constructor(parent, tree, startLine) {
 	super(parent, tree, startLine)
 	this.type = startLine.type
+	this.containsRange = false
 	
 	this.head = tree.get(this, startLine, "nd_head")
 
@@ -405,7 +406,7 @@ export class Case extends StmWithBlock {
 	let line = tree.nextLine(startLine.indent, "attr", "nd_body")
 	line = tree.nextLine(line.indent)
 	if (line.type == "NODE_WHEN") {
-	    this.firstWhen = new When(this, tree, line)
+	    this.firstWhen = new When(this, tree, line, this)
 	} else if (line.type == "NODE_IN") {
 	    this.firstWhen = new In(this, tree, line)
 	} else {
@@ -415,6 +416,8 @@ export class Case extends StmWithBlock {
 	if (this.asExpr()) {
 	    this.returnize(tree)
 	}
+
+
     }
 
     findLocalVarSearch(la, search) { // la is a LocalAssignment
@@ -451,12 +454,14 @@ export class Case extends StmWithBlock {
     }
     
     convert(output) {
-
 	if (this.head == undefined) {
 	    this.convertGlorifiedIfElse(output)
 	    return
+	} else if (this.containsRange) {
+	    this.convertIfliWhen(output)
+	    return
 	}
-
+	
 	if (this.asExpr()) {
 	    this.functionize1(output)
 	}
@@ -496,12 +501,31 @@ export class Case extends StmWithBlock {
 	    this.functionize2(output)
 	}
     }
+
+    convertIfliWhen(output) {
+	if (this.asExpr()) {
+	    this.functionize1(output)
+	}
+	
+	let when = this.firstWhen
+	let first = true
+	while (when != undefined) {
+	    when.convertIfliWhen(output, first, this.head)
+	    first = false
+	    when = when.when
+	}
+
+	if (this.asExpr()) {
+	    this.functionize2(output)
+	}
+    }
 }
 
 class When extends StmWithBlock {
-    constructor(parent, tree, startLine) {
+    constructor(parent, tree, startLine, caseStm) {
 	super(parent, tree, startLine)
 
+	this.caseStm = caseStm
 	this.head = tree.get(this, startLine, "nd_head")
 	this.body = tree.get(this, startLine, "nd_body")
 	
@@ -509,13 +533,17 @@ class When extends StmWithBlock {
 	line = tree.nextLine(line.indent)
 	switch (line.type) {
 	case "NODE_WHEN":
-	    this.when = new When(this, tree, line)
+	    this.when = new When(this, tree, line, caseStm)
 	case "(null node)":
 	    this.els = undefined
 	    break
 	default:
 	    this.els = resolveNode(this, tree, line)
 	    break
+	}
+
+	if (this.head.array != undefined && this.head.head instanceof Range) {
+	    this.caseStm.containsRange = true
 	}
     }
 
@@ -609,6 +637,80 @@ class When extends StmWithBlock {
 	    this.add(output, "}")
 	}
     }
+
+    convertIfliWhen(output, first, ifhead) {
+	this.add(output, (first ? "if (" : " else if ("))
+
+
+	if (this.head.array.length == 1) {
+	    if (this.head.array[0] instanceof Range) {
+		this.convertRange(output, this.head.array[0], ifhead)
+	    } else {
+		this.convertExpr(output, this.head.array[0], ifhead)
+	    }
+	} else {
+	    let first = true
+	    for (const cond of this.head.array) {
+		if (first) {
+		    first = false
+		} else {
+		    this.add(output, " || ")
+		}
+		this.add(output, "(")
+
+		if (cond instanceof Range) {
+		    this.convertRange(output, cond, ifhead)
+		} else {
+		    this.convertExpr(output, cond, ifhead)
+		}
+		
+		this.add(output, ")")
+	    }
+	}
+
+	
+	this.add(output, ") {")
+	output.addLine()
+	
+	this.add(output, this.body)
+	output.addLine()
+	this.add(output, "}")
+	
+	if (this.els != undefined) {
+	    this.add(output, " else {")
+	    output.addLine()
+	
+	    this.add(output, this.els)
+	    output.addLine()
+	    this.add(output, "}")
+	}
+    }
+
+    convertRange(output, range, ifhead) {
+	this.add(output, "(")
+	this.add(output, ifhead)
+	this.add(output, ") >= (")
+	this.add(output, range.beg)
+	this.add(output, ") && (")
+	this.add(output, ifhead)
+	if (range.exclude) {
+	    this.add(output, ") < (")
+	} else {
+	    this.add(output, ") <= (")
+	}
+
+	this.add(output, range.end)
+	this.add(output, ")")
+    }
+
+    convertExpr(output, cond, ifhead) {
+	this.add(output, "(")
+	this.add(output, ifhead)
+	this.add(output, ") == (")
+	this.add(output, cond)
+	this.add(output, ")")
+    }
+
 }
 
 class In extends StmWithBlock {
