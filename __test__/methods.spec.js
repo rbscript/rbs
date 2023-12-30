@@ -773,3 +773,28 @@ test("nested calls II", () => {
     expect(out).toEqual(out2)
 })
 
+test("undef", () => {
+    const src = createSource(
+	"undef f",
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"      f = undefined"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("alias I", () => {
+    const src = createSource(
+	"alias f g",
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"      f = g"
+    )
+    
+    expect(out).toEqual(out2)
+})

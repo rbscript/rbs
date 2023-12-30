@@ -4,14 +4,14 @@ import {String, DynamicString, EvalString, XString, DXString,
 	Match, Match2, Match3, NthRef, DynamicRegExp, BackRef} from './string'
 import {OpCall, OpAnd, OpOr, AssignAnd, AssignOr, OpAssignAnd, OpAssignOr,
 	OpAssign1, OpAssign2, Defined, Call} from './operators'
-import {FuncCall, VarCall, Defn, ClassMethod, Lambda, Undefine, 
+import {FuncCall, VarCall, Defn, ClassMethod, Lambda, Undefine, Alias,
 	OptionalArgument, KeywordArgument, ArgsPush, ArgsCat, PostArg} from './methods'
 import {List, Args, Range, Splat, ZList, Values} from './lists'
 import {Hash, HashPattern} from './hashes'
 import {LocalAssignment, GlobalAssignment, ClassVarAssignment, MemberAssignment,
 	MultiAssignment, AttributeAssignment, DynamicAssignment, DynamicAssignmentCurrent,
 	LocalVariable, GlobalVariable, MemberVariable, ClassVariable, DynamicVariable,
-	ConstDecl, Const, Nil, True, False, Alias} from './variables'
+	ConstDecl, Const, Nil, True, False, Valias} from './variables'
 import {If, Unless, Return, For, While, Until, Case, Break, Next, Redo,
 	Begin, Iter} from './statements'
 import {Class, Self, Singleton, Module, Colon2, Colon3, Super, ZSuper} from './classes'
@@ -186,6 +186,8 @@ export function resolveNode(parent, tree, line) {
 	return new Yield(parent, tree, line)
     case "NODE_ALIAS":
 	return new Alias(parent, tree, line)
+    case "NODE_VALIAS":
+	return new Valias(parent, tree, line)
     case "NODE_MODULE":
 	return new Module(parent, tree, line)
     case "NODE_COLON2":

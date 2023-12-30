@@ -239,7 +239,7 @@ export class GlobalAssignment extends Artifact {
 
     convert(output) {
 	this.add(output, "globalThis.")
-	this.add(output, symbol(this.entry.slice(2))) // :$g
+	this.add(output, symbol(this.entry.slice(1))) // :$g
 	this.add(output, " = ")
 	this.add(output, this.value)
     }
@@ -303,7 +303,7 @@ export class GlobalVariable extends Artifact {
 
     convert(output) {
 	this.add(output, "globalThis.")
-	this.add(output, symbol(this.entry.slice(2))) // :$g
+	this.add(output, symbol(this.entry.slice(1))) // :$g
     }
 }
 
@@ -418,12 +418,30 @@ export class False extends Artifact {
     }
 }
 
-export class Alias extends Artifact {
+export class Valias extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, tree, startLine)
 	
-	this.first = tree.get(this, startLine, "nd_1st")
-	this.second = tree.get(this, startLine, "nd_2nd")
+	this.alias = tree.get(this, startLine, "nd_alias")
+	this.orig = tree.get(this, startLine, "nd_orig")
+    }
+
+    convert(output) {
+	this.addNewLine(output, "Object.defineProperty(globalThis.constructor.prototype, '")
+	this.add(output, symbol(this.alias))
+	this.add(output, "', {")
+	this.addNewLine(output, "    configurable: true,")
+
+	this.addNewLine(output, "    get() {")
+	this.addNewLine(output, "      return ")
+	this.add(output, symbol(this.orig))
+	this.addNewLine(output, "    }")
+	this.addNewLine(output, "    set(value) {")
+	this.addNewLine(output, "      ")
+	this.add(output, symbol(this.orig))
+	this.add(output, " = value")
+	this.addNewLine(output, "    }")
+	this.addNewLine(output, "})")
     }
 }
 

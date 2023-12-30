@@ -27,7 +27,7 @@ test("global variable definition", () => {
     const out = parseSource(src)
 
     const out2 = createSource(
-	"globalThis.g = 666",
+	"globalThis.$g = 666",
     )
     expect(out).toEqual(out2)
 })
@@ -133,10 +133,10 @@ test("multi variable def and use", () => {
 
     const out2 = createSource(
 	"let a = 666",
-	"globalThis.g = 333",
+	"globalThis.$g = 333",
 	"const m = 775",
 	"const c = 4",
-	"a = (a + globalThis.g) + m / c"
+	"a = (a + globalThis.$g) + m / c"
     )
     expect(out).toEqual(out2)
 })
@@ -421,6 +421,28 @@ test("return from while II", () => {
 	"    }",
 	"    })()"
     )
+    expect(out).toEqual(out2)
+})
+
+
+test("alias II", () => {
+    const src = createSource(
+	"alias $f $g",
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"Object.defineProperty(globalThis.constructor.prototype, '$f', {",
+	"    configurable: true,",
+	"    get() {",
+	"      return $g",
+	"    }",
+	"    set(value) {",
+	"      $g = value",
+	"    }",
+	"})"
+    )
+    
     expect(out).toEqual(out2)
 })
 

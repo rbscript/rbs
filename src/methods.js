@@ -341,10 +341,13 @@ export class KeywordArgument extends Artifact {
 export class Undefine extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, tree, startLine)
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_undef")
-	line = tree.nextLine(line.indent)
-	this.undef = resolveNode(this, tree, line)
+
+	this.undef = tree.get(this, startLine, "nd_undef")
+    }
+
+    convert(output) {
+	this.addNewLine(output, this.undef)
+	this.add(output, " = undefined")
     }
 }
 
@@ -372,5 +375,20 @@ export class PostArg extends Artifact {
 
 	this.head = tree.get(this, startLine, "nd_1st")
 	this.body = tree.get(this, startLine, "nd_2nd")
+    }
+}
+
+export class Alias extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, tree, startLine)
+	
+	this.first = tree.get(this, startLine, "nd_1st")
+	this.second = tree.get(this, startLine, "nd_2nd")
+    }
+
+    convert(output) {
+	this.add(output, this.first)
+	this.add(output, " = ")
+	this.add(output, this.second)
     }
 }
