@@ -687,7 +687,7 @@ test("def with unused argument", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function welcomeHome(_1, _2) {",
+	"function welcomeHome(___1, ___2) {",
 	"}"
     )
     

@@ -453,9 +453,9 @@ test("multi assignment I", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"const multi1 = f()",
-	"const a = multi1[0]",
-	"   const b = multi1[1]"
+	"const multi__1 = f()",
+	"const a = multi__1[0]",
+	"   const b = multi__1[1]"
     )
     
     expect(out).toEqual(out2)
@@ -468,9 +468,9 @@ test("multi assignment II", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"const multi1 = [b, a]",
-	"const a = multi1[0]",
-	"   const b = multi1[1]"
+	"const multi__1 = [b, a]",
+	"const a = multi__1[0]",
+	"   const b = multi__1[1]"
     )
     
     expect(out).toEqual(out2)
@@ -483,9 +483,9 @@ test("multi assignment III", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"const multi1 = [this.#b, a]",
-	"const a = multi1[0]",
-	"   this.#b = multi1[1]"
+	"const multi__1 = [this.#b, a]",
+	"const a = multi__1[0]",
+	"   this.#b = multi__1[1]"
     )
     
     expect(out).toEqual(out2)

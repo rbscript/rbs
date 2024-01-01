@@ -50,9 +50,9 @@ export class Output {
     genVar(prefix) {
 	this.varMon++
 	if (prefix != undefined) {
-	    return prefix + this.varMon
+	    return prefix + "__" + this.varMon
 	} else {
-	    return "var" + this.varMon
+	    return "var__" + this.varMon
 	}
     }
 }
