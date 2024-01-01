@@ -446,3 +446,48 @@ test("alias II", () => {
     expect(out).toEqual(out2)
 })
 
+test("multi assignment I", () => {
+    const src = createSource(
+	"a, b = f()"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"const multi1 = f()",
+	"const a = multi1[0]",
+	"   const b = multi1[1]"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("multi assignment II", () => {
+    const src = createSource(
+	"a, b = b, a"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"const multi1 = [b, a]",
+	"const a = multi1[0]",
+	"   const b = multi1[1]"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("multi assignment III", () => {
+    const src = createSource(
+	"a, @b = @b, a"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"const multi1 = [this.#b, a]",
+	"const a = multi1[0]",
+	"   this.#b = multi1[1]"
+    )
+    
+    expect(out).toEqual(out2)
+})
+

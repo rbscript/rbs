@@ -1,5 +1,6 @@
 import {resolveNode} from './node'
 import {Artifact} from './artifact'
+import {Return} from './statements'
 
 export class List extends Artifact {
     constructor(parent, tree, startLine) {
@@ -11,8 +12,6 @@ export class List extends Artifact {
 	for (let i = 0; i < alen; ++i) {
 	    this.array.push(tree.get(this, startLine, "nd_head"))
 	}
-
-
 
 	// For some reason, nd_heads may appear instead of nd_next (nd_alen is not the decider here)
 	while (true) {
@@ -45,6 +44,10 @@ export class List extends Artifact {
 	    this.add(output, elem)
 	}
 	this.add(output, "]")
+    }
+
+    returnize(tree) {
+	return Return.ize(tree, this)
     }
 }
 
@@ -115,31 +118,13 @@ export class ZList extends Artifact {
     }
 }
 
-// return 1, 2, 3
-export class Values extends Artifact {
-    constructor(parent, tree, startLine) {
-	super(parent, tree, startLine)
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_alen")
-	const alen = parseInt(line.value)
+export class Values extends List {
+    convert(output) {
+	this.addNewLine(output, "return ")
+	super.convert(output)
+    }
 
-	this.array = []
-	for (let i = 0; i < alen; ++i) {
-	    this.array.push(tree.get(this, startLine, "nd_head"))
-	}
-
-	// For some reason, nd_heads may appear instead of nd_next (nd_alen is not the decider here)
-	while (true) {
-	    line = tree.nextLine(startLine.indent)
-	    if (line.name == "nd_head") {
-		line = tree.nextLine(line.indent)
-		this.array.push(resolveNode(this, tree, line))
-	    } else if (line.name == "nd_next") {
-		tree.nextLine(line.indent, "(null node)")
-		break
-	    } else {
-		throw "Unexpected attr " + this.name + " for Values"
-	    }
-	}
+    returnize(tree) {
+	return this
     }
 }

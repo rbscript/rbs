@@ -798,3 +798,20 @@ test("alias I", () => {
     
     expect(out).toEqual(out2)
 })
+
+test("return multiple", () => {
+    const src = createSource(
+	"def f",
+	"  return 3, 5, 8",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function f() {",
+	"         return [3, 5, 8]",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})

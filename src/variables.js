@@ -78,8 +78,11 @@ export class LocalAssignment extends Assignment {
 	}
 
 	if (this.parent instanceof List) { // Keyword argument
-	    return -1
+	    if (!(this.parent.parent instanceof MultiAssignment)) {
+		return -1
+	    }
 	}
+
 
 	// Sometimes there is single stm under If etc.
 	let block = this.parent.parent
@@ -123,18 +126,15 @@ export class LocalAssignment extends Assignment {
     }
 }
 
-export class MemberAssignment extends Artifact {
+export class MemberAssignment extends Assignment {
     constructor(parent, tree, startLine) {
 	super(parent, tree, startLine)
-
-	this.vid = tree.get(this, startLine, "nd_vid")
-	this.value = tree.get(this, startLine, "nd_value")
 
 	const owner = this.findOwner()
 	owner.addProperty(this, this.vid)
     }
 
-    convert(output) {
+    convertLeft(output) {
 	const owner = this.findOwner()
 	const name = symbol(owner.getProperty(this.vid.slice(2)).jsName)
 
@@ -143,8 +143,7 @@ export class MemberAssignment extends Artifact {
 	} else {
 	    this.add(output, "this." + name)
 	}
-	this.add(output, " = ")
-	this.add(output, this.value)
+	this.add(output, " ")
     }
 }
 
@@ -248,10 +247,29 @@ export class GlobalAssignment extends Artifact {
 export class MultiAssignment extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, tree, startLine)
-
+	
 	this.value = tree.get(this, startLine, "nd_value")
 	this.head = tree.get(this, startLine, "nd_head")
 	this.args = tree.get(this, startLine, "nd_args")
+    }
+
+    convert(output) {
+
+	const av = output.genVar("multi")
+	this.addNewLine(output, "const ")
+	this.add(output, av)
+	this.add(output, " = ")
+	this.add(output, this.value)
+
+	for (let i = 0; i < this.head.array.length; ++i) {
+	    this.addNewLine(output, "")
+	    this.head.array[i].convertLeft(output)
+
+	    this.add(output, "= ")
+	    this.add(output, av)
+	    this.add(output, "[" + i + "]")
+	    
+	}
     }
 }
 
