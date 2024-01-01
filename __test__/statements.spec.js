@@ -246,7 +246,11 @@ test("case with expressions", () => {
 	"  const a = 333",
 	"}"
     )
-test("case with expressions", () => {
+
+    expect(out).toEqual(out2)
+})
+
+test("case with ranges", () => {
     const src = createSource(
 	"case score",
 	'when 0..4, 5...10 then return "Complicated"',

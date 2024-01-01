@@ -416,8 +416,6 @@ export class Case extends StmWithBlock {
 	if (this.asExpr()) {
 	    this.returnize(tree)
 	}
-
-
     }
 
     findLocalVarSearch(la, search) { // la is a LocalAssignment
@@ -542,8 +540,15 @@ class When extends StmWithBlock {
 	    break
 	}
 
-	if (this.head.array != undefined && this.head.head instanceof Range) {
-	    this.caseStm.containsRange = true
+	if (this.head.array != undefined)
+	{
+	    // Check if any of the element is a range
+	    for (const elem of this.head.array) {
+		if (elem instanceof Range) {
+		    this.caseStm.containsRange = true
+		    break
+		}
+	    }
 	}
     }
 
