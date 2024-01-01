@@ -32,7 +32,7 @@ export class Call extends Artifact {
 
 	// Check if we need to put paranthesis
 	//
-	if (this.args == undefined) {
+	if (this.args == undefined && this.mid != ":new") {
 
 	    // The problem here is,
 	    // having no difference between a.b.c and a.b().c via the parsetree

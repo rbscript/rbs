@@ -416,7 +416,7 @@ test("new in an expression", () => {
 
 test("nested expr", () => {
     const src = createSource(
-	"a.b",
+	"a.b()",
     )
     const out = parseSource(src)
 
@@ -428,7 +428,7 @@ test("nested expr", () => {
 
 test("very nested expr", () => {
     const src = createSource(
-	"a.b.c.d",
+	"a.b().c().d()",
     )
     const out = parseSource(src)
 

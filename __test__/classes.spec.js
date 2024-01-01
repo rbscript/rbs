@@ -545,7 +545,7 @@ test("method with super", () => {
 	"  def initialize(a, b)",
 	"    super(a, b)",
 	"    @eye_color = 'blue'",
-	"    super.do_something",
+	"    super.do_something()",
 	"  end",
 	"end")
     const out = parseSource(src)
