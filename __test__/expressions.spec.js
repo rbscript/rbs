@@ -48,8 +48,7 @@ test("negative number", () => {
 
     const out = parseSource(src)
 
-    // For some reason, negative numbers have extra column...
-    expect(out).toEqual(" -1")
+    expect(out).toEqual("-1")
 })
 
 
@@ -269,7 +268,7 @@ test("Indented HEREDOC string", () => {
 
     const out = parseSource(src)
 
-    expect(out).toEqual('  const expectedResult = "This would contain specially formatted text.\\n\\nThat might span many lines\\n"')
+    expect(out).toEqual('const expectedResult = "This would contain specially formatted text.\\n\\nThat might span many lines\\n"')
 })
 
 test("Squiggly HEREDOC string", () => {
@@ -505,7 +504,7 @@ test("simple range V", () => {
 
     const out = parseSource(src)
 
-    expect(out).toEqual(" [666, undefined]")
+    expect(out).toEqual("[666, undefined]")
 })
 
 test("array range I", () => {

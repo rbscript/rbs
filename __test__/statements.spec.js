@@ -205,7 +205,7 @@ test("simple case", () => {
 	"end"
     )
     const out = parseSource(src)
-    
+
     const out2 = createSource(
 	"switch (a) {",
 	"case 1:",
@@ -242,7 +242,7 @@ test("case with expressions", () => {
 	"} else if ((a == 2) || (a < 3 + 5)) {",
 	"  const x = 333",
 	"} else {",
-	"     const x = 666",
+	"  const x = 666",
 	"  const a = 333",
 	"}"
     )
@@ -266,19 +266,19 @@ test("case with ranges", () => {
     
     const out2 = createSource(
 	"if (((score) >= (0) && (score) <= (4)) || ((score) >= (5) && (score) < (10))) {",
-	'                       return "Complicated"',
+	'  return "Complicated"',
 	"} else if ((score) >= (10) && (score) <= (40)) {",
-	'                 return "Fail"',
+	'  return "Fail"',
 	"} else if ((score) >= (41) && (score) <= (60)) {",
-	'                 return "Pass"',
+	'  return "Pass"',
 	"} else if ((score) >= (61) && (score) <= (70)) {",
-	'                 return "Pass with Merit"',
+	'  return "Pass with Merit"',
 	"} else if ((score) >= (71) && (score) <= (100)) {",
-	'                  return "Pass with Distinction"',
+	'  return "Pass with Distinction"',
 	"} else if ((score) == (-1)) {",
-	'             return "Oh my god"',
+	'  return "Oh my god"',
 	"} else {",
-	'     return "Invalid Score"',
+	'  return "Invalid Score"',
 	"}"
     )
     expect(out).toEqual(out2)
@@ -318,7 +318,7 @@ test("while with break", () => {
 	"while (true) {",
 	"  i += 3",
 	"  if (i > 10) {",
-	"  break",
+	"    break",
 	"  }",
 	"}"
     )
@@ -340,7 +340,7 @@ test("while with next", () => {
 	"while (true) {",
 	"  i += 3",
 	"  if (i > 10) {",
-	"  continue",
+	"    continue",
 	"  }",
 	"}"
     )

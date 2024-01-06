@@ -222,14 +222,14 @@ test("begin/rescue as expr I", () => {
     const out2 = createSource(
 	'let ad = "Savas"',
 	"ad = (() => {",
-	"     {",
-	"     try {",
-	'       return "Bill Gates"',
-	"     } catch {",
-	'       return "Paul Allen"',
-	"     }",
-	"     }",
-	"     })()"
+	"  {",
+	"    try {",
+	'      return "Bill Gates"',
+	"    } catch {",
+	'      return "Paul Allen"',
+	"    }",
+	"  }",
+	"})()"
     )
     
     expect(out).toEqual(out2)
@@ -243,12 +243,12 @@ test("begin/rescue as expr II", () => {
 
     const out2 = createSource(
 	"const ad = (() => {",
-	"                  try {",
-	'     return "Bill Gates"',
-	"                  } catch {",
-	'                         return "Paul Allen"',
-	"                  }",
-	"     })()"
+	"  try {",
+	'    return "Bill Gates"',
+	"  } catch {",
+	'    return "Paul Allen"',
+	"  }",
+	"})()"
     )
     
     expect(out).toEqual(out2)
@@ -272,9 +272,9 @@ test("multi rescue I", () => {
 	'  print("hello")',
 	"} catch (e__1) {",
 	"  if (e__1 instanceof ArgumentError) {",
-	'  print("bad argument")',
+	'    print("bad argument")',
 	"  } else {",
-	'  print("good bye")',
+	'    print("good bye")',
 	"  }",
 	"}"
     )
@@ -301,39 +301,11 @@ test("multi rescue II", () => {
 	'  print("hello")',
 	"} catch (e__1) {",
 	"  if (e__1 instanceof ArgumentError) {",
-	'  print("bad argument")',
+	'    print("bad argument")',
 	"  } else if (e__1 instanceof RuntimeError) {",
-	'  print("do not run")',
+	'    print("do not run")',
 	"  } else {",
-	'  print("good bye")',
-	"  }",
-	"}"
-    )
-    
-    expect(out).toEqual(out2)
-})
-
-test("multi rescue I", () => {
-    const src = createSource(
-	"begin",
-	"  print 'hello'",
-	"rescue ArgumentError => ae",
-	"  print 'bad argument'",
-	"rescue",
-	"  print 'good bye'",
-	"end"
-    )
-    const out = parseSource(src)
-    
-    const out2 = createSource(
-	"try {",
-	'  print("hello")',
-	"} catch (e__1) {",
-	"  if (e__1 instanceof ArgumentError) {",
-	"const ae = e__1",
-	'  print("bad argument")',
-	"  } else {",
-	'  print("good bye")',
+	'    print("good bye")',
 	"  }",
 	"}"
     )
@@ -358,10 +330,38 @@ test("multi rescue III", () => {
 	'  print("hello")',
 	"} catch (e__1) {",
 	"  if (e__1 instanceof ArgumentError) {",
-	"const ae = e__1",
-	'  print("bad argument")',
+	"    const ae = e__1",
+	'    print("bad argument")',
 	"  } else {",
-	'  print("good bye")',
+	'    print("good bye")',
+	"  }",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("multi rescue IV", () => {
+    const src = createSource(
+	"begin",
+	"  print 'hello'",
+	"rescue ArgumentError => ae",
+	"  print 'bad argument'",
+	"rescue",
+	"  print 'good bye'",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"try {",
+	'  print("hello")',
+	"} catch (e__1) {",
+	"  if (e__1 instanceof ArgumentError) {",
+	"    const ae = e__1",
+	'    print("bad argument")',
+	"  } else {",
+	'    print("good bye")',
 	"  }",
 	"}"
     )
@@ -380,7 +380,7 @@ test("begin/rescue/else", () => {
 	"end"
     )
     const out = parseSource(src)
-    
+
     const out2 = createSource(
 	"let els__1 = false",
 	"try {",
@@ -390,7 +390,7 @@ test("begin/rescue/else", () => {
 	'  print("good bye")',
 	"}",
 	"if (els__1) {",
-	'print("we dont get caught")',
+	'  print("we dont get caught")',
 	"}"
     )
     
@@ -411,18 +411,17 @@ test("def/rescue/else", () => {
     
     const out2 = createSource(
 	"function fn() {",
-	"let els__1 = false",
-	"try {",
-	'  print("hello")',
-	"  els__1 = true",
-	"} catch {",
-	'  print("good bye")',
-	"}",
-	"if (els__1) {",
-	'print("we dont get caught")',
-	"}",
+	"  let els__1 = false",
+	"  try {",
+	'    print("hello")',
+	"    els__1 = true",
+	"  } catch {",
+	'    print("good bye")',
+	"  }",
+	"  if (els__1) {",
+	'    print("we dont get caught")',
+	"  }",
 	"}"
-	
     )
     
     expect(out).toEqual(out2)
@@ -441,23 +440,23 @@ test("def/rescue/ensure/else", () => {
 	"end"
     )
     const out = parseSource(src)
-    
+
     const out2 = createSource(
 	"function fn() {",
-	"try {",
-	"let els__1 = false",
-	"try {",
-	'  print("hello")',
-	"  els__1 = true",
-	"} catch {",
-	'  print("good bye")',
-	"}",
-	"if (els__1) {",
-	'print("we dont get caught")',
-	"}",
-	"} finally {",
-	'  print("satisfaction guaranteed")',
-	"}",
+	"  try {",
+	"    let els__1 = false",
+	"    try {",
+	'      print("hello")',
+	"      els__1 = true",
+	"    } catch {",
+	'      print("good bye")',
+	"    }",
+	"    if (els__1) {",
+	'      print("we dont get caught")',
+	"    }",
+	"  } finally {",
+	'    print("satisfaction guaranteed")',
+	"  }",
 	"}"
 	
     )

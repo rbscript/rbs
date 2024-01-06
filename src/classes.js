@@ -173,10 +173,11 @@ export class Class extends Owner {
 	    this.add(output, this.supper)
 	}
 	this.add(output, " {")
-	output.addLine()
+	output.indent()
 
 	this.add(output, this.body)
-
+	output.unindent()
+	
 	this.addNewLine(output, "}")
     }
 

@@ -15,12 +15,12 @@ export class StmWithBlock extends Artifact {
 
     functionize1(output) {
 	this.add(output, "(() => {")
-	output.addLine()
+	output.indent()
     }
 
     functionize2(output) {
-	output.addLine()
-	this.add(output, "})()")
+	output.unindent()
+	this.addNewLine(output, "})()")
     }
 
     asExpr() {
@@ -90,10 +90,10 @@ export class If extends StmWithBlock {
 	this.add(output, "if (")
 	this.add(output, this.cond)
 	this.add(output, ") {")
-	output.addLine()
-	
+
+	output.indent()
 	this.add(output, this.body)
-	output.addLine()
+	output.unindent()
 	this.add(output, "}")
 
 	if (this.els != undefined) {
@@ -113,10 +113,10 @@ export class If extends StmWithBlock {
 	this.add(output, " else if (")
 	this.add(output, iff.cond)
 	this.add(output, ") {")
-	output.addLine()
 
+	output.indent()
 	this.add(output, iff.body)
-	output.addLine()
+	output.unindent()
 	this.add(output, "}")
 
 	if (iff.els != undefined) {
@@ -130,10 +130,10 @@ export class If extends StmWithBlock {
 
     convertElse(output, els) {
 	this.add(output, " else {")
-	output.addLine()
+	output.indent()
 	
 	this.add(output, els)
-	output.addLine()
+	output.unindent()
 	this.add(output, "}")
     }
 }
@@ -175,18 +175,18 @@ export class Unless extends StmWithBlock {
 	this.add(output, "if (!(")
 	this.add(output, this.cond)
 	this.add(output, ")) {")
-	output.addLine()
+	output.indent()
 	
 	this.add(output, this.body)
-	output.addLine()
+	output.unindent()
 	this.add(output, "}")
 
 	if (this.els != undefined) {
 	    this.add(output, " else {")
-	    output.addLine()
+	    output.indent()
 	    
 	    this.add(output, this.els)
-	    output.addLine()
+	    output.unindent()
 	    this.add(output, "}")
 	}
 
@@ -302,10 +302,10 @@ export class For extends Loop {
 	this.add(output, " in ")
 	this.add(output, this.iter)
 	this.add(output, ") {")
-	output.addLine()
+	output.indent()
 
 	this.add(output, this.body)
-	output.addLine()
+	output.unindent()
 	this.add(output, "}")
 
 	if (this.asExpr()) {
@@ -334,18 +334,18 @@ export class While extends Loop {
 	}
 	
 	if (this.state.startsWith("1")) {
-	    this.add(output, "while (")
+	    this.addNewLine(output, "while (")
 	    this.add(output, this.cond)
 	    this.add(output, ") {")
 	} else if (this.state.startsWith("0")) {
-	    this.add(output, "do {")
+	    this.addNewLine(output, "do {")
 	} else {
 	    throw "Unexpected state " + this.state + " for while"
 	}
-	output.addLine()
 	
+	output.indent()
 	this.add(output, this.body)
-	output.addLine()
+	output.unindent()
 	this.add(output, "}")
 
 	if (this.state.startsWith("0")) {
@@ -382,10 +382,10 @@ export class Until extends Loop {
 	this.add(output, "while (!(")
 	this.add(output, this.cond)
 	this.add(output, ")) {")
-	output.addLine()
+	output.indent()
 
 	this.add(output, this.body)
-	output.addLine()
+	output.unindent()
 	this.add(output, "}")
 
 	if (this.asExpr()) {
@@ -475,7 +475,7 @@ export class Case extends StmWithBlock {
 	    when = when.when
 	}
 
-	this.add(output, "}")
+	this.addNewLine(output, "}")
 
 	if (this.asExpr()) {
 	    this.functionize2(output)
@@ -571,13 +571,14 @@ class When extends StmWithBlock {
 
     convert(output) {
 	for (const cond of this.head.array) {
-	    this.add(output, "case ")
+	    this.addNewLine(output, "case ")
 	    this.add(output, cond)
 	    this.add(output, ":")
-	    output.addLine()
 	}
+
+	output.indent()
 	this.add(output, this.body)
-	output.addLine()
+	output.unindent()
 
 	let addbreak = !(this.body instanceof Return) 
 	if (!addbreak) {
@@ -591,10 +592,10 @@ class When extends StmWithBlock {
 	
 	if (this.els != undefined) {
 	    this.add(output, "default:")
-	    output.addLine()
+	    output.indent()
 
 	    this.add(output, this.els)
-	    output.addLine()
+	    output.unindent()
 
 	    addbreak = this.els instanceof Return
 	    if (!addbreak) {
@@ -627,18 +628,18 @@ class When extends StmWithBlock {
 	    }
 	}
 	this.add(output, ") {")
-	output.addLine()
+	output.indent()
 	
 	this.add(output, this.body)
-	output.addLine()
+	output.unindent()
 	this.add(output, "}")
 
 	if (this.els != undefined) {
 	    this.add(output, " else {")
-	    output.addLine()
+	    output.indent()
 	
 	    this.add(output, this.els)
-	    output.addLine()
+	    output.unindent()
 	    this.add(output, "}")
 	}
     }
@@ -675,18 +676,18 @@ class When extends StmWithBlock {
 
 	
 	this.add(output, ") {")
-	output.addLine()
+	output.indent()
 	
 	this.add(output, this.body)
-	output.addLine()
+	output.unindent()
 	this.add(output, "}")
 	
 	if (this.els != undefined) {
 	    this.add(output, " else {")
-	    output.addLine()
+	    output.indent()
 	
 	    this.add(output, this.els)
-	    output.addLine()
+	    output.unindent()
 	    this.add(output, "}")
 	}
     }
@@ -767,10 +768,10 @@ export class Begin extends StmWithBlock {
 	    }
 
 	    this.add(output, "{")
-	    output.addLine()
+	    output.indent()
 	    
 	    this.body.convert(output)
-	    output.addLine()
+	    output.unindent()
 	    this.add(output, "}")
 	    
 	    if (this.asExpr()) {
@@ -797,9 +798,9 @@ export class Iter extends StmWithBlock {
 	this.body.convertArgs(output)
 	this.add(output, ") => {")
 
-	output.addLine()
+	output.indent()
 	this.add(output, this.body)
-	output.addLine()
+	output.unindent()
 	this.add(output, "})")
     }
 }

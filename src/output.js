@@ -5,8 +5,24 @@ export class Output {
 	this.text = ""
 	this.line = 0
 	this.col = 0
-	this.delta = 0 // see Artifact.alignWith()
 	this.varMon = 0; // Monotonously increasing variable  id
+	this.curIndent = 0
+    }
+
+    indent() {
+	this.curIndent += 2
+	this.addLine()
+    }
+
+    unindent() {
+	this.curIndent -= 2
+	if (this.curIndent < 0) {
+	    console.trace()
+	    throw "Indent is negative " + this.curIndent
+	}
+	if (this.col != 0) {
+	    this.addLine()
+	}
     }
 
     addLine() {
@@ -15,14 +31,14 @@ export class Output {
 	this.col = 0
     }
 
-    addNewLine(col, str) {
+    addNewLine(str) {
 	if (this.col != 0) {
 	    this.addLine()
 	}
-	this.add(col, str)
+	this.add(str)
     }
 
-    add(col, str) {
+    add(str) {
 	if (str == undefined) {
 	    console.warn("Trying to add undefined string")
 	    throw "Trying to add undefined string"
@@ -34,8 +50,8 @@ export class Output {
 	if ("string" != typeof str) {
 	    throw "Trying to add " + str.constructor.name
 	}
-	if (this.col == 0) {
-	    for (let i = 0; i < col + this.delta; ++i) {
+	if (this.col == 0 && this.curIndent > 0) {
+	    for (let i = 0; i < this.curIndent; ++i) {
 		this.text += " "
 	    }
 	}

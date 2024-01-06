@@ -218,12 +218,12 @@ test("return from stm I", () => {
 
     const out2 = createSource(
 	"const a = (() => {",
-	"    if (true) {",
-	"       return 333",
-	"    } else {",
-	"       return 666",
-	"    }",
-	"    })()"
+	"  if (true) {",
+	"    return 333",
+	"  } else {",
+	"    return 666",
+	"  }",
+	"})()"
     )
     expect(out).toEqual(out2)
 })
@@ -242,12 +242,12 @@ test("return from stm II", () => {
 
     const out2 = createSource(
 	"const a = (() => {",
-	"    if (true) {",
-	"       return 333",
-	"    } else {",
-	"       return 666",
-	"    }",
-	"    })()"
+	"  if (true) {",
+	"    return 333",
+	"  } else {",
+	"    return 666",
+	"  }",
+	"})()"
     )
     expect(out).toEqual(out2)
 })
@@ -265,12 +265,12 @@ test("return from stm as param I", () => {
     
     const out2 = createSource(
 	"print((() => {",
-	"      if (true) {",
-	'       return "333"',
-	"      } else {",
-	'       return "666"',
-	"      }",
-	"      })())"
+	"  if (true) {",
+	'    return "333"',
+	"  } else {",
+	'    return "666"',
+	"  }",
+	"})())"
     )
     expect(out).toEqual(out2)
 })
@@ -292,19 +292,19 @@ test("return from stm III", () => {
 
     const out2 = createSource(
 	"const a = (() => {",
-	"    if (true) {",
-	"       return 333",
-	"    } else {",
-	"       return 666",
-	"    }",
-	"    })() + (() => {",
-	"    switch (x) {",
-	"    case 1:",
-	"                return 2",
-	"    case 2:",
-	"                return 3",
-	"    }",
-	"    })()"
+	"  if (true) {",
+	"    return 333",
+	"  } else {",
+	"    return 666",
+	"  }",
+	"})() + (() => {",
+	"  switch (x) {",
+	"  case 1:",
+	"    return 2",
+	"  case 2:",
+	"    return 3",
+	"  }",
+	"})()"
     )
     expect(out).toEqual(out2)
 })
@@ -320,10 +320,10 @@ test("return from begin I", () => {
     
     const out2 = createSource(
 	"const a = (() => {",
-	"    {",
-	"       return 333",
-	"    }",
-	"    })()"
+	"  {",
+	"    return 333",
+	"  }",
+	"})()"
     )
     expect(out).toEqual(out2)
 })
@@ -340,11 +340,11 @@ test("return from begin II", () => {
 
     const out2 = createSource(
 	"const a = (() => {",
-	"    {",
-	"       const y = 22",
-	"       return 333",
-	"    }",
-	"    })()"
+	"  {",
+	"    const y = 22",
+	"    return 333",
+	"  }",
+	"})()"
     )
     expect(out).toEqual(out2)
 })
@@ -363,11 +363,11 @@ test("return from begin with let/const problem", () => {
     const out2 = createSource(
 	"let y = 11",
 	"const a = (() => {",
-	"    {",
-	"       y = 22",
-	"       return 333",
-	"    }",
-	"    })()"
+	"  {",
+	"    y = 22",
+	"    return 333",
+	"  }",
+	"})()"
     )
     expect(out).toEqual(out2)
 })
@@ -386,13 +386,13 @@ test("return from while I", () => {
     const out2 = createSource(
 	"let i = 0",
 	"const a = (() => {",
-	"    while (i < 10) {",
-	"      if (i == 5) {",
-	"            return 666",
-	"      }",
-	"      i += 1",
+	"  while (i < 10) {",
+	"    if (i == 5) {",
+	"      return 666",
 	"    }",
-	"    })()"
+	"    i += 1",
+	"  }",
+	"})()"
     )
     expect(out).toEqual(out2)
 })
@@ -406,20 +406,19 @@ test("return from while II", () => {
 	"      i += 1",
 	"    end"
     )
-
     const out = parseSource(src)
     
     const out2 = createSource(
 	"let i = 0",
 	"const a = (() => {",
-	"    while (i < 10) {",
+	"  while (i < 10) {",
 	// No 333 here because Ruby surppresses it
-	"      if (i == 5) {",
-	"            return 666",
-	"      }",
-	"      i += 1",
+	"    if (i == 5) {",
+	"      return 666",
 	"    }",
-	"    })()"
+	"    i += 1",
+	"  }",
+	"})()"
     )
     expect(out).toEqual(out2)
 })
@@ -455,7 +454,7 @@ test("multi assignment I", () => {
     const out2 = createSource(
 	"const multi__1 = f()",
 	"const a = multi__1[0]",
-	"   const b = multi__1[1]"
+	"const b = multi__1[1]"
     )
     
     expect(out).toEqual(out2)
@@ -470,7 +469,7 @@ test("multi assignment II", () => {
     const out2 = createSource(
 	"const multi__1 = [b, a]",
 	"const a = multi__1[0]",
-	"   const b = multi__1[1]"
+	"const b = multi__1[1]"
     )
     
     expect(out).toEqual(out2)
@@ -485,7 +484,7 @@ test("multi assignment III", () => {
     const out2 = createSource(
 	"const multi__1 = [this.#b, a]",
 	"const a = multi__1[0]",
-	"   this.#b = multi__1[1]"
+	"this.#b = multi__1[1]"
     )
     
     expect(out).toEqual(out2)

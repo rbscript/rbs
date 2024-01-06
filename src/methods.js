@@ -224,8 +224,9 @@ export class Defn extends Artifact {
 	this.add(output, ") {")
 
 	if (this.defn.body != undefined) { // Possible when method body is empty
-	    output.addLine()
+	    output.indent()
 	    this.add(output, this.defn.body)
+	    output.unindent()
 	}
 	
 	this.addNewLine(output, "}")
@@ -288,8 +289,9 @@ export class ClassMethod extends Artifact {
 	this.add(output, ") {")
 
 	if (this.defn.body != undefined) { // Possible when method body is empty
-	    output.addLine()
+	    output.indent()
 	    this.add(output, this.defn.body)
+	    output.unindent()
 	}
 	
 	this.addNewLine(output, "}")

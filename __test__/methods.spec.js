@@ -780,7 +780,7 @@ test("undef", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"      f = undefined"
+	"f = undefined"
     )
     
     expect(out).toEqual(out2)
@@ -793,7 +793,7 @@ test("alias I", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"      f = g"
+	"f = g"
     )
     
     expect(out).toEqual(out2)
@@ -809,7 +809,7 @@ test("return multiple", () => {
     
     const out2 = createSource(
 	"function f() {",
-	"         return [3, 5, 8]",
+	"  return [3, 5, 8]",
 	"}"
     )
     

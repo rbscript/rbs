@@ -28,24 +28,16 @@ export class Ensure extends StmWithBlock {
     
     convert(output) {
 
-	// Note: Aligns are ugly here because
-	//         columns are incorrectly specified except for head and ensr blocks
-	
-	this.alignWith(output, this.head, this.parent)
-	this.add(output, "try {")
-	this.unalign(output, this.head, this.parent)
-	
+	this.addNewLine(output, "try {")
+	output.indent()
 	this.addNewLine(output, this.head)
+	output.unindent()
 
-	this.alignWith(output, this.head, this.parent)
 	this.addNewLine(output, "} finally {")
-	this.unalign(output, this.head, this.parent)
-	
+	output.indent()
 	this.addNewLine(output, this.ensr)
-
-	this.alignWith(output, this.head, this.parent)
+	output.unindent()
 	this.addNewLine(output, "}")
-	this.unalign(output, this.head, this.parent)
     }
 }
 
@@ -100,8 +92,6 @@ export class Rescue extends StmWithBlock {
 	    this.functionize1(output)
 	}
 	
-	this.alignWith(output, this.head, this.resq)
-	
 	let elsvar
 	if (this.els != undefined) {
 	    elsvar = output.genVar("els")
@@ -112,38 +102,40 @@ export class Rescue extends StmWithBlock {
 	
 	
 	this.addNewLine(output, "try {")
-	this.unalign(output, this.head, this.resq)
-	
+
+	output.indent()
 	this.addNewLine(output, this.head)
 
 	if (this.els != undefined) {
 	    this.addNewLine(output, elsvar)
 	    this.add(output, " = true")
 	}
+	output.unindent()
 	
 	// Only rescue without a parameter
 	//
 	if (this.resq.args == undefined) {
-	    this.alignWith(output, this.head, this.resq)
 	    this.addNewLine(output, "} catch {")
-	    this.unalign(output, this.head, this.resq)
 
+	    output.indent()
 	    this.addNewLine(output, this.resq.body)
+	    output.unindent()
+
+	    this.addNewLine(output, "}")
+
 	} else {
 	    // Rescue with typed arguments etc
 	    //
 
-
 	    // catch clause
-	    this.alignWith(output, this.head, this.resq)
 	    this.addNewLine(output, "} catch (")
 	    this.exvar = output.genVar("e")
 	    this.add(output, this.exvar)
 	    this.add(output, ") {")
-	    this.unalign(output, this.head, this.resq)
 
 	    // Now the bodies
 	    //
+	    output.indent()
 	    let rescue = this.resq
 	    let first = true
 	    while (rescue != undefined) {
@@ -164,29 +156,31 @@ export class Rescue extends StmWithBlock {
 		    this.addNewLine(output, "} else {")
 		}
 
+		output.indent()
 		this.addNewLine(output, rescue.body)
-	    
+		output.unindent()
+
+		if (rescue.args == undefined) { // Close the else
+		    this.addNewLine(output, "}")
+		}
+		
 		rescue = rescue.head
 	    }
 
+	    output.unindent()
 	    this.addNewLine(output, "}")
-
 	}
-
-	this.alignWith(output, this.head, this.resq)
-	this.addNewLine(output, "}")
 	
 	if (this.els != undefined) {
 	    this.addNewLine(output, "if (")
 	    this.add(output, elsvar)
 	    this.add(output, ") {")
-	    
+
+	    output.indent()
 	    this.addNewLine(output, this.els)
-	    
+	    output.unindent()
 	    this.addNewLine(output, "}")
 	}
-
-	this.unalign(output, this.head, this.resq)
 
 	if (this.asExpr()) {
 	    this.functionize2(output)
