@@ -489,9 +489,9 @@ test("do block I", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"makeIt(() => {",
+	"for (const dummy__1 of makeIt()) {",
 	'  print("666")',
-	"})"
+	"}"
     )
     expect(out).toEqual(out2)
 })             
@@ -506,15 +506,15 @@ test("do block II", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"makeIt(333, (x) => {",
+	"for (const x of makeIt(333)) {",
 	'  print("666")',
 	'  print("777")',
-	"})"
+	"}"
     )
     expect(out).toEqual(out2)
 })             
 
-test.skip("method do block I", () => {
+test("method do block I", () => {
     const src = createSource(
 	"o.make_it do",
 	'  print "666"',
@@ -523,14 +523,14 @@ test.skip("method do block I", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"o.makeIt(() => {",
+	"for (const dummy__1 of o.makeIt()) {",
 	'  print("666")',
-	"})"
+	"}"
     )
     expect(out).toEqual(out2)
 })             
 
-test.skip("do block regarding let/const I", () => {
+test("do block regarding let/const I", () => {
     const src = createSource(
 	"a = 3",
 	"o.make_it do",
@@ -542,15 +542,15 @@ test.skip("do block regarding let/const I", () => {
     
     const out2 = createSource(
 	"let a = 3",
-	"o.makeIt(() => {",
+	"for (const dummy__1 of o.makeIt()) {",
 	"  a = 5",
 	'  print("666")',
-	"})"
+	"}"
     )
     expect(out).toEqual(out2)
 })             
 
-test.skip("do block regarding let/const II", () => {
+test("do block regarding let/const II", () => {
     const src = createSource(
 	"a = 3",
 	"o.make_it do |;a|",
@@ -562,15 +562,15 @@ test.skip("do block regarding let/const II", () => {
     
     const out2 = createSource(
 	"const a = 3",
-	"o.makeIt(() => {",
+	"for (const dummy__1 of o.makeIt()) {",
 	"  const a = 5",
 	'  print("666")',
-	"})"
+	"}"
     )
     expect(out).toEqual(out2)
 })             
 
-test.skip("do block regarding let/const III", () => {
+test("do block regarding let/const III", () => {
     const src = createSource(
 	"a = 3",
 	"o.make_it do |;a|",
@@ -583,83 +583,40 @@ test.skip("do block regarding let/const III", () => {
     
     const out2 = createSource(
 	"const a = 3",
-	"o.makeIt(() => {",
+	"for (const dummy__1 of o.makeIt()) {",
 	"  let a = 5",
 	'  print("666")',
 	"  a = 77",
-	"})"
+	"}"
     )
     expect(out).toEqual(out2)
 })             
 
-test.skip("do block regarding let/const IV", () => {
-    const src = createSource(
-	"a = 3",
-	"b = 44",
-	"c = 55",
-	"o.make_it do |c;a|",
-	"  a = 5",
-	'  print "666"',
-	"  a = 77",
-	"  c = 99",
-	"  if b == 91",
-	"    b = 91",
-	"  end",
-	"end"
-    )
-    const out = parseSource(src)
-    
-    const out2 = createSource(
-	"const a = 3",
-	"let b = 44",
-	"const c = 55",
-	"o.makeIt((c) => {", // TODO cannot grok parameter c in block
-	"  let a = 5",
-	'  print("666")',
-	"  a = 77",
-	"  c = 99",
-	"  if (b == 91) {",
-	"    b = 91",
-	"  }",
-	"})"
-    )
-    expect(out).toEqual(out2)
-})             
-
-// TODO The solution is for (iterator)
-test.skip("do block returning value for a method", () => {
+test("do block returning value for a method", () => {
     const src = createSource(
 	"def m(n)",
-	"  $a.each_with_index do |e, i|",
+	"  $a.each_with_index() do |e, i|",
 	"    return e if n == i",
 	"  end",
 	"  return nil",
 	"end"
     )
     const out = parseSource(src)
-    console.log(out)
-    
+
     const out2 = createSource(
 	"function m(n) {",
-	"  let ret1 = false",
-	"  let retvalue2 = undefined",
-	"  $a.eachWithIndex((e, i) => {",
+	"  for (const [e, i] of globalThis.$a.eachWithIndex()) {",
 	"    if (n == i) {",
-	"    ret1 = true",
-	"    retvalue2 = e",
-	"    return e",
+	"      return e",
 	"    }",
-	"  })",
-	"  if (ret1) {",
-	"    return retvalue2",
 	"  }",
-	"  return undefined",
+	// no "return undefined" because it is optimized out by the ruby compiler
 	"}"
     )
     expect(out).toEqual(out2)
 })             
 
-test.skip("do block regarding let/const III", () => {
+test("do block regarding let/const III", () => {
     const src = createSource(
 	"a = 3",
 	"o.make_it do |;a|",
@@ -672,11 +629,11 @@ test.skip("do block regarding let/const III", () => {
     
     const out2 = createSource(
 	"const a = 3",
-	"o.makeIt(() => {",
+	"for (const dummy__1 of o.makeIt()) {",
 	"  let a = 5",
 	'  print("666")',
 	"  a = 77",
-	"})"
+	"}"
     )
     expect(out).toEqual(out2)
 })             

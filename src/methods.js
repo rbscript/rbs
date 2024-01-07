@@ -29,7 +29,7 @@ export class FuncCall extends Artifact {
 	}
     }
 
-    convert(output, withDo) {
+    convert(output) {
 	if (this.mid == undefined) {
 	    return
 	}
@@ -71,17 +71,8 @@ export class FuncCall extends Artifact {
 	    if (kwStarted) {
 		this.add(output, "}")
 	    }
-	    
-	    if (withDo) {
-		this.add(output, ", ")
-	    }
 	}
-
-	if (!withDo) {
-	    // Common case is just closing the paranthesis
-	    //
-	    this.add(output, ")")
-	}
+	this.add(output, ")")
     }
 
     convertRaise(output) {

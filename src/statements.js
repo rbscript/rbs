@@ -792,16 +792,37 @@ export class Iter extends StmWithBlock {
     }
 
     convert(output) {
-	this.iter.convert(output, true) // see FuncCall.convert()
 
-	this.add(output, "(")
-	this.body.convertArgs(output)
-	this.add(output, ") => {")
+	if (this.asExpr()) {
+	    this.functionize1(output)
+	}
+
+	this.addNewLine(output, "for (const ")
+
+	if (this.body.params.length == 1) {
+	    this.body.convertArgs(output)
+	    this.add(output, " of ")
+	} else if (this.body.params.length == 0) {
+	    this.add(output, output.genVar("dummy"))
+	    this.add(output, " of ")
+	} else {
+	    this.add(output, "[")
+	    this.body.convertArgs(output)
+	    this.add(output, "] of ")
+	}
+	
+
+	this.iter.convert(output, true) // see FuncCall.convert()
+	this.add(output, ") {")
 
 	output.indent()
 	this.add(output, this.body)
 	output.unindent()
-	this.add(output, "})")
+	this.add(output, "}")
+	
+	if (this.asExpr()) {
+	    this.functionize2(output)
+	}
     }
 }
 

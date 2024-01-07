@@ -32,7 +32,9 @@ export class Call extends Artifact {
 
 	// Check if we need to put paranthesis
 	//
-	if (this.args == undefined && this.mid != ":new") {
+	if (!withDo &&
+	    this.args == undefined &&
+	    this.mid != ":new") {
 
 	    // The problem here is,
 	    // having no difference between a.b.c and a.b().c via the parsetree
@@ -48,24 +50,16 @@ export class Call extends Artifact {
 	}
 	
 	this.add(output, "(")
-	this.convertArgs(output, withDo)
-	if (!withDo) {
-	    // Common case
-	    //
-	    this.add(output, ")")
-	}
+	this.convertArgs(output)
+	this.add(output, ")")
     }
 
-    convertArgs(output, withDo) {
+    convertArgs(output) {
 	if (this.args != undefined && this.args.array.length > 0) {
 	    this.add(output, this.args.array[0])
 	    for (let i = 1; i < this.args.array.length; ++i) {
 		this.add(output, ", ")
 		this.add(output, this.args.array[i])
-	    }
-	    
-	    if (withDo) {
-		this.add(output, ", ")
 	    }
 	}
     }
