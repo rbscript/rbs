@@ -285,24 +285,6 @@ test("case with ranges", () => {
 })             
 
 
-test.skip("begin block", () => { // TODO it is enclosed in NODE_BLOCK instead of NODE_BEGIN
-    const src = createSource(
-	"begin",
-	"  a = 333",
-	"  print(53 + 2)",
-	"end"
-    )
-    const out = parseSource(src)
-
-    const out2 = createSource(
-	"{",
-	"  const a = 333",
-	"  print(53 + 2)",
-	"}"
-    )
-    expect(out).toEqual(out2)
-})             
-
 test("while with break", () => {
     const src = createSource(
 	"i = 0",
@@ -637,3 +619,20 @@ test("do block regarding let/const III", () => {
     )
     expect(out).toEqual(out2)
 })             
+
+test("begin block", () => {
+    const src = createSource(
+	"begin",
+	"  a = 333",
+	"  print(53 + 2)",
+	"end"
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"const a = 333",
+	"print(53 + 2)"
+    )
+    expect(out).toEqual(out2)
+})             
+
