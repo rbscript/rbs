@@ -140,9 +140,18 @@ export class Scope extends Artifact {
 	    if (count > 0) {
 		this.add(output, ", ")
 	    }
+	    count++
 
 	    this.add(output, "...")
 	    this.add(output, this.args.kwRestArg)
+	}
+
+	if (this.args.blockArg != undefined &&
+	    this.args.blockArg != "(null)") {
+	    if (count > 0) {
+		this.add(output, ", ")
+	    }
+	    this.add(output, symbol(this.args.blockArg))
 	}
     }
 

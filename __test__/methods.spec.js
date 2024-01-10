@@ -917,3 +917,53 @@ test("function inside method", () => {
     expect(out).toEqual(out2)
 })
 
+test("Creating proc", () => {
+    const src = createSource(
+	"def makeproc(&p)",
+	"  p",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function makeproc(p) {",
+	"  return p",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("Calling proc I", () => {
+    const src = createSource(
+	"def callproc(&p)",
+	"  p.call",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function callproc(p) {",
+	"  return p()",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("Calling proc II", () => {
+    const src = createSource(
+	"def callproc(&p)",
+	"  p.call 666",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function callproc(p) {",
+	"  return p(666)",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})

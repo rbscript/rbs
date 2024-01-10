@@ -19,6 +19,8 @@ export class Call extends Artifact {
 	if (this.mid == ":new") {
 	    this.add(output, "new ")
 	    this.add(output, this.recv)
+	} else if (this.mid == ":call") {
+	    this.add(output, this.recv)
 	} else if (this.mid == ":[]") {
 	    return this.convertArray(output)
 	} else {
@@ -34,6 +36,7 @@ export class Call extends Artifact {
 	//
 	if (!withDo &&
 	    this.args == undefined &&
+	    this.mid != ":call" &&
 	    this.mid != ":new") {
 
 	    // The problem here is,
