@@ -311,10 +311,27 @@ export class ClassMethod extends Artifact {
 export class Lambda extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, tree, startLine)
+
+	this.body = tree.get(this, startLine, "nd_body")
+
+	// this.body is a Scope
+	this.body.body = this.body.body.returnize(tree)
+    }
+
+    convert(output) {
+	Lambda.convertt(this, output, this.body)
+    }
+
+    static convertt(that, output, body) {
+	that.add(output, "(")
+	body.convertArgs(output) // See Scope.convertArgs()
+	that.add(output, ") => {")
+
+	output.indent()
+	that.add(output, body)
 	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_body")
-	line = tree.nextLine(line.indent)
-	this.body = resolveNode(this, tree, line)
+	output.unindent()
+	that.add(output, "}")
     }
 }
 

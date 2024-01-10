@@ -967,3 +967,68 @@ test("Calling proc II", () => {
     
     expect(out).toEqual(out2)
 })
+
+test("Defining lambda I", () => {
+    const src = createSource(
+	"is_positive = lambda {|x| x > 0}"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"const isPositive = (x) => {",
+	"  return x > 0",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("Defining lambda II", () => {
+    const src = createSource(
+	"is_positive = -> (x) {x > 0}"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"const isPositive = (x) => {",
+	"  return x > 0",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("Defining lambda III", () => {
+    const src = createSource(
+	"is_positive = -> (x) {print 'selam'; x > 0}"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"const isPositive = (x) => {",
+	'  print("selam")',
+	"  return x > 0",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("Defining lambda IV", () => {
+    const src = createSource(
+	"is_positive = -> (x) do",
+	"  print 'selam'",
+	"  x > 0",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"const isPositive = (x) => {",
+	'  print("selam")',
+	"  return x > 0",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})

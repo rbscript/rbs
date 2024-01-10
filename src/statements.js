@@ -3,6 +3,7 @@ import {Artifact} from './artifact'
 import {List, Range} from './lists'
 import {symbol} from './literal'
 import {Scope, Block} from './blocks'
+import {FuncCall, Lambda} from './methods'
 
 export class StmWithBlock extends Artifact {
     constructor(parent, tree, startLine) {
@@ -789,9 +790,22 @@ export class Iter extends StmWithBlock {
 
 	this.iter = tree.get(this, startLine, "nd_iter")
 	this.body = tree.get(this, startLine, "nd_body")
+
+	
+	this.lambda = (this.iter instanceof FuncCall &&
+		       this.iter.mid == ':lambda')
+	if (this.lambda) {
+	    this.body.body = this.body.body.returnize(tree)
+	}
+
     }
 
     convert(output) {
+
+	if (this.lambda) {
+	    Lambda.convertt(this, output, this.body)
+	    return
+	}
 
 	if (this.asExpr()) {
 	    this.functionize1(output)
