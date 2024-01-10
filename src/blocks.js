@@ -285,9 +285,25 @@ export class Body extends Artifact {
 export class Yield extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, tree, startLine)
-	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
-	line = tree.nextLine(line.indent)
-	this.head = resolveNode(this, tree, line)
+	this.head = tree.get(this, startLine, "nd_head")
+
+	const defn = this.findOwnerMethod()
+	if (defn == undefined) {
+	    throw "Yield statement should be in a method"
+	}
+
+	defn.generator = true
+    }
+
+    convert(output) {
+	this.addNewLine(output, "yield ")
+	if (this.head != undefined && this.head.array.length > 0) {
+	    this.add(output, this.head.array[0])
+	    for (let i = 1; i < this.head.array.length; ++i) {
+		this.add(output, ", ")
+		this.add(output, this.head.array[i])
+	    }
+	}
     }
 }
 

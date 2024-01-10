@@ -815,3 +815,63 @@ test("return multiple", () => {
     
     expect(out).toEqual(out2)
 })
+
+test("function with yield I", () => {
+    const src = createSource(
+	"def f",
+	"  yield 4",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function* f() {",
+	"  yield 4",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("function with yield II", () => {
+    const src = createSource(
+	"def f n",
+	"  if n == 3 then yield 22; end",
+	"  yield 4",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function* f(n) {",
+	"  if (n == 3) {",
+	"    yield 22",
+	"  }",
+	"  yield 4",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("method with yield I", () => {
+    const src = createSource(
+	"class C",
+	"  def f",
+	"    yield 4",
+	"  end",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"class C {",
+	"  *f() {",
+	"    yield 4",
+	"  }",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+

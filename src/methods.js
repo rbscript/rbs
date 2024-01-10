@@ -161,7 +161,8 @@ export class VarCall extends Artifact {
 export class Defn extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, tree, startLine)
-	
+
+	this.generator = false
 	this.mid = tree.get(this, startLine, "nd_mid")
 	this.defn = tree.get(this, startLine, "nd_defn")
 
@@ -174,10 +175,20 @@ export class Defn extends Artifact {
 	owner.addMethod(this, this.mid)
     }
 
+    findOwnerMethod() {
+	return this
+    }
+
     convert(output) {
 	const owner = this.findOwner()
+	let func = false
 	if (owner instanceof Program) {
-	    this.add(output, "function ")
+	    if (this.generator) {
+		this.add(output, "function* ")
+	    } else {
+		this.add(output, "function ")
+	    }
+	    func = true
 	} else if (owner instanceof Module) {
 	    this.add(output, owner.name)
 	    this.add(output, ".")
@@ -194,7 +205,7 @@ export class Defn extends Artifact {
 		}
 	    }
 	}
-
+	
 	let name
 	
 	if (this.mid == ":initialize") {
@@ -203,6 +214,8 @@ export class Defn extends Artifact {
 	    name = symbol(owner.getMethod(this.mid.slice(1)).jsName)
 	    if (name.endsWith("=")) { // for setters
 		name = name.slice(0, -1)
+	    } else if (this.generator && !func) {
+		name = "*" + name
 	    }
 	}
 	this.add(output, name)

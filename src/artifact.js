@@ -30,6 +30,13 @@ export class Artifact {
 	return this.parent.findOwner()
     }
 
+    findOwnerMethod() {
+	if (this.parent == undefined) {
+	    return undefined
+	}
+	return this.parent.findOwnerMethod()
+    }
+
     returnize(tree) {
 	return this
     }
