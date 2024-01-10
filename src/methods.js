@@ -181,19 +181,21 @@ export class Defn extends Artifact {
 
     convert(output) {
 	const owner = this.findOwner()
-	let func = false
-	if (owner instanceof Program) {
+	const ownerDefn = this.parent.findOwnerMethod()
+	let func = ownerDefn != undefined || (owner instanceof Program)
+
+	if (owner instanceof Module) {
+	    this.add(output, owner.name)
+	    this.add(output, ".")
+
+	} else if (func) {
 	    if (this.generator) {
 		this.add(output, "function* ")
 	    } else {
 		this.add(output, "function ")
 	    }
-	    func = true
-	} else if (owner instanceof Module) {
-	    this.add(output, owner.name)
-	    this.add(output, ".")
 
-	} else {// class
+	}  else {// class
 
 	    // Check if it is a property
 	    //

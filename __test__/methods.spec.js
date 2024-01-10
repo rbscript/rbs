@@ -875,3 +875,45 @@ test("method with yield I", () => {
     expect(out).toEqual(out2)
 })
 
+test("function inside function", () => {
+    const src = createSource(
+	"def f",
+	"  def g",
+	"  end",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"function f() {",
+	"  function g() {",
+	"  }",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("function inside method", () => {
+    const src = createSource(
+	"class C",
+	"  def f",
+	"    def g",
+	"    end",
+	"  end",
+	"end"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"class C {",
+	"  f() {",
+	"    function g() {",
+	"    }",
+	"  }",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
