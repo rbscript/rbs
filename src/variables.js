@@ -199,13 +199,14 @@ export class ConstDecl extends Artifact {
 		this.addNewLine(output, "static get ")
 		this.add(output, name.slice(1))
 		this.add(output, "() {")
+		output.indent()
 		this.addNewLine(output, "return ")
 		this.add(output, symbol(owner.name))
 		this.add(output, ".")
 		this.add(output, name)
+		output.unindent()
 		this.addNewLine(output, "}")
 	    }
-	    
 	    
 	} else {
 	    this.add(output, "const ")

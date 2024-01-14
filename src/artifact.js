@@ -67,6 +67,15 @@ export class Artifact {
 	throw "No object is found to get the class " + name
     }
 
+    addModule(module) {
+	if (this.parent != undefined) {
+	    this.parent.addModule(module)
+	} else {
+	    throw "No object is found for our module to add"
+	}
+    }
+
+    
     // About let/const
     findLocalVar(la) {
 	return 0

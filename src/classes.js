@@ -233,8 +233,6 @@ export class Program extends Owner {
     constructor(tree) {
 	super(undefined, undefined, undefined)
 
-	
-
 	let line = tree.nextLine(0, "NODE_SCOPE")
 	this.scope = resolveNode(this, tree, line)
     }
@@ -277,8 +275,32 @@ export class Module extends Owner {
 	this.parent.addModule(this)
     }
 
+    get name() {
+	return this.cpath.mid
+    }
+    
     findOwner() {
 	return this
+    }
+
+    inClass() {
+	return true
+    }
+    
+    convert(output) {
+	if (this.parent.inClass()) {
+	    this.addNewLine(output, "static ")
+	} else {
+	    this.addNewLine(output, "globalThis.")
+	}
+	this.add(output, this.cpath)
+	this.add(output, " = class {")
+
+	output.indent()
+	this.add(output, this.body)
+	output.unindent()
+	
+	this.addNewLine(output, "}")
     }
 }
 
@@ -291,9 +313,9 @@ export class Colon2 extends Artifact {
     }
 
     convert(output) {
-	if (this.head != undefined) {
-	    this.add(output, symbol(this.head))
-	    this.add(output, "::")
+	if (this.head != undefined && this.head != "(null node)") {
+	    this.add(output, this.head)
+	    this.add(output, ".")
 	}
 	this.add(output, symbol(this.mid))
     }

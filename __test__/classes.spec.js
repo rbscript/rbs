@@ -385,7 +385,7 @@ test("class constant II", () => {
 	"class Animal {",
 	'  static #Cat = "cat"',
 	"  static get Cat() {",
-	'  return Animal.#Cat',
+	'    return Animal.#Cat',
 	"  }",
 	"}"
     )
@@ -591,3 +591,99 @@ test.skip("require", () => {
     //expect(out).toEqual(out2)
 })             
 
+test("Simple module with constant", () => {
+    const src = createSource(
+	"module Geometry",
+	"  PI = 3.14",
+	"end",
+	"print Geometry::PI"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"globalThis.Geometry = class {",
+	"  static #PI = 3.14",
+	"  static get PI() {",
+	"    return Geometry.#PI",
+	"  }",
+	"}",
+	"print(Geometry.PI)"
+    )
+
+    expect(out).toEqual(out2)
+})             
+
+
+test("Simple module with a method", () => {
+    const src = createSource(
+	"module Animals",
+	"  def self.kelle",
+	"    print 'kelle'",
+	"  end",
+	"end",
+	"Animals::kelle()"
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"globalThis.Animals = class {",
+	"  static kelle() {",
+	'    print("kelle")',
+	"  }",
+	"}",
+	"Animals.kelle()"
+    )
+
+    expect(out).toEqual(out2)
+})             
+
+test("Nested modules with a method I", () => {
+    const src = createSource(
+	"module Creatures",
+	"  module Animals",
+	"    def self.kelle",
+	"      print 'kelle'",
+	"    end",
+	"  end",
+	"end",
+	"Creatures::Animals::kelle()"
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"globalThis.Creatures = class {",
+	"  static Animals = class {",
+	"    static kelle() {",
+	'      print("kelle")',
+	"    }",
+	"  }",
+	"}",
+	"Creatures.Animals.kelle()"
+    )
+
+    expect(out).toEqual(out2)
+})             
+
+test("Nested modules with a method II", () => {
+    const src = createSource(
+	"module Creatures::Animals",
+	"  def self.kelle",
+	"    print 'kelle'",
+	"  end",
+	"end",
+	"Creatures::Animals::kelle()"
+    )
+    const out = parseSource(src)
+    console.log(out)
+
+    const out2 = createSource(
+	"globalThis.Creatures.Animals = class {",
+	"  static kelle() {",
+	'    print("kelle")',
+	"  }",
+	"}",
+	"Creatures.Animals.kelle()"
+    )
+
+    expect(out).toEqual(out2)
+})             

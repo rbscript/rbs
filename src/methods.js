@@ -262,21 +262,13 @@ export class ClassMethod extends Artifact {
 
     convert(output) {
 	const owner = this.findOwner()
-	if (owner instanceof Program) {
-	    throw "unexpected"
-	} else if (owner instanceof Module) {
-	    this.add(output, owner.name)
-	    this.add(output, ".")
-
-	} else {// class
-	    this.add(output, "static ")
-
-	    if (this.mid.endsWith("=")) {
-		this.add(output, "set ")
-	    } else if (owner.getClassProperty(this.mid.slice(1)) != undefined) {
-		if (this.defn.args.preArgsNum == 0) {
-		    this.add(output, "get ")
-		}
+	this.add(output, "static ")
+	
+	if (this.mid.endsWith("=")) {
+	    this.add(output, "set ")
+	} else if (owner.getClassProperty(this.mid.slice(1)) != undefined) {
+	    if (this.defn.args.preArgsNum == 0) {
+		this.add(output, "get ")
 	    }
 	}
 	
