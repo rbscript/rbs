@@ -14,6 +14,8 @@ export class FuncCall extends Artifact {
 	this.mid = tree.get(this, startLine, "nd_mid")
 	this.args = tree.get(this, startLine, "nd_args")
 
+	this.require = false
+	
 	// For example: private :meow
 	if (this.inClass()) {
 	    const klas = this.findOwner()
@@ -26,6 +28,11 @@ export class FuncCall extends Artifact {
 		this.mid = undefined // Signal that we won't be outputted
 		break
 	    }
+	} else {
+	    if ((this.mid == ":require" || this.mid == ':load') &&
+		this.args.array.length == 1) {
+		this.require = true
+	    }
 	}
     }
 
@@ -36,6 +43,10 @@ export class FuncCall extends Artifact {
 
 	if (this.mid == ':raise' || this.mid == ':fail') {
 	    return this.convertRaise(output)
+	}
+
+	if (this.require) {
+	    return this.convertRequire(output)
 	}
 	
 	this.add(output, symbol(this.mid))
@@ -95,6 +106,34 @@ export class FuncCall extends Artifact {
 	    this.add(output, ")")
 	}
 
+    }
+
+    convertRequire(output) {
+	const importVar = output.genVar("import")
+	const keyVar = output.genVar("key")
+
+	this.addNewLine(output, "import * as ")
+	this.add(output, importVar)
+	this.add(output, " from ")
+	this.add(output, this.args.array[0])
+	
+	this.addNewLine(output, "for (const ")
+	this.add(output, keyVar)
+	this.add(output, " in ")
+	this.add(output, importVar)
+	this.add(output, ") {")
+
+	output.indent()
+	this.add(output, "globalThis[")
+	this.add(output, keyVar)
+	this.add(output, "] = ")
+	this.add(output, importVar)
+	this.add(output, "[")
+	this.add(output, keyVar)
+	this.add(output, "]")
+	
+	output.unindent()
+	this.add(output, "}")
     }
 }
 

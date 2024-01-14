@@ -698,3 +698,20 @@ test("Nested modules with a method II", () => {
 
     expect(out).toEqual(out2)
 })             
+
+test("Require", () => {
+    const src = createSource(
+	"require 'library'",
+    )
+    const out = parseSource(src)
+    console.log(out)
+
+    const out2 = createSource(
+	'import * as import__1 from "library"',
+	"for (const key__2 in import__1) {",
+	"  globalThis[key__2] = import__1[key__2]",
+	"}"
+    )
+
+    expect(out).toEqual(out2)
+})             
