@@ -16,10 +16,25 @@ test("constant definition", () => {
     const out = parseSource(src)
 
     const out2 = createSource(
+	"export const PI = 3.14",
+    )
+    expect(out).toEqual(out2)
+})
+
+test("private constant definition", () => {
+    const src = createSource(
+	"private",
+	"PI = 3.14"
+    )
+
+    const out = parseSource(src)
+
+    const out2 = createSource(
 	"const PI = 3.14",
     )
     expect(out).toEqual(out2)
 })
+
 
 test("global variable definition", () => {
     const src = createSource("$g = 666")

@@ -586,7 +586,7 @@ test("do block returning value for a method", () => {
     const out = parseSource(src)
 
     const out2 = createSource(
-	"function m(n) {",
+	"export function m(n) {",
 	"  for (const [e, i] of globalThis.$a.eachWithIndex()) {",
 	"    if (n == i) {",
 	"      return e",

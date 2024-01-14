@@ -18,6 +18,8 @@ class Owner extends Artifact {
 	// private -> everything is private, starts with #
 	// protected -> everything is protected, starts with _
 	this.mode = "public"
+
+	this.priv = true // We are private by default (as classes and modules)
     }
 
     findOwner() {
@@ -30,6 +32,9 @@ class Owner extends Artifact {
     
     addClass(klass) {
 	this.classes[klass.name] = klass
+	if (this.mode == "public") {
+	    klass.priv = false
+	}
     }
 
     getClass(name) {
@@ -38,6 +43,9 @@ class Owner extends Artifact {
 
     addModule(module) {
 	this.modules[module.name] = module
+	if (this.mode == "public") {
+	    module.priv = false
+	}
     }
 
     getModule(name) {
@@ -145,6 +153,13 @@ class Owner extends Artifact {
 	    const name = arg.lit.slice(1) // eliminate :
 	    if (this.methods[name] != undefined) {
 		this.methods[name].visibility = mode
+	    } else if (mode == "public") {
+		if (this.classes[name] != undefined) {
+		    this.classes[name].priv = false
+		} else if (this.modules[name] != undefined) {
+		    this.modules[name].priv = false
+
+		}
 	    }
 	}
     }
@@ -166,6 +181,13 @@ export class Class extends Owner {
     }
     
     convert(output) {
+	if (!this.priv) {
+	    const owner = this.parent.findOwner()
+	    if (owner instanceof Program) {
+		this.add(output, "export ")
+	    }
+	}
+	
 	this.add(output, "class ")
 	this.add(output, this.cpath)
 	if (this.supper != undefined) {

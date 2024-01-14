@@ -6,6 +6,7 @@ import {Call} from './operators'
 import {Block, Scope} from './blocks'
 import {Defn} from './methods'
 import {List} from './lists'
+import {Program} from './classes'
 
 class Assignment extends Artifact {
     constructor(parent, tree, startLine) {
@@ -177,9 +178,13 @@ export class ConstDecl extends Artifact {
 	this.els = tree.get(this, startLine, "nd_else") // I hope this is unused
 	this.value = tree.get(this, startLine, "nd_value")
 
+	const owner = this.findOwner()
 	if (this.inClass()) {
-	    const owner = this.findOwner()
 	    owner.addClassProperty(this, "@@" + this.vid) // BAD: class prop eliminates first 3 chars
+	}
+	this.priv = true
+	if (owner.mode == "public") {
+	    this.priv = false
 	}
     }
 
@@ -209,6 +214,10 @@ export class ConstDecl extends Artifact {
 	    }
 	    
 	} else {
+	    const owner = this.findOwner()
+	    if (!this.priv && (owner instanceof Program)) {
+		this.add(output, "export ")
+	    }
 	    this.add(output, "const ")
 	    this.add(output, symbol(this.vid))
 	    this.add(output, " = ")

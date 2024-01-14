@@ -106,23 +106,21 @@ export class VarCall extends Artifact {
 
 	// Here we handle public, private and protected
 	//
-	if (this.inClass()) {
-	    const klas = this.findOwner()
-		  
-	    switch (this.mid) {
-	    case ":public":
-		klas.changeMode("public")
-		this.mid = undefined
-		break
-	    case ":private":
-		klas.changeMode("private")
-		this.mid = undefined
-		break
-	    case ":protected":
-		klas.changeMode("protected")
-		this.mid = undefined
-		break
-	    }
+	const klas = this.findOwner()
+	
+	switch (this.mid) {
+	case ":public":
+	    klas.changeMode("public")
+	    this.mid = undefined
+	    break
+	case ":private":
+	    klas.changeMode("private")
+	    this.mid = undefined
+	    break
+	case ":protected":
+	    klas.changeMode("protected")
+	    this.mid = undefined
+	    break
 	}
     }
 
@@ -184,6 +182,12 @@ export class Defn extends Artifact {
 	const ownerDefn = this.parent.findOwnerMethod()
 	let func = ownerDefn != undefined || (owner instanceof Program)
 
+	if (ownerDefn == undefined && (owner instanceof Program)) {
+	    const m = owner.getMethod(this.mid.slice(1))
+	    if (m.visibility == "public") {
+		this.add(output, "export ")
+	    }
+	}
 	if (owner instanceof Module) {
 	    this.add(output, owner.name)
 	    this.add(output, ".")

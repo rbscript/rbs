@@ -11,7 +11,7 @@ test("method definition", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function onePlusOne() {",
+	"export function onePlusOne() {",
 	"  return 1 + 1",
 	"}"
     )
@@ -28,7 +28,7 @@ test("method definition", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function antiChrist() {",
+	"export function antiChrist() {",
 	"  return 666",
 	"}"
     )
@@ -47,7 +47,7 @@ test("method definition multi line", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function aPlusOne() {",
+	"export function aPlusOne() {",
 	"  const a = 1",
 	"  return a + 1",
 	"}"
@@ -69,7 +69,7 @@ test("method def with if", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function negativeQ(n) {",
+	"export function negativeQ(n) {",
 	"  if (n < 0) {",
 	"    return true",
 	"  } else {",
@@ -100,7 +100,7 @@ test("method def with case", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function numberName(n) {",
+	"export function numberName(n) {",
 	"  switch (n) {",
 	"  case 0:",
 	'    return "zero"',
@@ -444,7 +444,7 @@ test("def with default arguments I", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function antiChrist(a = 1) {",
+	"export function antiChrist(a = 1) {",
 	"  return 666",
 	"}"
     )
@@ -461,7 +461,7 @@ test("def with default arguments II", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function antiChrist(a = 1, b = a / 3) {",
+	"export function antiChrist(a = 1, b = a / 3) {",
 	"  return 666",
 	"}"
     )
@@ -478,7 +478,7 @@ test("def with default arguments III", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function antiChrist(a, b = a / 3) {",
+	"export function antiChrist(a, b = a / 3) {",
 	"  return 666",
 	"}"
     )
@@ -495,7 +495,7 @@ test("def with default arguments IV", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function antiChrist(a = 1) {",
+	"export function antiChrist(a = 1) {",
 	"  a = 666",
 	"}"
     )
@@ -512,7 +512,7 @@ test("def with keyword arguments I", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function antiChrist({num} = {}) {",
+	"export function antiChrist({num} = {}) {",
 	"  return num * 666",
 	"}"
     )
@@ -529,7 +529,7 @@ test("def with keyword arguments II", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function antiChrist({num = 23}) {",
+	"export function antiChrist({num = 23}) {",
 	"  return num * 666",
 	"}"
     )
@@ -546,7 +546,7 @@ test("def with keyword arguments III", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function antiChrist({num = 23}) {",
+	"export function antiChrist({num = 23}) {",
 	"  num = 666",
 	"}"
     )
@@ -564,7 +564,7 @@ test("def with keyword and optional arguments I", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function antiChrist(str, index = str + 46, {num = 23}) {",
+	"export function antiChrist(str, index = str + 46, {num = 23}) {",
 	"  num = 666",
 	'  const stri = "kelle"',
 	"}"
@@ -585,7 +585,7 @@ test("def with keyword and optional arguments II", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function antiChrist(str, index = str + 46, {num = 23, count}) {",
+	"export function antiChrist(str, index = str + 46, {num = 23, count}) {",
 	"  num = 666",
 	"  index = 3",
 	'  let stri = "kelle"',
@@ -604,7 +604,7 @@ test("def with rest arguments I", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function antiChrist(...rest) {",
+	"export function antiChrist(...rest) {",
 	"}"
     )
     
@@ -619,7 +619,7 @@ test("def with rest arguments II", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function antiChrist(a, ...rest) {",
+	"export function antiChrist(a, ...rest) {",
 	"}"
     )
     
@@ -687,7 +687,7 @@ test("def with unused argument", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function welcomeHome(___1, ___2) {",
+	"export function welcomeHome(___1, ___2) {",
 	"}"
     )
     
@@ -808,7 +808,7 @@ test("return multiple", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function f() {",
+	"export function f() {",
 	"  return [3, 5, 8]",
 	"}"
     )
@@ -825,7 +825,7 @@ test("function with yield I", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function* f() {",
+	"export function* f() {",
 	"  yield 4",
 	"}"
     )
@@ -843,7 +843,7 @@ test("function with yield II", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function* f(n) {",
+	"export function* f(n) {",
 	"  if (n == 3) {",
 	"    yield 22",
 	"  }",
@@ -865,7 +865,7 @@ test("method with yield I", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"class C {",
+	"export class C {",
 	"  *f() {",
 	"    yield 4",
 	"  }",
@@ -885,7 +885,7 @@ test("function inside function", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function f() {",
+	"export function f() {",
 	"  function g() {",
 	"  }",
 	"}"
@@ -906,7 +906,7 @@ test("function inside method", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"class C {",
+	"export class C {",
 	"  f() {",
 	"    function g() {",
 	"    }",
@@ -926,7 +926,7 @@ test("Creating proc", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function makeproc(p) {",
+	"export function makeproc(p) {",
 	"  return p",
 	"}"
     )
@@ -943,7 +943,7 @@ test("Calling proc I", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function callproc(p) {",
+	"export function callproc(p) {",
 	"  return p()",
 	"}"
     )
@@ -960,7 +960,7 @@ test("Calling proc II", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function callproc(p) {",
+	"export function callproc(p) {",
 	"  return p(666)",
 	"}"
     )

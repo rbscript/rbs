@@ -410,7 +410,7 @@ test("def/rescue/else", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"function fn() {",
+	"export function fn() {",
 	"  let els__1 = false",
 	"  try {",
 	'    print("hello")',
@@ -442,7 +442,7 @@ test("def/rescue/ensure/else", () => {
     const out = parseSource(src)
 
     const out2 = createSource(
-	"function fn() {",
+	"export function fn() {",
 	"  try {",
 	"    let els__1 = false",
 	"    try {",

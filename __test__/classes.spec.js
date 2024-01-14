@@ -9,11 +9,27 @@ test("simple class", () => {
     const out = parseSource(src)
 
     const out2 = createSource(
+	"export class Animal {",
+	"}"
+    )
+    expect(out).toEqual(out2)
+})             
+
+test("simple private class", () => {
+    const src = createSource(
+	"private",
+	"class Animal",
+	"end")
+    const out = parseSource(src)
+    console.log(out)
+    
+    const out2 = createSource(
 	"class Animal {",
 	"}"
     )
     expect(out).toEqual(out2)
 })             
+
 
 test("simple inheritance", () => {
     const src = createSource(
@@ -24,9 +40,9 @@ test("simple inheritance", () => {
     const out = parseSource(src)
 
     const out2 = createSource(
-	"class Animal {",
+	"export class Animal {",
 	"}",
-	"class Human extends Animal {",
+	"export class Human extends Animal {",
 	"}"
     )
     expect(out).toEqual(out2)
@@ -43,7 +59,7 @@ test("class with constructor", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"class Animal {",
+	"export class Animal {",
 	"  constructor() {",
 	'    this.#eyeColor = "blue"',
 	"  }",
@@ -67,7 +83,7 @@ test("class with constructor and a method", () => {
     const out = parseSource(src)
 
     const out2 = createSource(
-	"class Animal {",
+	"export class Animal {",
 	"  constructor() {",
 	'    this.#eyeColor = "blue"',
 	"  }",
@@ -92,7 +108,7 @@ test("class with a private method", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"class Animal {",
+	"export class Animal {",
 	"  #meow(a) {",
 	"  }",
 	"}"
@@ -111,7 +127,7 @@ test("class with a private method 2", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"class Animal {",
+	"export class Animal {",
 	"  #meow(a) {",
 	"  }",
 	"}"
@@ -130,7 +146,7 @@ test("class with a protected method", () => {
     const out = parseSource(src)
 
     const out2 = createSource(
-	"class Animal {",
+	"export class Animal {",
 	"  _sayMeow(a) {",
 	"  }",
 	"}"
@@ -150,7 +166,7 @@ test("class with a protected method but private property", () => {
     const out = parseSource(src)
 
     const out2 = createSource(
-	"class Animal {",
+	"export class Animal {",
 	"  _sayMeow(a) {",
 	"    this.#said = true",
 	"  }",
@@ -174,7 +190,7 @@ test("class with an ambigious no-param method", () => {
     const out = parseSource(src)
 
     const out2 = createSource(
-	"class Animal {",
+	"export class Animal {",
 	"  sayMeow() {",
 	'    print("miyav")',
 	"  }",
@@ -206,7 +222,7 @@ function animalClassForRuby() {
 
 function animalClassForJs() {
     return createSource(
-	"class Animal {",
+	"export class Animal {",
 	"  sayMeow() {",
 	'    print("miyav")',
 	"  }",
@@ -244,7 +260,7 @@ test("class inheritance using protected & public property", () => {
     
     const out2 = createSource(
 	animalClassForJs(),
-	"class Human extends Animal {",
+	"export class Human extends Animal {",
 	"  g() {",
 	"    this._lives = 1",
 	"  }",
@@ -253,8 +269,6 @@ test("class inheritance using protected & public property", () => {
 
     expect(out).toEqual(out2)
 })
-
-
 
 test("class with a protected method but private property", () => {
     const src = createSource(
@@ -268,7 +282,7 @@ test("class with a protected method but private property", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"class Animal {",
+	"export class Animal {",
 	"  _said = false",
 	"  _sayMeow(a) {",
 	"    this._said = true",
@@ -278,9 +292,6 @@ test("class with a protected method but private property", () => {
 
     expect(out).toEqual(out2)
 })             
-
-
-
 
 test("class with getter, setter and auto return", () => {
     const src = createSource(
@@ -295,7 +306,7 @@ test("class with getter, setter and auto return", () => {
     const out = parseSource(src)
 
     const out2 = createSource(
-	"class Team {",
+	"export class Team {",
 	"  get result() {",
 	"    return this.#result",
 	"  }",
@@ -319,7 +330,7 @@ test("class method", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"class Animal {",
+	"export class Animal {",
 	"  static #eyeColor",
 	"  static deneme(a, b) {",
 	'    Animal.#eyeColor = "blue"',
@@ -344,7 +355,7 @@ test("class properties", () => {
     const out = parseSource(src)
 
     const out2 = createSource(
-	"class Animal {",
+	"export class Animal {",
 	"  static #eyeColor",
 	"  static get eyeColor() {",
 	'    return Animal.#eyeColor',
@@ -366,7 +377,7 @@ test.skip("class constant I", () => {
     const out = parseSource(src)
 
     const out2 = createSource(
-	"class Animal {",
+	"export class Animal {",
 	"  Cat",
 	"}"
     )
@@ -382,7 +393,7 @@ test("class constant II", () => {
     const out = parseSource(src)
 
     const out2 = createSource(
-	"class Animal {",
+	"export class Animal {",
 	'  static #Cat = "cat"',
 	"  static get Cat() {",
 	'    return Animal.#Cat',
@@ -528,7 +539,7 @@ test("constructor with super", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"class Animal extends Creature {",
+	"export class Animal extends Creature {",
 	"  constructor(a, b) {",
 	"    super(a, b)",
 	'    this.#eyeColor = "blue"',
@@ -551,7 +562,7 @@ test("method with super", () => {
     const out = parseSource(src)
 
     const out2 = createSource(
-	"class Animal extends Creature {",
+	"export class Animal extends Creature {",
 	"  constructor(a, b) {",
 	"    super(a, b)",
 	'    this.#eyeColor = "blue"',
