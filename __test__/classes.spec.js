@@ -21,7 +21,6 @@ test("simple private class", () => {
 	"class Animal",
 	"end")
     const out = parseSource(src)
-    console.log(out)
     
     const out2 = createSource(
 	"class Animal {",
@@ -685,7 +684,6 @@ test("Nested modules with a method II", () => {
 	"Creatures::Animals::kelle()"
     )
     const out = parseSource(src)
-    console.log(out)
 
     const out2 = createSource(
 	"globalThis.Creatures.Animals = class {",
@@ -704,13 +702,38 @@ test("Require", () => {
 	"require 'library'",
     )
     const out = parseSource(src)
-    console.log(out)
 
     const out2 = createSource(
 	'import * as import__1 from "library"',
 	"for (const key__2 in import__1) {",
 	"  globalThis[key__2] = import__1[key__2]",
 	"}"
+    )
+
+    expect(out).toEqual(out2)
+})             
+
+test("Include", () => {
+    const src = createSource(
+	"module M",
+	"  def kelle",
+	"  end",
+	"end",
+	"class C",
+	"  include M",
+	"end"
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"globalThis.M = class {",
+	"  kelle() {",
+	"  }",
+	"}",
+	"export class C {",
+	"}",
+	"const {cons__1, ...proto__2} = Object.getOwnPropertyDescriptors(M.prototype)",
+	"Object.defineProperties(C.prototype, proto__2)"
     )
 
     expect(out).toEqual(out2)

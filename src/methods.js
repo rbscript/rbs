@@ -27,6 +27,14 @@ export class FuncCall extends Artifact {
 		klas.addVisibility(this.mid.slice(1), this.args)
 		this.mid = undefined // Signal that we won't be outputted
 		break
+	    case ":include":
+	    case ":extend":
+	    case ":prepend":
+		if (klas instanceof Class) {
+		    klas.addInclude(this.mid, this.args.array[0])
+		    this.mid = undefined // Signal that we won't be outputted
+		}
+		break
 	    }
 	} else {
 	    if ((this.mid == ":require" || this.mid == ':load') &&
@@ -227,11 +235,8 @@ export class Defn extends Artifact {
 		this.add(output, "export ")
 	    }
 	}
-	if (owner instanceof Module) {
-	    this.add(output, owner.name)
-	    this.add(output, ".")
 
-	} else if (func) {
+	if (func) {
 	    if (this.generator) {
 		this.add(output, "function* ")
 	    } else {

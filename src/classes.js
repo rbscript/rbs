@@ -168,6 +168,10 @@ class Owner extends Artifact {
 export class Class extends Owner {
     constructor(parent, tree, startLine) {
 	super(parent, tree, startLine)
+
+	this.includes = []
+	this.extendes = []
+	this.prependes = []
 	
 	this.cpath  = tree.get(this, startLine, "nd_cpath")
 	this.supper  = tree.get(this, startLine, "nd_super")
@@ -178,6 +182,20 @@ export class Class extends Owner {
 
     get name() {
 	return this.cpath.mid
+    }
+
+    addInclude(type, name) {
+	switch (type) {
+	case ":include":
+	    this.includes.push(name)
+	    break
+	case ":extend":
+	    this.extendes.push(name)
+	    break
+	case ":prepend":
+	    this.prependes.push(name)
+	    break
+	}
     }
     
     convert(output) {
@@ -201,6 +219,8 @@ export class Class extends Owner {
 	output.unindent()
 	
 	this.addNewLine(output, "}")
+
+	this.convertIncludes(output) // if any
     }
 
     inClass() {
@@ -210,7 +230,55 @@ export class Class extends Owner {
     get superClass() {
 	return this.parent.getClass(this.supper.name)
     }
-    
+
+    convertIncludes(output) {
+	for (const x of this.includes) {
+	    const consVar = output.genVar("cons")
+	    const protoVar = output.genVar("proto")
+
+	    this.addNewLine(output, "const {")
+	    this.add(output, consVar)
+	    this.add(output, ", ...")
+	    this.add(output, protoVar)
+	    this.add(output, "} = Object.getOwnPropertyDescriptors(")
+	    this.add(output, x)
+	    this.add(output, ".prototype)")
+
+	    this.addNewLine(output, "Object.defineProperties(")
+	    this.add(output, this.cpath)
+	    this.add(output, ".prototype, ")
+	    this.add(output, protoVar)
+	    this.add(output, ")")
+	}
+
+	for (const x of this.extendes) {
+	    const consVar = output.genVar("cons")
+	    const protoVar = output.genVar("proto")
+
+	    this.addNewLine(output, "const {")
+	    this.add(output, consVar)
+	    this.add(output, ", ...")
+	    this.add(output, protoVar)
+	    this.add(output, "} = Object.getOwnPropertyDescriptors(")
+	    this.add(output, x)
+	    this.add(output, ".prototype)")
+
+	    this.addNewLine(output, "Object.defineProperties(")
+	    this.add(output, this.cpath)
+	    this.add(output, ", ")
+	    this.add(output, protoVar)
+	    this.add(output, ")")
+	}
+
+	// https://stackoverflow.com/questions/51823432/javascript-how-to-change-the-parent-class-of-a-class
+	for (const x of this.prependes) {
+	    this.addNewLine(output, this.cpath)
+	    this.add(output, ".prototype.__proto__ = ")
+	    this.add(output, x)
+	    this.add(output, ".prototype")
+	}
+	
+    }
 }
 
 class Property {
