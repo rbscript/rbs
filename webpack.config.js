@@ -17,7 +17,8 @@ module.exports = {
 	extensions: [ '.js' ],
     },
     output: {
-	filename: 'rbs-loader-0.1.js',
-	path: path.resolve(__dirname, 'dist')
+	filename: 'index.js',
+	path: path.resolve(__dirname, 'dist'),
+	libraryTarget: 'umd'
     },
 };
