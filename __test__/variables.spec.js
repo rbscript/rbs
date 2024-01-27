@@ -505,3 +505,41 @@ test("multi assignment III", () => {
     expect(out).toEqual(out2)
 })
 
+test("attribute assignment I", () => {
+    const src = createSource(
+	"f.a = 333"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"f.a = 333"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("attribute assignment II", () => {
+    const src = createSource(
+	"f().a = 333"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"f().a = 333"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("attribute assignment II", () => {
+    const src = createSource(
+	"f(3, 5, 8).a = 333"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"f(3, 5, 8).a = 333"
+    )
+    
+    expect(out).toEqual(out2)
+})

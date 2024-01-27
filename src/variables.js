@@ -464,17 +464,20 @@ export class Valias extends Artifact {
 export class AttributeAssignment extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, tree, startLine)
+
+	this.recv = tree.get(this, startLine, "nd_recv")
+	this.mid = tree.get(this, startLine, "nd_mid")
+	this.args = tree.get(this, startLine, "nd_args")
+    }
+
+    convert(output) {
+	this.add(output, this.recv)
+	this.add(output, ".")
+	this.add(output, symbol(this.mid).slice(0, -1)) // :a=
+	this.add(output, " = ")
 	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_recv")
-	line = tree.nextLine(line.indent)
-	this.recv = resolveNode(this, tree, line)
-
-	line = tree.nextLine(startLine.indent, "attr", "nd_mid")
-	this.mid = line.value
-
-	line = tree.nextLine(startLine.indent, "attr", "nd_args")
-	line = tree.nextLine(line.indent)
-	this.args = resolveNode(this, tree, line)
+	// For some reason, args is a list with one element
+	this.add(output, this.args.array[0])
     }
 }
 
