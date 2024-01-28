@@ -99,7 +99,19 @@ export class OpCall extends Artifact {
 
     convert(output) {
 
-	if (this.recv instanceof OpCall) {
+	if (this.args == undefined) {
+	    // Unary operator
+	    let op = this.mid.slice(1)
+	    if (op.endsWith("@")) { // Some operators like +, - ends with @ to avoid ambiguity
+		op = op.slice(0, -1)
+	    }
+	    
+	    this.add(output, op)
+	    this.add(output, "(")
+	    this.add(output, this.recv)
+	    this.add(output, ")")
+	    return
+	} else if (this.recv instanceof OpCall) {
 	    this.add(output, "(")
 	    this.add(output, this.recv)
 	    this.add(output, ")")
@@ -193,6 +205,15 @@ export class OpAnd extends Artifact {
 	line = tree.nextLine(line.indent)
 	this.second = resolveNode(this, tree, line)
     }
+
+    convert(output) {
+	for (const first of this.firsts) {
+	    this.add(output, first)
+	    this.add(output, " && ")
+	}
+
+	this.add(output, this.second)
+    }
 }
 
 export class OpOr extends Artifact {
@@ -218,6 +239,15 @@ export class OpOr extends Artifact {
 	line = tree.nextLine(line.indent)
 	this.second = resolveNode(this, tree, line)
     }
+
+    convert(output) {
+	for (const first of this.firsts) {
+	    this.add(output, first)
+	    this.add(output, " || ")
+	}
+
+	this.add(output, this.second)
+    }
 }
 
 export class AssignAnd extends Artifact {
@@ -237,34 +267,45 @@ export class AssignAnd extends Artifact {
 export class OpAssignAnd extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, tree, startLine)
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
-	line = tree.nextLine(line.indent)
-	this.head = resolveNode(this, tree, line)
 
-	line = tree.nextLine(startLine.indent, "attr", "nd_value")
-	line = tree.nextLine(line.indent)
-	this.value = resolveNode(this, tree, line)
+	this.head = tree.get(this, startLine, "nd_head")
+	this.value = tree.get(this, startLine, "nd_value")
     }
-}
 
+    convert(output) {
+	this.add(output, this.head)
+	this.add(output, " &&= ")
+	this.add(output, this.value.value)
+    }
 
-export class AssignOr extends Artifact {
-    constructor(parent, tree, startLine) {
-	super(parent, tree, startLine)
-	
-	let line = tree.nextLine(startLine.indent, "attr", "nd_head")
-	line = tree.nextLine(line.indent)
-	this.head = resolveNode(this, tree, line)
-
-	line = tree.nextLine(startLine.indent, "attr", "nd_value")
-	line = tree.nextLine(line.indent)
-	this.value = resolveNode(this, tree, line)
+    findLocalVar(la) {
+	return this.value.findLocalVar(la)
     }
 }
 
 
 export class OpAssignOr extends Artifact {
+    constructor(parent, tree, startLine) {
+	super(parent, tree, startLine)
+
+	this.head = tree.get(this, startLine, "nd_head")
+	this.value = tree.get(this, startLine, "nd_value")
+    }
+
+    convert(output) {
+	this.add(output, this.head)
+	this.add(output, " ||= ")
+	this.add(output, this.value.value)
+    }
+
+    findLocalVar(la) {
+	return this.value.findLocalVar(la)
+    }
+
+}
+
+
+export class AssignOr extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, tree, startLine)
 	

@@ -544,3 +544,106 @@ test("comparison operator", () => {
     
     expect(out).toEqual(out2)
 })
+
+test("and operator", () => {
+    const src = createSource("a and b")
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"a && b"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("and and && operators", () => {
+    const src = createSource("a && b and c && d")
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"a && b && c && d"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("not operator", () => {
+    const src = createSource("not a")
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"!(a)"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("not operator II", () => {
+    const src = createSource("not a > b")
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"!(a > b)"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("unary operator I", () => {
+    const src = createSource("+5")
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"5"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("unary operator II", () => {
+    const src = createSource("-5")
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"-5"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("unary operator II", () => {
+    const src = createSource("-(5 / 2)")
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"-(5 / 2)"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("assign and I", () => {
+    const src = createSource("a &&= b")
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"a &&= b"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+test("assign and II", () => {
+    const src = createSource(
+	"a = true",
+	"a &&= b"
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"let a = true",
+	"a &&= b"
+    )
+    
+    expect(out).toEqual(out2)
+})
