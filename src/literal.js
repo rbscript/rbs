@@ -60,6 +60,28 @@ export function symbol(str) {
     return text
 }
 
+export function isOperator(symbol) {
+    switch (symbol.slice(0, 2)) {
+    case ':+':
+    case ':!':
+    case ':~':
+    case ':*':
+    case ':/':
+    case ':%':
+    case ':-':
+    case ':<':
+    case ':>':
+    case ':&':
+    case ':|':
+    case ':^':
+    case ':=':
+    case ':.':
+    case ':?':
+	return true
+    }
+    return false
+}
+
 export class Literal extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, tree, startLine)

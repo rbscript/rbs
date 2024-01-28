@@ -543,3 +543,16 @@ test("attribute assignment II", () => {
     
     expect(out).toEqual(out2)
 })
+
+test("assignment to method call", () => {
+    const src = createSource(
+	"a = document.createElement('a')"
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	'const a = document.createElement("a")'
+    )
+    
+    expect(out).toEqual(out2)
+})

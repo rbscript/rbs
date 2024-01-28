@@ -1,6 +1,6 @@
 import {resolveNode} from './node'
 import {Artifact} from './artifact'
-import {Literal, symbol} from './literal'
+import {Literal, symbol, isOperator} from './literal'
 import {Return} from './statements'
 import {Call} from './operators'
 import {Block, Scope} from './blocks'
@@ -31,15 +31,27 @@ class Assignment extends Artifact {
 	    this.add(output, "= ")
 	    this.add(output, this.value)
 	    
-	} else {
+	} else { 
 
-	    // This is an assignment like x += 1
 	    //
-	    this.add(output, this.value.mid.slice(1)) // :+
-	    this.add(output, "= ")
+	    // We're in NODE_CALL
+	    //
 
-	    // For some reason, args is a list with one element
-	    this.add(output, this.value.args.array[0])
+	    if (isOperator(this.value.mid)) {
+		// This is an assignment like x += 1
+		//
+		this.add(output, this.value.mid.slice(1)) // :+
+		this.add(output, "= ")
+
+		// For some reason, args is a list with one element
+		this.add(output, this.value.args.array[0])
+
+	    } else {
+		// Normal method call
+		//
+		this.add(output, "= ")
+		this.add(output, this.value)
+	    }
 	}
     }
 
