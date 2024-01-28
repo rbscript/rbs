@@ -12,7 +12,9 @@ export class Artifact {
     }
     
     convert(output) {
-	throw "convert() not implemented for " + this.constructor.name
+	throw new Error(
+	    "convert() not implemented for " + this.constructor.name +
+		" at " + this.location)
     }
 
     add(output, str) {
