@@ -88,7 +88,7 @@ test("class with constructor and a method", () => {
 	"  }",
 	"  meow(a) {",
 	'    if (this.#eyeColor == "blue") {',
-	"      hello", // TODO NODE_VCALL Represents a local variable or a method call without an explicit receiver, to be determined at run-time.
+	"      return hello", // TODO NODE_VCALL Represents a local variable or a method call without an explicit receiver, to be determined at run-time.
 	"    }",
 	"  }",
 	"}"
@@ -191,10 +191,10 @@ test("class with an ambigious no-param method", () => {
     const out2 = createSource(
 	"export class Animal {",
 	"  sayMeow() {",
-	'    print("miyav")',
+	'    return print("miyav")',
 	"  }",
 	"  f() {",
-	"    this.sayMeow()",
+	"    return this.sayMeow()",
 	"  }",
 	"}"
     )
@@ -223,7 +223,7 @@ function animalClassForJs() {
     return createSource(
 	"export class Animal {",
 	"  sayMeow() {",
-	'    print("miyav")',
+	'    return print("miyav")',
 	"  }",
 	"  _lives",
 	"  get lives() {",
@@ -638,7 +638,7 @@ test("Simple module with a method", () => {
     const out2 = createSource(
 	"globalThis.Animals = class {",
 	"  static kelle() {",
-	'    print("kelle")',
+	'    return print("kelle")',
 	"  }",
 	"}",
 	"Animals.kelle()"
@@ -664,7 +664,7 @@ test("Nested modules with a method I", () => {
 	"globalThis.Creatures = class {",
 	"  static Animals = class {",
 	"    static kelle() {",
-	'      print("kelle")',
+	'      return print("kelle")',
 	"    }",
 	"  }",
 	"}",
@@ -688,7 +688,7 @@ test("Nested modules with a method II", () => {
     const out2 = createSource(
 	"globalThis.Creatures.Animals = class {",
 	"  static kelle() {",
-	'    print("kelle")',
+	'    return print("kelle")',
 	"  }",
 	"}",
 	"Creatures.Animals.kelle()"

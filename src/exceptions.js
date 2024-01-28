@@ -78,11 +78,12 @@ export class Rescue extends StmWithBlock {
     }
     
     returnize(tree) {
-	this.head = this.head.returnize(tree)
-	this.resq = this.resq.returnize(tree)
 	if (this.els != undefined) {
 	    this.els = this.els.returnize(tree)
+	} else {
+	    this.head = this.head.returnize(tree)
 	}
+	this.resq = this.resq.returnize(tree)
 	return this
     }
     

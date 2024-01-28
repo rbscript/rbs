@@ -1032,3 +1032,31 @@ test("Defining lambda IV", () => {
     
     expect(out).toEqual(out2)
 })
+
+test("Not so simple if elsif for returnize bug", () => {
+    const src = createSource(
+	"def save",
+	"  if cur_handler != nil",
+        "    cur_handler.call",
+	"  elsif cur_key != nil",
+	"    set_db(cur_key, by_id('content').value)",
+	"  end",
+	"end"
+    )
+
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"export function save() {",
+	"  if (curHandler != undefined) {",
+	"    return curHandler()",
+	"  } else if (curKey != undefined) {",
+	'    return setDb(curKey, byId("content").value)',
+	"  }",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})             
+
+

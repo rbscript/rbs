@@ -44,6 +44,10 @@ export class FuncCall extends Artifact {
 	}
     }
 
+    returnize(tree) {
+	return Return.ize(tree, this)
+    }
+    
     convert(output) {
 	if (this.mid == undefined) {
 	    return
@@ -171,6 +175,10 @@ export class VarCall extends Artifact {
 	}
     }
 
+    returnize(tree) {
+	return Return.ize(tree, this)
+    }
+    
     convert(output) {
 
 	if (this.mid == undefined) { // public, private, protected
