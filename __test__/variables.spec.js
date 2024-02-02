@@ -556,3 +556,21 @@ test("assignment to method call", () => {
     
     expect(out).toEqual(out2)
 })
+
+test("assign value to hash", () => {
+    const src = createSource(
+	"db = {}",
+	"db['a'] = 333"
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"const db = {}",
+	'db["a"] = 333'
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+
+

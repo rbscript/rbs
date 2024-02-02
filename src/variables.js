@@ -483,6 +483,11 @@ export class AttributeAssignment extends Artifact {
     }
 
     convert(output) {
+
+	if (this.mid == ":[]=") {
+	    return this.convertHashAssignment(output)
+	}
+	
 	this.add(output, this.recv)
 	this.add(output, ".")
 	this.add(output, symbol(this.mid).slice(0, -1)) // :a=
@@ -490,6 +495,14 @@ export class AttributeAssignment extends Artifact {
 	
 	// For some reason, args is a list with one element
 	this.add(output, this.args.array[0])
+    }
+
+    convertHashAssignment(output) {
+	this.add(output, this.recv)
+	this.add(output, "[")
+	this.add(output, this.args.array[0])
+	this.add(output, "] = ")
+	this.add(output, this.args.array[1])
     }
 }
 
