@@ -15,13 +15,15 @@ export class Hash extends Artifact {
 	    throw "Unexpected brace for hash " + this.brace
 	}
 	this.add(output, "{")
-	for (let i = 0; i < this.head.array.length; i += 2) {
-	    if (i != 0) {
-		this.add(output, ", ")
+	if (this.head != undefined) {
+	    for (let i = 0; i < this.head.array.length; i += 2) {
+		if (i != 0) {
+		    this.add(output, ", ")
+		}
+		this.add(output, this.head.array[i])
+		this.add(output, ": ")
+		this.add(output, this.head.array[i + 1])
 	    }
-	    this.add(output, this.head.array[i])
-	    this.add(output, ": ")
-	    this.add(output, this.head.array[i + 1])
 	}
 	this.add(output, "}")
     }

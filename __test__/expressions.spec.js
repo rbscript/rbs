@@ -160,6 +160,16 @@ test("rational number", () => {
     expect(out).toEqual("const r = (1/10)")
 })
 
+test("empty hash", () => {
+    const src = createSource("{}")
+
+    const out = parseSource(src)
+
+    expect(out).toEqual("{}")
+})
+
+
+
 test.skip("imaginary number", () => {
     const src = createSource("i = 1i")
 
