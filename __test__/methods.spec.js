@@ -1059,7 +1059,7 @@ test("Not so simple if elsif for returnize bug", () => {
     expect(out).toEqual(out2)
 })             
 
-test("lone func call without paranthesis", () => {
+test("lone undefined func call without paranthesis", () => {
     const src = createSource(
 	"def save",
 	"  refresh_races",
@@ -1077,5 +1077,118 @@ test("lone func call without paranthesis", () => {
     expect(out).toEqual(out2)
 })             
 
+test("lone undefined returning func call without paranthesis", () => {
+    const src = createSource(
+	"def save",
+	"  return refresh_races",
+	"end"
+    )
 
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"export function save() {",
+	'  return refreshRaces',
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})             
+
+
+test("lone func call without paranthesis I", () => {
+    const src = createSource(
+	"def refresh_races",
+	"end",
+	"def save",
+	"  return refresh_races",
+	"end"
+    )
+
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"export function refreshRaces() {",
+	"}",
+	"export function save() {",
+	'  return refreshRaces()',
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})             
+
+test("lone func call without paranthesis II", () => {
+    const src = createSource(
+	"def save",
+	"  return refresh_races",
+	"end",
+	"def refresh_races",
+	"end"
+    )
+
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"export function save() {",
+	'  return refreshRaces()',
+	"}",
+	"export function refreshRaces() {",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})             
+
+test("lone func call in class w/o parans ", () => {
+    const src = createSource(
+	"def save",
+	"end",
+	"class Klas",
+	"  def refresh_races",
+	"    save",
+	"  end",
+	"end"
+    )
+
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"export function save() {",
+	"}",
+	"export class Klas {",
+	"  refreshRaces() {",
+	"    return save()",
+	"  }",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})             
+
+test("lone method call in class w/o parans ", () => {
+    const src = createSource(
+	"class Klas",
+	"  def save",
+	"  end",
+	"  def refresh_races",
+	"    save",
+	"  end",
+	"end"
+    )
+
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"export class Klas {",
+	"  save() {",
+	"  }",
+	"  refreshRaces() {",
+	"    return this.save()",
+	"  }",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})             
 

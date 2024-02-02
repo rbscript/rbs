@@ -189,7 +189,9 @@ export class VarCall extends Artifact {
 	const owner = this.findOwner()
 	const method = owner.getMethod(this.mid.slice(1))
 	if (method != undefined && method.visibility != "private") {
-	    this.add(output, "this.")
+	    if (!(owner instanceof Program)) {
+		this.add(output, "this.")
+	    }
 	    this.add(output, symbol(method.jsName))
 	    this.add(output, "()")
 	} else {
