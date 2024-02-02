@@ -206,6 +206,16 @@ export class VarCall extends Artifact {
 		// Common case
 		//
 		this.add(output, symbol(this.mid))
+
+		// When a single symbol occupies a whole line
+		// Then we assume it is a function or method call
+		if (this.isWholeLine()) {
+		    if (this.inClass()) {
+			// TODO maybe func, method or class method
+		    } else {
+			this.add(output, "()")
+		    }
+		}
 	    }
 	}
     }

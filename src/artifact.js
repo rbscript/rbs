@@ -105,12 +105,58 @@ export class Artifact {
 		} else if (line == loc.endLine &&
 			   col == loc.endCol - 1) {
 
+		    // Before returning, check if it occupies a whole line
+		    if (this.wholeLine) {
+			loop:
+			for (let j = i + 1; j < source.length; ++j) {
+			    switch (source[j]) {
+			    case ' ':
+			    case '\t':
+			    case '\r':
+				break
+			    case '\n':
+				break loop
+			    default:
+				this.wholeLine = false
+				break loop
+			    }
+			}
+		    }
+		    
 		    return source.slice(start, i + 1)
 		}
 		col++
 	    }
+
+	    if (start == undefined &&
+		line == loc.startLine &&
+		col < loc.startCol) {
+
+		if (this.wholeLine == undefined) {
+		    this.wholeLine = true
+		}
+
+		switch (source[i]) {
+		case ' ':
+		case '\t':
+		case '\r':
+		case '\n':
+		    break
+		default:
+		    this.wholeLine = false
+		    break
+		}
+		
+	    }
 	}
 	
-	throw "undefined " + this
+	return source.slice(start)
+    }
+
+    isWholeLine() {
+	if (this.wholeLine == undefined) {
+	    this.getContent()
+	}
+	return this.wholeLine
     }
 }

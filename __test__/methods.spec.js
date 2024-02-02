@@ -1059,4 +1059,23 @@ test("Not so simple if elsif for returnize bug", () => {
     expect(out).toEqual(out2)
 })             
 
+test("lone func call without paranthesis", () => {
+    const src = createSource(
+	"def save",
+	"  refresh_races",
+	"end"
+    )
+
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"export function save() {",
+	'  return refreshRaces()',
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})             
+
+
 

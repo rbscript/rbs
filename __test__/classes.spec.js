@@ -88,7 +88,7 @@ test("class with constructor and a method", () => {
 	"  }",
 	"  meow(a) {",
 	'    if (this.#eyeColor == "blue") {',
-	"      return hello", // TODO NODE_VCALL Represents a local variable or a method call without an explicit receiver, to be determined at run-time.
+	"      return hello",
 	"    }",
 	"  }",
 	"}"
