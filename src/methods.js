@@ -60,8 +60,31 @@ export class FuncCall extends Artifact {
 	if (this.require) {
 	    return this.convertRequire(output)
 	}
-	
-	this.add(output, symbol(this.mid))
+
+	// Convert to a method call if exists as a method
+	const owner = this.findOwner()
+	const method = owner.getMethod(this.mid.slice(1))
+	if (method != undefined && method.visibility != "private") {
+	    if (!(owner instanceof Program)) {
+		this.add(output, "this.")
+	    }
+	    this.add(output, symbol(method.jsName))
+	} else {
+
+	    if (this.inClass()) {
+		const senbol = symbol(this.mid)
+		this.add(output, "(this.")
+		this.add(output, senbol)
+		this.add(output, " ?? ")
+		this.add(output, senbol)
+		this.add(output, ")")
+		
+	    } else {
+		// Common case
+		//
+		this.add(output, symbol(this.mid))
+	    }
+	}
 
 	this.add(output, "(")
 
@@ -178,7 +201,7 @@ export class VarCall extends Artifact {
     returnize(tree) {
 	return Return.ize(tree, this)
     }
-    
+
     convert(output) {
 
 	if (this.mid == undefined) { // public, private, protected
@@ -193,32 +216,34 @@ export class VarCall extends Artifact {
 		this.add(output, "this.")
 	    }
 	    this.add(output, symbol(method.jsName))
-	    this.add(output, "()")
 	} else {
-	    // Put it as a single symbol and pray
-	    //
-	    
-	    // but, :raise is different
-	    //
 	    if (this.mid == ':raise' || this.mid == ':fail') {
 		this.add(output, "throw;")
 	    } else if (this.mid == ":_") {
 		this.add(output, "undefined")
 	    } else {
-		// Common case
-		//
-		this.add(output, symbol(this.mid))
 
-		// When a single symbol occupies a whole line
-		// Then we assume it is a function or method call
-		if (this.isWholeLine()) {
-		    if (this.inClass()) {
-			// TODO maybe func, method or class method
-		    } else {
-			this.add(output, "()")
-		    }
+		if (this.inClass()) {
+		    const senbol = symbol(this.mid)
+		    this.add(output, "(this.")
+		    this.add(output, senbol)
+		    this.add(output, " ?? ")
+		    this.add(output, senbol)
+		    this.add(output, ")")
+		
+		} else {
+		    // Common case
+		    //
+		    this.add(output, symbol(this.mid))
 		}
+
 	    }
+	}
+
+	// When a single symbol occupies a whole line
+	// Then we assume it is a function or method call
+	if (this.isWholeLine()) {
+	    this.add(output, "()")
 	}
     }
 }
@@ -237,7 +262,7 @@ export class Defn extends Artifact {
 
 	// Inform the class that it has a new method
 	const owner = this.findOwner()
-	owner.addMethod(this, this.mid)
+	owner.addMethod(this, this.mid, this.defn.args)
     }
 
     findOwnerMethod() {
@@ -325,7 +350,7 @@ export class ClassMethod extends Artifact {
 
 	// Inform the class that it has a new method
 	const owner = this.findOwner()
-	owner.addClassMethod(this, this.mid)
+	owner.addClassMethod(this, this.mid, this.defn.args)
     }
 
     convert(output) {

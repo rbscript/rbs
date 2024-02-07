@@ -1101,7 +1101,7 @@ test("lone func call without paranthesis I", () => {
 	"def refresh_races",
 	"end",
 	"def save",
-	"  return refresh_races",
+	"  return refresh_races()",
 	"end"
     )
 
@@ -1121,7 +1121,7 @@ test("lone func call without paranthesis I", () => {
 test("lone func call without paranthesis II", () => {
     const src = createSource(
 	"def save",
-	"  return refresh_races",
+	"  return refresh_races()",
 	"end",
 	"def refresh_races",
 	"end"
@@ -1185,6 +1185,44 @@ test("lone method call in class w/o parans ", () => {
 	"  }",
 	"  refreshRaces() {",
 	"    return this.save()",
+	"  }",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})             
+
+test("Method ref in method call params", () => {
+    const src = createSource(
+	"def namik",
+	"end",
+	"class Klas",
+	"  def main",
+	"    namik()",
+	"    add_menu('kelle', kelle)",
+	"  end",
+	"  def kelle",
+	"  end",
+	"  def add_menu text, callback",
+	"    callback.call",
+	"  end",
+	"end"
+    )
+
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"export function namik() {",
+	"}",
+	"export class Klas {",
+	"  main() {",
+	"    namik()",
+	'    return this.addMenu("kelle", this.kelle)',
+	"  }",
+	"  kelle() {",
+	"  }",
+	"  addMenu(text, callback) {",
+	"    return callback()",
 	"  }",
 	"}"
     )

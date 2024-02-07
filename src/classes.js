@@ -85,22 +85,22 @@ class Owner extends Artifact {
 	this.classProps[name] = new Property(artifact, name, mode)
     }
 
-    addMethod(artifact, name) {
+    addMethod(artifact, name, args) {
 	name = name.slice(1) // eliminate :
 	if (this.getMethod(name) != undefined) {
 	    return
 	}
 
-	this.methods[name] = new Method(artifact, name, this.mode)
+	this.methods[name] = new Method(artifact, name, args, this.mode)
     }
 
-    addClassMethod(artifact, name) {
+    addClassMethod(artifact, name, args) {
 	name = name.slice(1) // eliminate :
 	if (this.getClassMethod(name) != undefined) {
 	    return
 	}
 
-	this.methods[name] = new Method(artifact, name, this.mode)
+	this.methods[name] = new Method(artifact, name, args, this.mode)
     }
 
     getProperty(name) {
@@ -301,9 +301,10 @@ class Property {
 }
 
 class Method {
-    constructor(artifact, name, visibility) {
+    constructor(artifact, name, args, visibility) {
 	this.artifact = artifact
 	this.name = name
+	this.args = args
 	this.visibility = visibility
     }
 
