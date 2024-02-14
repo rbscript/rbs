@@ -264,7 +264,7 @@ export class AssignAnd extends Artifact {
     }
 }
 
-export class OpAssignAnd extends Artifact {
+class OpAssign extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, tree, startLine)
 
@@ -272,36 +272,31 @@ export class OpAssignAnd extends Artifact {
 	this.value = tree.get(this, startLine, "nd_value")
     }
 
+    letOrConstBackward(la, stm) {
+	return la.vid == this.head.vid
+    }
+
+    letOrConstForward(la) {
+	return this.value.letOrConstForward(la)
+    }
+    
+}
+
+export class OpAssignAnd extends OpAssign {
     convert(output) {
 	this.add(output, this.head)
 	this.add(output, " &&= ")
 	this.add(output, this.value.value)
     }
-
-    findLocalVar(la) {
-	return this.value.findLocalVar(la)
-    }
 }
 
 
-export class OpAssignOr extends Artifact {
-    constructor(parent, tree, startLine) {
-	super(parent, tree, startLine)
-
-	this.head = tree.get(this, startLine, "nd_head")
-	this.value = tree.get(this, startLine, "nd_value")
-    }
-
+export class OpAssignOr extends OpAssign {
     convert(output) {
 	this.add(output, this.head)
 	this.add(output, " ||= ")
 	this.add(output, this.value.value)
     }
-
-    findLocalVar(la) {
-	return this.value.findLocalVar(la)
-    }
-
 }
 
 

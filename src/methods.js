@@ -269,6 +269,10 @@ export class Defn extends Artifact {
 	return this
     }
 
+    letOrConstBackward(la, stm) {
+	return this.defn.hasParam(la.vid)
+    }
+
     convert(output) {
 	const owner = this.findOwner()
 	const ownerDefn = this.parent.findOwnerMethod()

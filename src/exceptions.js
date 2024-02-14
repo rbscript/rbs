@@ -18,12 +18,11 @@ export class Ensure extends StmWithBlock {
 	return this
     }
 
-    findLocalVar(la, search) { // la is a LocalAssignment
-	const ret = this.head.findLocalVar(la, search)
-	if (ret == 0) {
-	    return this.ensr.findLocalVar(la, search)
+    letOrConstForward(la) {
+	if (this.head.letOrConstForward(la)) {
+	    return true
 	}
-	return ret
+	return this.ensr.letOrConstForward(la)
     }
     
     convert(output) {
@@ -65,18 +64,20 @@ export class Rescue extends StmWithBlock {
 	}
 	return true
     }
-    
-    findLocalVar(la, search) { // la is a LocalAssignment
-	let ret = this.head.findLocalVar(la, search)
-	if (ret == 0) {
-	    ret = this.resq.findLocalVar(la, search)
-	    if (ret == 0 && this.els != undefined) {
-		ret = this.els.findLocalVar(la, search)
-	    }
+
+    letOrConstForward(la) {
+	if (this.head.letOrConstForward(la)) {
+	    return true
 	}
-	return ret
+	if (this.resq.letOrConstForward(la)) {
+	    return true
+	}
+	if (this.els != undefined) {
+	    return this.els.letOrConstForward(la)
+	}
+	return false
     }
-    
+
     returnize(tree) {
 	if (this.els != undefined) {
 	    this.els = this.els.returnize(tree)
@@ -207,12 +208,14 @@ export class RescueBody extends StmWithBlock {
 	return this
     }
 
-    findLocalVar(la, search) { // la is a LocalAssignment
-	const ret = this.body.findLocalVar(la, search)
-	if (ret == 0 && this.head != undefined) {
-	    return this.head.findLocalVar(la, search)
+    letOrConstForward(la) {
+	if (this.body.letOrConstForward(la)) {
+	    return true
 	}
-	return ret
+	if (this.head != undefined) {
+	    return this.head.letOrConstForward(la)
+	}
+	return false
     }
 }
 

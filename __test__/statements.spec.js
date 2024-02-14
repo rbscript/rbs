@@ -136,7 +136,7 @@ test("simple for", () => {
     const out = parseSource(src)
 
     const out2 = createSource(
-	"for (const i in someFunc) {",
+	"for (const i of someFunc) {",
 	"  print(i)",
 	"}"
     )
@@ -632,6 +632,32 @@ test("begin block", () => {
     const out2 = createSource(
 	"const a = 333",
 	"print(53 + 2)"
+    )
+    expect(out).toEqual(out2)
+})             
+
+test("Bug: Stack overflow while trying to find the variable", () => {
+    const src = createSource(
+	"def puanlar(sys)",
+	"  text = get_db('puansys')",
+	"  for line in lines do",
+	"    toks = line.split('-')",
+	"    for i in (1...2) do",
+	"    end",
+	"  end",
+	"end"
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"export function puanlar(sys) {",
+	'  const text = getDb("puansys")',
+	"  for (const line of lines) {",
+	'    const toks = line.split("-")',
+	"    for (const i of [1, 2]) {",
+	"    }",
+	"  }",
+	"}"
     )
     expect(out).toEqual(out2)
 })             

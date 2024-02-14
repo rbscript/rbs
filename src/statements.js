@@ -10,8 +10,11 @@ export class StmWithBlock extends Artifact {
 	super(parent, tree, startLine)
     }
 
-    findLocalVar(la, search) { // la is a LocalAssignment
-	return this.body.findLocalVar(la, search)
+    letOrConstForward(la) {
+	if (this.body == undefined) {
+	    return false
+	}
+	return this.body.letOrConstForward(la)
     }
 
     functionize1(output) {
@@ -56,6 +59,16 @@ export class If extends StmWithBlock {
 	}
     }
 
+    letOrConstForward(la) {
+	if (this.body.letOrConstForward(la)) {
+	    return true
+	}
+	if (this.els != undefined && this.els.letOrConstForward(la)) {
+	    return true
+	}
+	return false
+    }
+
     returnize(tree) {
 	this.body = this.body.returnize(tree)
 	if (this.els != undefined) {
@@ -71,17 +84,6 @@ export class If extends StmWithBlock {
 	return this.body.isReturn() && this.els.isReturn()
     }
 
-    findLocalVar(la, search) { // la is a LocalAssignment
-	const ret = this.body.findLocalVar(la, false)
-	if (ret != 0) {
-	    return ret
-	}
-	if (this.els != undefined) {
-	    return this.els.findLocalVar(la, false)
-	}
-	return 0
-    }
-    
     convert(output) {
 
 	if (this.asExpr()) {
@@ -166,7 +168,17 @@ export class Unless extends StmWithBlock {
 	}
 	return this.body.isReturn() && this.els.isReturn()
     }
-    
+
+    letOrConstForward(la) {
+	if (this.body.letOrConstForward(la)) {
+	    return true
+	}
+	if (this.els != undefined && this.els.letOrConstForward(la)) {
+	    return true
+	}
+	return false
+    }
+
     convert(output) {
 
 	if (this.asExpr()) {
@@ -300,7 +312,7 @@ export class For extends Loop {
 	
 	this.add(output, "for (const ")
 	this.add(output, symbol(this.body.args.preInit.vid))
-	this.add(output, " in ")
+	this.add(output, " of ")
 	this.add(output, this.iter)
 	this.add(output, ") {")
 	output.indent()
@@ -419,19 +431,6 @@ export class Case extends StmWithBlock {
 	}
     }
 
-    findLocalVarSearch(la, search) { // la is a LocalAssignment
-	let when = this.firstWhen
-	while (when != undefined) {
-	    
-	    const ret = when.findLocalVar(la, search)
-	    if (ret != 0) {
-		return ret
-	    }
-	    when = when.when
-	}
-	return 0
-    }
-    
     returnize(tree) {
 	let when = this.firstWhen
 	while (when != undefined) {
@@ -798,6 +797,29 @@ export class Iter extends StmWithBlock {
 	    this.body.body = this.body.body.returnize(tree)
 	}
 
+    }
+
+    letOrConstForward(la) {
+	if (this.lambda) {
+	    return super.letOrConstForward(la)
+	}
+	
+	if (this.body.body == undefined) {
+	    return false
+	}
+
+	if (this.body.hasVar(la.vid)) { // |;a|
+	    return false
+	}
+
+	return this.body.body.letOrConstForward(la)
+    }
+
+    letOrConstBackward(la, stm) {
+	if (this.body.hasVar(la.vid)) { // |;a|
+	    return false
+	}
+	return this.parent.letOrConstBackward(la, this)
     }
 
     convert(output) {

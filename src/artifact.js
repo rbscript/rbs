@@ -77,12 +77,18 @@ export class Artifact {
 	}
     }
 
-    
-    // About let/const
-    findLocalVar(la) {
-	return 0
+    letOrConstBackward(la, stm) {
+	if (this.parent == undefined) {
+	    return false
+	}
+
+	return this.parent.letOrConstBackward(la, this)
     }
 
+    letOrConstForward(la) {
+	return false
+    }
+    
     getContent() {
 	const source = this.tree.content // This is the real source code, not the parsetree
 	const loc = this.location

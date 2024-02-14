@@ -155,19 +155,19 @@ export class Scope extends Artifact {
 	}
     }
 
-    findLocalVar(la, search) { // la == LocalAssignment
-	if (this.hasVar(la.vid)) {
-	    return 0
-	}
-	return this.body.findLocalVar(la, search)
-    }
-
     hasParam(symbol) {
 	return this.params.includes(symbol)
     }
 
     hasVar(symbol) {
 	return this.vars.includes(symbol)
+    }
+
+    returnizeForBreak(tree) {
+	if (this.body instanceof Block) {
+	    this.body = this.body.returnizeForBreak(tree)
+	}
+	return this
     }
 }
 
@@ -220,54 +220,29 @@ export class Block extends Artifact {
 	return this.statements[this.statements.length - 1].isReturn()
     }
 
-    // Returns -1 if found before, +1 after, and 0 if not found
-    findLocalVar(la, search) { // la == LocalAssignment
-	let index = this.statements.length - 1
-	if (search) {
-	    index = this.statements.indexOf(la)
+    letOrConstBackward(la, stm) {
+	const index = this.statements.indexOf(stm)
+	if (index == -1) {
+	    throw "Invalid statement " + stm + " in " + this
 	}
 	
-	// Search backwards for -1
-	//
 	for (let i = index - 1; i >= 0; --i) {
-	    const stm = this.statements[i]
-	    if (stm.findLocalVar(la, false) != 0) {
-		return -1
+	    if (this.statements[i].letOrConstForward(la)) {
+		return true
 	    }
 	}
+	
+	return this.parent.letOrConstBackward(la, this)
+    }
 
-	// Search parent blocks
-	//
-	let block = this.parent
-	while (block != undefined) {
-	    if (block instanceof Block) {
-		const ret = block.findLocalVar(la, false)
-		if (ret != 0) {
-		    return -1
-		}
-	    } else if (block instanceof Scope) {
-		if (block.hasParam(la.vid)) {
-		    return -1
-		}
-		if (block.hasVar(la.vid)) {
-		    break
-		}
-	    }
-	    block = block.parent
-	}
-
-	if (search) {
-	    // Search forward
-	    //
-	    for (let i = index + 1; i < this.statements.length; ++i) {
-		const stm = this.statements[i]
-		if (stm.findLocalVar(la, false) != 0) {
-		    return 1
-		}
+    letOrConstForward(la) {
+	const index = (la.parent == this ? this.statements.indexOf(la) : -1)
+	for (let i = index + 1; i < this.statements.length; ++i) {
+	    if (this.statements[i].letOrConstForward(la)) {
+		return true
 	    }
 	}
-
-	return 0
+	return false
     }
 }
 

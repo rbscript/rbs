@@ -55,9 +55,9 @@ class Assignment extends Artifact {
 	}
     }
 
-    findLocalVar(la, search) { // la is a LocalAssignment
-	return this.value.findLocalVar(la, false)
-    }    
+    letOrConstForward(la) {
+	return this.value.letOrConstForward(la)
+    }
 }
 
 export class LocalAssignment extends Assignment {
@@ -70,59 +70,32 @@ export class LocalAssignment extends Assignment {
 	this.add(output, " ")
     }
 
-    exploreLocalVar() { // const or let or nothing
-
-	let result
-
-	if (this.parent instanceof Block) {
-	    return this.parent.findLocalVar(this, true)
-	}
-
-	if (this.parent instanceof List) { // Keyword argument
-	    if (!(this.parent.parent instanceof MultiAssignment)) {
-		return -1
-	    }
-	}
-
-
-	// Sometimes there is single stm under If etc.
-	let block = this.parent.parent
-	while (block != undefined) {
-	    if (block instanceof Block) {
-		result = block.findLocalVar(this, false)
-	    } else if (block instanceof Scope) {
-		// We are bounded by the scope which the variable is defined
-		if (block.hasVar(this.vid)) {
-		    break
-		}
-	    } else if (block instanceof Defn) {
-		if (block.defn.hasParam(this.vid)) {
-		    return -1
-		}
-	    }
-	    block = block.parent
-	}
-	
-	if (result == undefined) {
-	    return 0
-	} else {
-	    return result
-	}
-    }
-
     determine() { // const or let or nothing
-	switch (this.exploreLocalVar()) {
-	case 0: return "const "
-	case -1: return ""
-	case 1: return "let "
+
+	if (this.parent.letOrConstBackward(this, this)) {
+	    return ""
 	}
+
+	if (this.parent instanceof Block && this.parent.letOrConstForward(this)) {
+	    return "let "
+	}
+
+	return "const "
     }
 
-    findLocalVar(la) {
-	if (this.vid == la.vid) {
-	    return 1
+    letOrConstBackward(la, stm) {
+	if (la.vid == this.vid) {
+	    return true
 	} else {
-	    return super.findLocalVar(la)
+	    return super.letOrConstBackward(la, this)
+	}
+    }
+    
+    letOrConstForward(la) {
+	if (la.vid == this.vid) {
+	    return true
+	} else {
+	    return super.letOrConstForward(la)
 	}
     }
 }
