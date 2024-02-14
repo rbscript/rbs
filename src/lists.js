@@ -116,6 +116,10 @@ export class ZList extends Artifact {
     constructor(parent, tree, startLine) {
 	super(parent, tree, startLine)
     }
+
+    convert(output) {
+	this.add(output, "[]")
+    }
 }
 
 export class Values extends List {
