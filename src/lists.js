@@ -80,9 +80,47 @@ export class Range extends Artifact {
     }
 
     convert(output) {
-	this.add(output, "[")
-	this.convertBare(output)
-	this.add(output, "]")
+	const beg = output.genVar("beg")
+	const end = output.genVar("end")
+
+	this.add(output, "(() => {")
+	output.indent()
+
+	this.addNewLine(output, beg)
+	this.add(output, " = ")
+	if (this.beg == undefined || this.beg.constructor.name == "Nil") {
+	    this.add(output, "0")
+	} else {
+	    this.add(output, this.beg)
+	}
+
+	this.addNewLine(output, end)
+	this.add(output, " = ")
+	if (this.exclude) {
+	    this.add(output, this.end)
+	} else {
+	    this.add(output, "(")
+	    this.add(output, this.end)
+	    this.add(output, ") + 1")
+	}
+
+	// Array.from({length: 5}, (_, i) => 0 + i)
+	this.addNewLine(output, "return Array.from({length: ")
+	this.add(output, end)
+	this.add(output, " - ")
+	this.add(output, beg)
+
+	const i = output.genVar("i")
+	this.add(output, "}, (_, ")
+	this.add(output, i)
+	this.add(output, ") => ")
+	this.add(output, beg)
+	this.add(output, " + ")
+	this.add(output, i)
+	this.add(output, ")")
+	
+	output.unindent()
+	this.addNewLine(output, "})()")
     }
     
     convertBare(output) {

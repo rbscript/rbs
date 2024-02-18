@@ -654,8 +654,12 @@ test("Bug: Stack overflow while trying to find the variable", () => {
 	'  const text = getDb("puansys")',
 	"  for (const line of lines) {",
 	'    const toks = line.split("-")',
-	"    for (const i of [1, 2]) {",
-	"    }",
+	"    for (const i of (() => {",
+	"      beg__1 = 1",
+	"      end__2 = 2",
+	"      return Array.from({length: end__2 - beg__1}, (_, i__3) => beg__1 + i__3)",
+	"    })()) {",
+        "    }",
 	"  }",
 	"}"
     )

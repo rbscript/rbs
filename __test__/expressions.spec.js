@@ -168,8 +168,6 @@ test("empty hash", () => {
     expect(out).toEqual("{}")
 })
 
-
-
 test.skip("imaginary number", () => {
     const src = createSource("i = 1i")
 
@@ -354,34 +352,61 @@ test("Hash II", () => {
 })
 
 // TODO https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from
-test.skip("Range I", () => {
+test("Range I", () => {
     const src = createSource(
 	'r = (333..666)')
 
     const out = parseSource(src)
+    console.log(out)
 
-    //expect(out).equals("")
+    const out2 = createSource(
+	"const r = (() => {",
+	"  beg__1 = 333",
+	"  end__2 = (666) + 1",
+	"  return Array.from({length: end__2 - beg__1}, (_, i__3) => beg__1 + i__3)",
+	"})()"
+    )
+    
+    expect(out).toEqual(out2)
 })
 
-test.skip("Range II", () => {
+test("Range II", () => {
     const src = createSource(
 	'r = (333...666)')
 
     const out = parseSource(src)
+    console.log(out)
 
-    //expect(out).equals("")
+    const out2 = createSource(
+	"const r = (() => {",
+	"  beg__1 = 333",
+	"  end__2 = 666",
+	"  return Array.from({length: end__2 - beg__1}, (_, i__3) => beg__1 + i__3)",
+	"})()"
+    )
+    
+    expect(out).toEqual(out2)
 })
 
-test.skip("Range III", () => {
+test("Range III", () => {
     const src = createSource(
 	'r = (..666)')
 
     const out = parseSource(src)
+    console.log(out)
 
-    //expect(out).equals("")
+    const out2 = createSource(
+	"const r = (() => {",
+	"  beg__1 = 0",
+	"  end__2 = (666) + 1",
+	"  return Array.from({length: end__2 - beg__1}, (_, i__3) => beg__1 + i__3)",
+	"})()"
+    )
+    
+    expect(out).toEqual(out2)
 })
 
-
+// Unsupported, at least for now
 test.skip("Range IV", () => {
     const src = createSource(
 	'r = (666..)')
@@ -474,47 +499,6 @@ test.skip("Regex Multi III", () => {
     const out = parseSource(src)
 
     //expect(out).equals("")
-})
-
-test("simple range I", () => {
-    const src = createSource("0..10")
-
-    const out = parseSource(src)
-
-    expect(out).toEqual("[0, (10) + 1]")
-})
-
-test("simple range II", () => {
-    const src = createSource("0...10")
-
-    const out = parseSource(src)
-
-    expect(out).toEqual("[0, 10]")
-})
-
-
-test("simple range III", () => {
-    const src = createSource("..33")
-
-    const out = parseSource(src)
-
-    expect(out).toEqual("[undefined, (33) + 1]")
-})
-
-test("simple range IV", () => {
-    const src = createSource("1..")
-
-    const out = parseSource(src)
-
-    expect(out).toEqual("[1, undefined]")
-})
-
-test("simple range V", () => {
-    const src = createSource("(666...)")
-
-    const out = parseSource(src)
-
-    expect(out).toEqual("[666, undefined]")
 })
 
 test("array range I", () => {
