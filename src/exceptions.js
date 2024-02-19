@@ -1,6 +1,10 @@
 import {resolveNode} from './node'
+import {symbol} from './literal'
 import {Artifact} from './artifact'
 import {StmWithBlock} from './statements'
+import {Block} from './blocks'
+import {LocalAssignment} from './variables'
+
 
 export class Ensure extends StmWithBlock {
     constructor(parent, tree, startLine) {
@@ -82,9 +86,14 @@ export class Rescue extends StmWithBlock {
 	if (this.els != undefined) {
 	    this.els = this.els.returnize(tree)
 	} else {
-	    this.head = this.head.returnize(tree)
+	    if (this.head != undefined) {
+		this.head = this.head.returnize(tree)
+	    }
 	}
-	this.resq = this.resq.returnize(tree)
+
+	if (this.resq != undefined) {
+	    this.resq = this.resq.returnize(tree)
+	}
 	return this
     }
     
@@ -106,7 +115,9 @@ export class Rescue extends StmWithBlock {
 	this.addNewLine(output, "try {")
 
 	output.indent()
-	this.addNewLine(output, this.head)
+	if (this.head != undefined) {
+	    this.addNewLine(output, this.head)
+	}
 
 	if (this.els != undefined) {
 	    this.addNewLine(output, elsvar)
@@ -117,7 +128,14 @@ export class Rescue extends StmWithBlock {
 	// Only rescue without a parameter
 	//
 	if (this.resq.args == undefined) {
-	    this.addNewLine(output, "} catch {")
+	    const exvar = this.resq.getExceptionVar()
+	    if (exvar == undefined) {
+		this.addNewLine(output, "} catch {")
+	    } else {
+		this.addNewLine(output, "} catch (")
+		this.add(output, symbol(exvar))
+		this.add(output, ") {")
+	    }
 
 	    output.indent()
 	    this.addNewLine(output, this.resq.body)
@@ -217,6 +235,16 @@ export class RescueBody extends StmWithBlock {
 	}
 	return false
     }
+
+    getExceptionVar() {
+	if (!(this.body instanceof Block)) {
+	    return undefined
+	}
+	if (!(this.body.statements[0] instanceof LocalAssignment)) {
+	    return undefined
+	}
+	return this.body.statements[0].vid
+    }
 }
 
 export class Retry extends Artifact {
@@ -231,16 +259,23 @@ export class ErrInfo extends Artifact {
 	super(parent, tree, startLine)
     }
 
-    convert(output) {
+    isTypedRescue() {
+	let rescue = this.getRescue()
+	return rescue.exvar != undefined
+    }
+    
+    getRescue() {
 	let parent = this.parent
 	while (parent != undefined) {
 	    if (parent instanceof Rescue) {
-		this.add(output, parent.exvar)
-		return
+		return parent
 	    }
 	    parent = parent.parent
 	}
-
-	throw "Unexpected"
+    }
+    
+    convert(output) {
+	let rescue = this.getRescue()
+	this.add(output, rescue.exvar)
     }
 }

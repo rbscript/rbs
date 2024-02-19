@@ -463,3 +463,25 @@ test("def/rescue/ensure/else", () => {
     
     expect(out).toEqual(out2)
 })
+
+test("Rescue with error var", () => {
+    const src = createSource(
+	"def fn x",
+	"rescue => error",
+	"  print 'good bye'",
+	"end"
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"export function fn(x) {",
+	"  try {",
+	"  } catch (error) {",
+	'    return print("good bye")',
+	"  }",
+	"}"
+	
+    )
+    
+    expect(out).toEqual(out2)
+})

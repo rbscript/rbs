@@ -21,6 +21,14 @@ class Assignment extends Artifact {
     }
     
     convert(output) {
+
+	// just ignore: rescue => error
+	//
+	if (this.value.constructor.name == "ErrInfo" &&
+	    !this.value.isTypedRescue()) {
+	    return
+	}
+	
 	this.convertLeft(output)
 
 	if (!(this.value instanceof Call) ||
