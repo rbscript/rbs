@@ -1,6 +1,7 @@
 import {resolveNode} from './node'
 import {Artifact} from './artifact'
 import {List} from './lists'
+import {Return} from './statements'
 
 export class Hash extends Artifact {
     constructor(parent, tree, startLine) {
@@ -14,18 +15,30 @@ export class Hash extends Artifact {
 	if (this.brace != "1 (hash literal)") {
 	    throw "Unexpected brace for hash " + this.brace
 	}
-	this.add(output, "{")
-	if (this.head != undefined) {
-	    for (let i = 0; i < this.head.array.length; i += 2) {
-		if (i != 0) {
-		    this.add(output, ", ")
-		}
-		this.add(output, this.head.array[i])
-		this.add(output, ": ")
-		this.add(output, this.head.array[i + 1])
-	    }
+
+	if (this.head == undefined) {
+	    this.add(output, "{}")
+	    return
 	}
+	
+	this.add(output, "{")
+	output.indent()
+
+	for (let i = 0; i < this.head.array.length; i += 2) {
+	    if (i != 0) {
+		this.add(output, ",")
+	    }
+	    this.addNewLine(output, this.head.array[i])
+	    this.add(output, ": ")
+	    this.add(output, this.head.array[i + 1])
+	}
+	
+	output.unindent()
 	this.add(output, "}")
+    }
+
+    returnize(tree) {
+	return Return.ize(tree, this)
     }
 }
 

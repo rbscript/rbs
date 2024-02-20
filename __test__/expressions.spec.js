@@ -165,7 +165,11 @@ test("empty hash", () => {
 
     const out = parseSource(src)
 
-    expect(out).toEqual("{}")
+    const out2 = createSource(
+	"{}"
+    )
+    
+    expect(out).toEqual(out2)
 })
 
 test.skip("imaginary number", () => {
@@ -339,7 +343,14 @@ test("Hash I", () => {
 
     const out = parseSource(src)
 
-    expect(out).toEqual('const h = {"a": 1, "b": 2}')
+    const out2 = createSource(
+	"const h = {",
+	'  "a": 1,',
+	'  "b": 2',
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
 })
 
 test("Hash II", () => {
@@ -348,10 +359,14 @@ test("Hash II", () => {
 
     const out = parseSource(src)
 
-    expect(out).toEqual('const h = {a: 1, b: 2}')
+    const out2 = createSource(
+	"const h = {",
+	'  a: 1,',
+	'  b: 2',
+	"}"
+    )
 })
 
-// TODO https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from
 test("Range I", () => {
     const src = createSource(
 	'r = (333..666)')
@@ -641,3 +656,27 @@ test("assign and II", () => {
     
     expect(out).toEqual(out2)
 })
+
+test("Returning hash constant", () => {
+    const src = createSource(
+	"def hesh",
+	"  return {",
+	"    :a => 666,",
+	"    :b => 333",
+	"  }",
+	"end"
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"export function hesh() {",
+	"  return {",
+	"    a: 666,",
+	"    b: 333",
+	"  }",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
