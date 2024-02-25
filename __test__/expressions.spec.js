@@ -680,3 +680,18 @@ test("Returning hash constant", () => {
     expect(out).toEqual(out2)
 })
 
+test("Member +=", () => {
+    const src = createSource("a.b += 3")
+
+    const out = parseSource(src)
+
+    expect(out).toEqual("a.b += 3")
+})
+
+test("Member +=", () => {
+    const src = createSource("a.b.c += 3")
+
+    const out = parseSource(src)
+
+    expect(out).toEqual("a.b.c += 3")
+})

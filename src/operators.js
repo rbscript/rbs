@@ -338,6 +338,16 @@ export class OpAssign2 extends Artifact {
 	this.mid = tree.get(this, startLine, "nd_next->nd_mid")
 	this.value = tree.get(this, startLine, "nd_value")
     }
+
+    convert(output) {
+	this.addNewLine(output, this.recv)
+	this.add(output, ".")
+	this.add(output, symbol(this.vid))
+	this.add(output, " ")
+	this.add(output, symbol(this.mid))
+	this.add(output, "= ")
+	this.add(output, this.value)
+    }
 }
 
 
