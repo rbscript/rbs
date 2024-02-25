@@ -23,7 +23,7 @@ test("single variable", () => {
 
     const out = parseSource(src)
 
-    expect(out).toEqual("x")
+    expect(out).toEqual("x()")
 })
 
 

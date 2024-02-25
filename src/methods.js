@@ -219,6 +219,7 @@ export class VarCall extends Artifact {
 	} else {
 	    if (this.mid == ':raise' || this.mid == ':fail') {
 		this.add(output, "throw;")
+		return 
 	    } else if (this.mid == ":_") {
 		this.add(output, "undefined")
 	    } else {

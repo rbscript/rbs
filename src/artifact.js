@@ -90,6 +90,10 @@ export class Artifact {
     }
     
     getContent() {
+	if (this.content != undefined) {
+	    return this.content
+	}
+	
 	const source = this.tree.content // This is the real source code, not the parsetree
 	const loc = this.location
 	let start = undefined
@@ -101,18 +105,23 @@ export class Artifact {
 		col = 0
 	    } else {
 		// Searching for the start
+		//
 		if (start == undefined &&
 		    line == loc.startLine &&
 		    col == loc.startCol) {
 
 		    start = i
 
-		// Searching for the end
-		} else if (line == loc.endLine &&
-			   col == loc.endCol - 1) {
+		}
 
+		// Searching for the end
+		//
+		if (line == loc.endLine &&
+		    col == loc.endCol - 1) {
+		    
 		    // Before returning, check if it occupies a whole line
-		    if (this.wholeLine) {
+		    //
+		    if (this.wholeLine == undefined) {
 			loop:
 			for (let j = i + 1; j < source.length; ++j) {
 			    switch (source[j]) {
@@ -121,6 +130,7 @@ export class Artifact {
 			    case '\r':
 				break
 			    case '\n':
+				this.wholeLine = true
 				break loop
 			    default:
 				this.wholeLine = false
@@ -128,19 +138,22 @@ export class Artifact {
 			    }
 			}
 		    }
-		    
-		    return source.slice(start, i + 1)
+
+		    if (this.wholeLine == undefined) {
+			this.wholeLine = true
+		    }
+
+		    this.content = source.slice(start, i + 1)
+		    return this.content
 		}
 		col++
 	    }
 
+	    // If we encounter any char before the start...
+	    //
 	    if (start == undefined &&
 		line == loc.startLine &&
 		col < loc.startCol) {
-
-		if (this.wholeLine == undefined) {
-		    this.wholeLine = true
-		}
 
 		switch (source[i]) {
 		case ' ':
@@ -152,17 +165,22 @@ export class Artifact {
 		    this.wholeLine = false
 		    break
 		}
-		
 	    }
+	} // for whole source code
+
+	if (this.wholeLine == undefined) {
+	    this.wholeLine = true
 	}
 	
-	return source.slice(start)
+	this.content = source.slice(start)
+	return this.content
     }
 
     isWholeLine() {
 	if (this.wholeLine == undefined) {
 	    this.getContent()
 	}
+
 	return this.wholeLine
     }
 }

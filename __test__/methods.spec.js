@@ -701,7 +701,7 @@ test("call if not nil", () => {
     const out = parseSource(src)
     
     const out2 = createSource(
-	"obj?.kelle"
+	"obj?.kelle()"
     )
     
     expect(out).toEqual(out2)
@@ -1230,3 +1230,36 @@ test("Method ref in method call params", () => {
     expect(out).toEqual(out2)
 })             
 
+test("Method ref in method call params", () => {
+    const src = createSource(
+	"races = get_all_races()",
+	"races.reverse"
+    )
+
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"const races = getAllRaces()",
+	"races.reverse()"
+    )
+    
+    expect(out).toEqual(out2)
+})             
+
+test("Complicated :call", () => {
+    const src = createSource(
+	"def f",
+        "  cur_handler.call",
+	"end"
+    )
+
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"export function f() {",
+	"  return curHandler()",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})             

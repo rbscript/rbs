@@ -46,12 +46,16 @@ export class Call extends Artifact {
 	    const content = this.getContent()
 	    if (!content.endsWith(")")) {
 
-		// We don't need paranthesis here
-		//
+		// When a single symbol occupies a whole line
+		// Then we assume it is a function or method call
+		if (this.isWholeLine()) {
+		    this.add(output, "()")
+		}
+		
 		return
 	    }
 	}
-	
+
 	this.add(output, "(")
 	this.convertArgs(output)
 	this.add(output, ")")
