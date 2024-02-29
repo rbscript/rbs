@@ -680,7 +680,7 @@ test("Returning hash constant", () => {
     expect(out).toEqual(out2)
 })
 
-test("Member +=", () => {
+test("Member += I", () => {
     const src = createSource("a.b += 3")
 
     const out = parseSource(src)
@@ -688,10 +688,18 @@ test("Member +=", () => {
     expect(out).toEqual("a.b += 3")
 })
 
-test("Member +=", () => {
+test("Member += II", () => {
     const src = createSource("a.b.c += 3")
 
     const out = parseSource(src)
 
     expect(out).toEqual("a.b.c += 3")
+})
+
+test("Array index +=", () => {
+    const src = createSource("a[i] += 3")
+
+    const out = parseSource(src)
+
+    expect(out).toEqual("a[i] += 3")
 })

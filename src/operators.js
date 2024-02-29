@@ -327,6 +327,16 @@ export class OpAssign1 extends Artifact {
 	this.head = tree.get(this, startLine, "nd_args->nd_head")
 	this.body = tree.get(this, startLine, "nd_args->nd_body")
     }
+
+    convert(output) {
+	this.addNewLine(output, this.recv)
+	this.add(output, this.head)
+	this.add(output, " ")
+	this.add(output, symbol(this.mid))
+	this.add(output, "= ")
+	this.add(output, this.body)
+    }
+
 }
 
 export class OpAssign2 extends Artifact {
