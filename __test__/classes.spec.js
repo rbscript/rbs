@@ -88,7 +88,7 @@ test("class with constructor and a method", () => {
 	"  }",
 	"  meow(a) {",
 	'    if (this.#eyeColor == "blue") {',
-	"      return hello",
+	"      return hello()",
 	"    }",
 	"  }",
 	"}"

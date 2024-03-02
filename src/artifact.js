@@ -130,6 +130,7 @@ export class Artifact {
 			    case '\r':
 				break
 			    case '\n':
+			    case '#':
 				this.wholeLine = true
 				break loop
 			    default:
