@@ -257,13 +257,17 @@ export class Defn extends Artifact {
 	this.mid = tree.get(this, startLine, "nd_mid")
 	this.defn = tree.get(this, startLine, "nd_defn")
 
-	if (this.defn.body != undefined) { // Possible when method body is empty
-	    this.defn.body = this.defn.body.returnize(tree)
-	}
-
 	// Inform the class that it has a new method
 	const owner = this.findOwner()
 	owner.addMethod(this, this.mid, this.defn.args)
+
+	if (this.defn.body != undefined) { // Possible when method body is empty
+	    if (owner.inClass() && this.mid == ":initialize") {
+		// Never returnize a constructor
+	    } else {
+		this.defn.body = this.defn.body.returnize(tree)
+	    }
+	}
     }
 
     findOwnerMethod() {

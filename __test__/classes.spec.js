@@ -565,7 +565,7 @@ test("method with super", () => {
 	"  constructor(a, b) {",
 	"    super(a, b)",
 	'    this.#eyeColor = "blue"',
-	"    return super.doSomething()",
+	"    super.doSomething()",
 	"  }",
 	"}"
     )
