@@ -1217,7 +1217,7 @@ test("Method ref in method call params", () => {
 	"export class Klas {",
 	"  main() {",
 	"    namik()",
-	'    return this.addMenu("kelle", this.kelle)',
+	'    return this.addMenu("kelle", this.kelle.bind(this))',
 	"  }",
 	"  kelle() {",
 	"  }",

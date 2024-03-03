@@ -245,6 +245,9 @@ export class VarCall extends Artifact {
 	// Then we assume it is a function or method call
 	if (this.isWholeLine()) {
 	    this.add(output, "()")
+	} else if (!(owner instanceof Program) &&
+		  this.parent.recv != this) { // Do not add bind to a receiver
+	    this.add(output, ".bind(this)")
 	}
     }
 }

@@ -738,3 +738,61 @@ test("Include", () => {
 
     expect(out).toEqual(out2)
 })             
+
+test("class method as event", () => {
+    const src = createSource(
+	"class Animal",
+	"  def initialize",
+	"    @n = 0",
+	"    listener handle",
+	"  end",
+	"  def handle",
+	"    @n = 1",
+	"  end",
+	"end")
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"export class Animal {",
+	"  constructor() {",
+	"    this.#n = 0",
+	'    listener(this.handle.bind(this))',
+	"  }",
+	"  handle() {",
+	"    this.#n = 1",
+	"  }",
+	"}"
+    )
+    expect(out).toEqual(out2)
+})             
+
+test("class method as event", () => {
+    const src = createSource(
+	"class Animal",
+	"  def initialize",
+	"    @n = 0",
+	"    window.add_event 'load', -> do",
+	"      add_event handle_click",
+	"    end",
+	"  end",
+	"  def handle_click",
+	"    @n = 1",
+	"  end",
+	"end")
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"export class Animal {",
+	"  constructor() {",
+	"    this.#n = 0",
+	'    window.addEvent("load", () => {',
+	"      return addEvent(this.handleClick.bind(this))",
+	"    })",
+	"  }",
+	"  handleClick() {",
+	"    this.#n = 1",
+	"  }",
+	"}"
+    )
+    expect(out).toEqual(out2)
+})             
