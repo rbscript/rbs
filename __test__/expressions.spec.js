@@ -376,8 +376,8 @@ test("Range I", () => {
 
     const out2 = createSource(
 	"const r = (() => {",
-	"  beg__1 = 333",
-	"  end__2 = (666) + 1",
+	"  const beg__1 = 333",
+	"  const end__2 = (666) + 1",
 	"  return Array.from({length: end__2 - beg__1}, (_, i__3) => beg__1 + i__3)",
 	"})()"
     )
@@ -394,8 +394,8 @@ test("Range II", () => {
 
     const out2 = createSource(
 	"const r = (() => {",
-	"  beg__1 = 333",
-	"  end__2 = 666",
+	"  const beg__1 = 333",
+	"  const end__2 = 666",
 	"  return Array.from({length: end__2 - beg__1}, (_, i__3) => beg__1 + i__3)",
 	"})()"
     )
@@ -412,8 +412,8 @@ test("Range III", () => {
 
     const out2 = createSource(
 	"const r = (() => {",
-	"  beg__1 = 0",
-	"  end__2 = (666) + 1",
+	"  const beg__1 = 0",
+	"  const end__2 = (666) + 1",
 	"  return Array.from({length: end__2 - beg__1}, (_, i__3) => beg__1 + i__3)",
 	"})()"
     )

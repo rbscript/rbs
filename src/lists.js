@@ -86,7 +86,8 @@ export class Range extends Artifact {
 	this.add(output, "(() => {")
 	output.indent()
 
-	this.addNewLine(output, beg)
+	this.addNewLine(output, "const ")
+	this.add(output, beg)
 	this.add(output, " = ")
 	if (this.beg == undefined || this.beg.constructor.name == "Nil") {
 	    this.add(output, "0")
@@ -94,7 +95,8 @@ export class Range extends Artifact {
 	    this.add(output, this.beg)
 	}
 
-	this.addNewLine(output, end)
+	this.addNewLine(output, "const ")
+	this.add(output, end)
 	this.add(output, " = ")
 	if (this.exclude) {
 	    this.add(output, this.end)
