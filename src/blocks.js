@@ -235,8 +235,10 @@ export class Block extends Artifact {
 	}
 	
 	for (let i = index - 1; i >= 0; --i) {
-	    if (this.statements[i].letOrConstForward(la)) {
-		return true
+	    if (this.statements[i] instanceof LocalAssignment) {
+		if (this.statements[i].vid == la.vid) {
+		    return true
+		}
 	    }
 	}
 	

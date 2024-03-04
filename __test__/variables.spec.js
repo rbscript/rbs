@@ -593,6 +593,31 @@ test("Bug: Unnecessary const for +=", () => {
     expect(out).toEqual(out2)
 })
 
+test("Bug: No var decl in for", () => {
+    const src = createSource(
+	"a = []",
+	"for i in a",
+	"  r = a[i]",
+	"end",
+	"for j in a",
+	"  r = a[j]",
+	"end"
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"const a = []",
+	"for (const i of a) {",
+	"  const r = a[i]",
+	"}",
+	"for (const j of a) {",
+	"  const r = a[j]",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
 
 
 
