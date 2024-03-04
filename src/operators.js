@@ -336,7 +336,6 @@ export class OpAssign1 extends Artifact {
 	this.add(output, "= ")
 	this.add(output, this.body)
     }
-
 }
 
 export class OpAssign2 extends Artifact {
@@ -358,6 +357,23 @@ export class OpAssign2 extends Artifact {
 	this.add(output, "= ")
 	this.add(output, this.value)
     }
+
+    letOrConstBackward(la, stm) {
+	if (la.vid == this.vid) {
+	    return true
+	} else {
+	    return super.letOrConstBackward(la, this)
+	}
+    }
+    
+    letOrConstForward(la) {
+	if (la.vid == this.vid) {
+	    return true
+	} else {
+	    return super.letOrConstForward(la)
+	}
+    }
+
 }
 
 

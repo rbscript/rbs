@@ -572,5 +572,27 @@ test("assign value to hash", () => {
     expect(out).toEqual(out2)
 })
 
+test("Bug: Unnecessary const for +=", () => {
+    const src = createSource(
+	"x = 0",
+	"a = []",
+	"for i in a",
+	"  x += 1",
+	"end"
+    )
+    const out = parseSource(src)
+
+    const out2 = createSource(
+	"let x = 0",
+	"const a = []",
+	"for (const i of a) {",
+	"  x += 1",
+	"}"
+    )
+    
+    expect(out).toEqual(out2)
+})
+
+
 
 

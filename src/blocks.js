@@ -58,6 +58,14 @@ export class Scope extends Artifact {
 	}
     }
 
+    letOrConstForward(la) {
+	if (this.body == undefined) {
+	    return false
+	}
+	return this.body.letOrConstForward(la)
+    }
+
+
     convert(output) {
 	this.add(output, this.body)
     }
