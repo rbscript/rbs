@@ -23,5 +23,8 @@
     "peerDependencies": {
         "@babel/core": "^7.12.0",
         "webpack": ">=5"
+    },
+    "dependencies": {
+        "source-map": "^0.7.4"
     }
 }
