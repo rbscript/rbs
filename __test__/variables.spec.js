@@ -1,6 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import {createSource} from './utils'
-import parseSource from '../src/rbs-loader'
+import {createSource, parseSource} from './utils'
 
 test.skip("variable definition", () => {
     const src = createSource("a = 666")

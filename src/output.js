@@ -55,7 +55,7 @@ export class Output {
 	
 	if (str instanceof Artifact) {
 	    str.convert(this)
-	    this.addToSourceMap(artifact)
+	    this.addToSourceMap(str)
 	    return
 	}
 	if ("string" != typeof str) {

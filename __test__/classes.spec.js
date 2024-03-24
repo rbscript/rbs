@@ -1,6 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import {createSource} from './utils'
-import parseSource from '../src/rbs-loader'
+import {createSource, parseSource} from './utils'
 
 test("simple class", () => {
     const src = createSource(
@@ -793,6 +792,42 @@ test("class method as event", () => {
 	"    this.#n = 1",
 	"  }",
 	"}"
+    )
+    expect(out).toEqual(out2)
+})             
+
+// Beware of this
+test.skip("class method as event", () => {
+    const src = createSource(
+	"class Animal",
+	"  def initialize",
+	"    @n = 0",
+	"  end",
+	"  def handle_click",
+	"    @n = 1",
+	"  end",
+	"end",
+	"a = Animal.new",
+	"window.add_event 'load', -> do",
+	"  add_event a.handle_click",
+	"end",
+
+    )
+    const out = parseSource(src)
+    
+    const out2 = createSource(
+	"export class Animal {",
+	"  constructor() {",
+	"    this.#n = 0",
+	"  }",
+	"  handleClick() {",
+	"    this.#n = 1",
+	"  }",
+	"}",
+	"const a = new Animal()",
+	'window.addEvent("load", () => {',
+	"  return addEvent(a.handleClick.bind(a))",
+	"})",
     )
     expect(out).toEqual(out2)
 })             

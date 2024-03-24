@@ -2,8 +2,8 @@ const path = require('path');
 
 module.exports = {
     target: 'node',
-    entry: './src/rbs-loader.js',
-    devtool: 'inline-source-map',
+    entry: './src/main.js',
+    devtool: 'source-map',
     module: {
 	rules: [
 	    {

@@ -1,6 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import {createSource} from './utils'
-import parseSource from '../src/rbs-loader'
+import {createSource, parseSource} from './utils'
 
 test("method definition", () => {
     const src = createSource(

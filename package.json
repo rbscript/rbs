@@ -1,8 +1,8 @@
 {
-    "name": "rbs-loader",
-    "displayName": "rbs loader",
+    "name": "rbs",
+    "displayName": "Rubyscript",
     "version": "0.1.0",
-    "description": "Rubyscript Loader",
+    "description": "Rubyscript",
     "main": "dist/index.js",
     "scripts": {
         "build": "npx webpack --mode development",

@@ -1,13 +1,7 @@
 import {resolveNode} from './node'
 import {spawnSync} from 'node:child_process'
-import {Program} from './classes'
 import {buffer} from 'node:buffer'
-
-let consolelog = false
-
-export function enableConsoleLog() {
-    consolelog = true
-}
+import {Program} from './classes'
 
 export function parse(source, dump) {
     const p = spawnSync('ruby', ["--dump=parsetree"], {
@@ -21,9 +15,6 @@ export function parse(source, dump) {
     }
 
     const stdout = p.stdout.toString()
-    if (consolelog) {
-	console.log(stdout)
-    }
     if (dump) {
 	log(stdout)
     }
